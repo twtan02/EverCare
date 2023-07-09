@@ -1,0 +1,7 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="8dp" /> <!-- Set the desired corner radius for the rounded rectangle -->
+    <gradient
+        android:angle="90"
+    android:startColor="#FF3366"
+    android:endColor="#FF6633" /> <!-- Set the end color for the gradient -->
+</shape>

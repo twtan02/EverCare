@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "902433633343",
+    "project_id": "evercare-5eb7a",
+    "storage_bucket": "evercare-5eb7a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:902433633343:android:35cb993a17542bcb7cb48a",
+        "android_client_info": {
+          "package_name": "my.edu.utar.evercare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "902433633343-jc5p42ntbkh92519vqc1rh0m7cn9d3hr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiCOjiSdwrXWs_fTuvFX1RRxMwcj1Qwww"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "902433633343-akoevmra44m4br4a91pef19u59a9cibo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
