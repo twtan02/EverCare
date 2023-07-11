@@ -1,1 +1,15 @@
+# Compiled class files
+*.class
+
+# Gradle build directory
+/build/
+
+# Local configuration file (e.g., for IDE)
+/local.properties
+
+# Generated files
+/generated/
+
+# Ignore all .iml files in the project
+*.iml
 
