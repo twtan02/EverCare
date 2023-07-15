@@ -1,15 +1,15 @@
-*.iml
-.gradle
+# Compiled class files
+*.class
+
+# Gradle build directory
+/build/
+
+# Local configuration file (e.g., for IDE)
 /local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
-local.properties
+
+# Generated files
+/generated/
+
+# Ignore all .iml files in the project
+*.iml
+
