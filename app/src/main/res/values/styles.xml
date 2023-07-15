@@ -14,6 +14,12 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <!-- Navigation bar -->
+    <style name="BottomNavigationTextStyle" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textSize">14sp</item> <!-- Increase the text size as desired -->
+    </style>
+
+
     <!-- Other styles -->
     <!-- ... -->
 </resources>

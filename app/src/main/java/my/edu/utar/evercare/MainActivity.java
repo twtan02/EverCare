@@ -1,64 +1,81 @@
 package my.edu.utar.evercare;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
-    private BottomNavigationView bottomNavigationView;
+    private EditText editTextEmail, editTextPassword;
+    private Button buttonLogin, buttonSignUp;
+
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
 
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setOnNavigationItemSelectedListener(navItemSelectedListener);
+        firebaseAuth = FirebaseAuth.getInstance();
 
-        // Load the initial fragment
-        loadFragment(new MedicalRecordFragment());
+        editTextEmail = findViewById(R.id.emailEditText);
+        editTextPassword = findViewById(R.id.passwordEditText);
+        buttonLogin = findViewById(R.id.loginButton);
+        buttonSignUp = findViewById(R.id.signUpButton);
+
+        buttonLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = editTextEmail.getText().toString().trim();
+                String password = editTextPassword.getText().toString().trim();
+
+                isValidLogin(email, password);
+            }
+        });
+
+        buttonSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, SignUpActivity.class));
+            }
+        });
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener navItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            Fragment selectedFragment = null;
-
-            switch (item.getItemId()) {
-                case R.id.menu_medical_record:
-                    selectedFragment = new MedicalRecordFragment();
-                    break;
-                case R.id.menu_chat:
-                    selectedFragment = new ChatFragment();
-                    break;
-                case R.id.menu_pill_reminder:
-                    selectedFragment = new PillReminderFragment();
-                    break;
-                case R.id.menu_emergency_help:
-                    selectedFragment = new EmergencyHelpFragment();
-                    break;
-                case R.id.menu_remote_monitoring:
-                    selectedFragment = new RemoteMonitoringFragment();
-                    break;
-            }
-
-            return loadFragment(selectedFragment);
+    private void isValidLogin(String email, String password) {
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            Toast.makeText(MainActivity.this, "Invalid email or password", Toast.LENGTH_SHORT).show();
+            return;
         }
-    };
 
-    private boolean loadFragment(Fragment fragment) {
-        if (fragment != null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentContainer, fragment)
-                    .commit();
-            return true;
-        }
-        return false;
+        firebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            performLogin(email);
+                        } else {
+                            Toast.makeText(MainActivity.this, "Invalid email or password", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    private void performLogin(String email) {
+        Intent intent = new Intent(MainActivity.this, HomepageActivity.class);
+        intent.putExtra("email", email);
+        startActivity(intent);
+        finish();
     }
 }

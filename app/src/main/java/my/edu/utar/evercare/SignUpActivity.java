@@ -115,7 +115,7 @@ public class SignUpActivity extends AppCompatActivity {
                     public void onSuccess(Void aVoid) {
                         // User data stored successfully, navigate back to the login page
                         Toast.makeText(SignUpActivity.this, "Registration successful", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
+                        startActivity(new Intent(SignUpActivity.this, MainActivity.class));
                         finish(); // Add this line to close the current activity
                     }
                 })

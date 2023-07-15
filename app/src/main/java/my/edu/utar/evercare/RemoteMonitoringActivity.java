@@ -1,51 +1,39 @@
 package my.edu.utar.evercare;
 
 import android.os.Bundle;
-
-import com.google.android.material.snackbar.Snackbar;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.view.View;
-
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import my.edu.utar.evercare.databinding.ActivityRemoteMonitoringBinding;
-
 public class RemoteMonitoringActivity extends AppCompatActivity {
 
-    private AppBarConfiguration appBarConfiguration;
-    private ActivityRemoteMonitoringBinding binding;
+    private TextView textViewData;
+    private Button buttonRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_remote_monitoring);
 
-        binding = ActivityRemoteMonitoringBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        textViewData = findViewById(R.id.textViewData);
+        buttonRefresh = findViewById(R.id.buttonRefresh);
 
-        setSupportActionBar(binding.toolbar);
-
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_remote_monitoring);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-
-        binding.fab.setOnClickListener(new View.OnClickListener() {
+        buttonRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onClick(View v) {
+                // Perform data refresh operation
+                refreshData();
             }
         });
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_remote_monitoring);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
+    private void refreshData() {
+        // Simulating data refresh
+        Toast.makeText(this, "Refreshing data...", Toast.LENGTH_SHORT).show();
+        // Update the data display
+        textViewData.setText("Updated data will be displayed here");
     }
 }
