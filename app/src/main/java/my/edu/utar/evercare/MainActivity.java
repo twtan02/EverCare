@@ -1,49 +1,64 @@
 package my.edu.utar.evercare;
 
-import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
+import android.view.MenuItem;
 
-import com.google.firebase.FirebaseApp;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
+
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-        // Check if the user is already logged in
-        // Replace this condition with your own logic to determine if the user is logged in
-        if (isLoggedIn()) {
-            // If the user is already logged in, start the main activity or home screen
-            startHomeActivity();
-        } else {
-            // If the user is not logged in, start the login activity
-            startLoginActivity();
-        }
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setOnNavigationItemSelectedListener(navItemSelectedListener);
 
-        FirebaseApp.initializeApp(this);
-
-        // Finish the current activity
-        finish();
+        // Load the initial fragment
+        loadFragment(new MedicalRecordFragment());
     }
 
-    private boolean isLoggedIn() {
-        // Implement your own logic here to check if the user is logged in
-        // You can use shared preferences, a database, or any other method to store and check the login status
-        // Return true if the user is logged in, false otherwise
-        // For this example, assume the user is not logged in
+    private BottomNavigationView.OnNavigationItemSelectedListener navItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment selectedFragment = null;
+
+            switch (item.getItemId()) {
+                case R.id.menu_medical_record:
+                    selectedFragment = new MedicalRecordFragment();
+                    break;
+                case R.id.menu_chat:
+                    selectedFragment = new ChatFragment();
+                    break;
+                case R.id.menu_pill_reminder:
+                    selectedFragment = new PillReminderFragment();
+                    break;
+                case R.id.menu_emergency_help:
+                    selectedFragment = new EmergencyHelpFragment();
+                    break;
+                case R.id.menu_remote_monitoring:
+                    selectedFragment = new RemoteMonitoringFragment();
+                    break;
+            }
+
+            return loadFragment(selectedFragment);
+        }
+    };
+
+    private boolean loadFragment(Fragment fragment) {
+        if (fragment != null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, fragment)
+                    .commit();
+            return true;
+        }
         return false;
     }
-
-    private void startLoginActivity() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-    }
-
-    private void startHomeActivity() {
-        Intent intent = new Intent(this, HomePageActivity.class);
-        startActivity(intent);
-    }
 }
-

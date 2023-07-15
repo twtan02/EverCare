@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">EverCare</string>
+    <string name="medical_record">Medical Record</string>
+    <string name="chat">Chat</string>
+    <string name="pill_reminder">Pill Reminder</string>
+    <string name="emergency_help">Emergency Help</string>
+    <string name="remote_monitoring">Remote Monitoring</string>
+    <string name="title_activity_chat">ChatActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="title_activity_remote_monitoring">RemoteMonitoringActivity</string>
 </resources>

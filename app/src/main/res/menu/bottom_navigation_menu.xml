@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_medical_record"
+        android:title="@string/medical_record"
+        android:icon="@drawable/medical_record" />
+    <item
+        android:id="@+id/menu_chat"
+        android:title="@string/chat"
+        android:icon="@drawable/chat" />
+    <item
+        android:id="@+id/menu_pill_reminder"
+        android:title="@string/pill_reminder"
+        android:icon="@drawable/pill_reminder" />
+    <item
+        android:id="@+id/menu_emergency_help"
+        android:title="@string/emergency_help"
+        android:icon="@drawable/emergency_help" />
+    <item
+        android:id="@+id/menu_remote_monitoring"
+        android:title="@string/remote_monitoring"
+        android:icon="@drawable/remote_monitoring" />
+</menu>

@@ -9,15 +9,24 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/drawable/edittext_rounded_bg.xml" value="0.35648148148148145" />
         <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/layout/activity_caregiver_user.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/layout/activity_elderly_user.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/layout/activity_emergency_help.xml" value="0.20520833333333333" />
         <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/layout/activity_home_page.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/layout/activity_login.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/layout/activity_main.xml" value="0.35260416666666666" />
         <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/layout/activity_medical_record.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/layout/activity_pill_reminder.xml" value="0.20520833333333333" />
         <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/layout/activity_sign_in.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/layout/activity_sign_up.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/layout/activity_staff_user.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/layout/bottom_navigation_menu.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/layout/dialog_add_medical_record.xml" value="0.20520833333333333" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/layout/fragment_chat.xml" value="0.20520833333333333" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/layout/fragment_emergency_help.xml" value="0.20520833333333333" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/layout/fragment_medical_record.xml" value="0.20520833333333333" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/layout/fragment_pill_reminder.xml" value="0.20520833333333333" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/layout/fragment_remote_monitoring.xml" value="0.20520833333333333" />
         <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/layout/item_medical_record.xml" value="0.3619791666666667" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/EverCare/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.36666666666666664" />
       </map>
     </option>
   </component>

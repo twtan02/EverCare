@@ -35,24 +35,6 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="User ID"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:layout_marginTop="16dp" />
-
-    <EditText
-        android:id="@+id/userIdEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter your user ID"
-        android:padding="12dp"
-        android:textColor="@color/black"
-        android:background="@drawable/edittext_rounded_bg"
-        android:imeOptions="actionNext" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:text="Email"
         android:textColor="@color/black"
         android:textSize="16sp"
@@ -87,6 +69,40 @@
         android:textColor="@color/black"
         android:background="@drawable/edittext_rounded_bg"
         android:imeOptions="actionDone" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select your role"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp" />
+
+    <RadioGroup
+        android:id="@+id/roleRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/passwordEditText"
+        android:layout_marginTop="16dp">
+
+        <RadioButton
+            android:id="@+id/elderlyRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Elderly" />
+
+        <RadioButton
+            android:id="@+id/staffRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Staff" />
+
+        <RadioButton
+            android:id="@+id/caregiverRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Caregiver" />
+    </RadioGroup>
 
     <Button
         android:id="@+id/signUpButton"

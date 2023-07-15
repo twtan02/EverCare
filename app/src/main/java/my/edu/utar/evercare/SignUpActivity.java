@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,6 +30,7 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText usernameEditText;
     private EditText emailEditText;
     private EditText passwordEditText;
+    private RadioGroup roleRadioGroup; // Add a RadioGroup for role selection
     private Button signUpButton;
 
     private FirebaseAuth firebaseAuth;
@@ -44,6 +47,7 @@ public class SignUpActivity extends AppCompatActivity {
         usernameEditText = findViewById(R.id.usernameEditText);
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
+        roleRadioGroup = findViewById(R.id.roleRadioGroup); // Initialize the RadioGroup
         signUpButton = findViewById(R.id.signUpButton);
 
         signUpButton.setOnClickListener(new View.OnClickListener() {
@@ -52,9 +56,10 @@ public class SignUpActivity extends AppCompatActivity {
                 String username = usernameEditText.getText().toString().trim();
                 String email = emailEditText.getText().toString().trim();
                 String password = passwordEditText.getText().toString().trim();
+                String role = getSelectedRole(); // Get the selected role from the RadioGroup
 
                 // Validate the input fields
-                if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                if (username.isEmpty() || email.isEmpty() || password.isEmpty() || role.isEmpty()) {
                     Toast.makeText(SignUpActivity.this, "Please fill in all the fields", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -68,7 +73,8 @@ public class SignUpActivity extends AppCompatActivity {
                                     // Registration successful, store additional user data in Firestore
                                     FirebaseUser user = firebaseAuth.getCurrentUser();
                                     if (user != null) {
-                                        storeUserData(user.getUid(), username);
+                                        String userId = user.getUid(); // Get the user ID
+                                        storeUserData(userId, username, role); // Pass the role to the storeUserData method
                                     } else {
                                         // Error getting user, show error message
                                         Toast.makeText(SignUpActivity.this, "Error getting user", Toast.LENGTH_SHORT).show();
@@ -83,13 +89,24 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
-    private void storeUserData(String userId, String username) {
+    private String getSelectedRole() {
+        int selectedRadioButtonId = roleRadioGroup.getCheckedRadioButtonId();
+        if (selectedRadioButtonId != -1) {
+            RadioButton selectedRadioButton = findViewById(selectedRadioButtonId);
+            return selectedRadioButton.getText().toString();
+        }
+        return "";
+    }
+
+    private void storeUserData(String userId, String username, String role) {
         // Create a new document in the "users" collection with the user's ID
         DocumentReference userRef = firestore.collection("users").document(userId);
 
         // Create a Map object to store the user data
         Map<String, Object> userData = new HashMap<>();
+        userData.put("userId", userId); // Add the user ID to the user data
         userData.put("username", username);
+        userData.put("role", role); // Store the role in Firestore
 
         // Set the user data in the document
         userRef.set(userData)

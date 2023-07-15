@@ -9,27 +9,50 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.EverCare">
-
+        <activity
+            android:name=".RemoteMonitoringActivity"
+            android:exported="false"
+            android:label="@string/title_activity_remote_monitoring"
+            android:theme="@style/Theme.EverCare.NoActionBar" />
+        <activity
+            android:name=".EmergencyHelpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ChatActivity"
+            android:exported="false"
+            android:label="@string/title_activity_chat"
+            android:theme="@style/Theme.EverCare.NoActionBar" />
+        <activity
+            android:name=".PillReminderActivity"
+            android:exported="false" />
         <activity
             android:name=".MedicalRecordActivity"
             android:exported="false" />
         <activity
             android:name=".SignUpActivity"
             android:exported="false" />
-
+        <activity
+            android:name=".ElderlyUserActivity"
+            android:label="Elderly User Activity" />
+        <activity
+            android:name=".StaffUserActivity"
+            android:label="Staff User Activity" />
+        <activity
+            android:name=".CaregiverUserActivity"
+            android:label="Caregiver User Activity" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".LoginActivity"
             android:label="Login"
             android:theme="@style/AppTheme.NoActionBar" />
-
     </application>
+
 </manifest>
