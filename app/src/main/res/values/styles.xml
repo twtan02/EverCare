@@ -19,6 +19,13 @@
         <item name="android:textSize">14sp</item> <!-- Increase the text size as desired -->
     </style>
 
+    <!-- Toolbar -->
+    <style name="ToolbarTheme" parent="Widget.AppCompat.Toolbar">
+        <!-- Customize the text color to black -->
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
 
     <!-- Other styles -->
     <!-- ... -->

@@ -1,4 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_profile"
+        android:title="Profile"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_font_size"
+        android:title="Font Size"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_daily_schedule"
+        android:title="Daily Schedule"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_contact_us"
+        android:title="Contact Us"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_logout"
+        android:title="Logout"
+        app:showAsAction="never" />
 </menu>
+

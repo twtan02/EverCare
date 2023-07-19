@@ -1,14 +1,19 @@
 package my.edu.utar.evercare;
 
-import androidx.appcompat.app.AppCompatActivity;
+public class CalendarItem {
+    private int dayOfMonth;
+    private String event;
 
-import android.os.Bundle;
+    public CalendarItem(int dayOfMonth, String event) {
+        this.dayOfMonth = dayOfMonth;
+        this.event = event;
+    }
 
-public class CalendarItem extends AppCompatActivity {
+    public int getDayOfMonth() {
+        return dayOfMonth;
+    }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calendar_item);
+    public String getEvent() {
+        return event;
     }
 }

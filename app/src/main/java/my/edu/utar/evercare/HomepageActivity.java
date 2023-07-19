@@ -2,16 +2,18 @@ package my.edu.utar.evercare;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+
 
 public class HomepageActivity extends AppCompatActivity {
 
@@ -24,6 +26,13 @@ public class HomepageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+
+        // Set the title
+        toolbar.setTitle("HOME");
+
+        // Set the toolbar as the ActionBar
+        setSupportActionBar(toolbar);
 
         // Set the listener for item selection
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
@@ -59,21 +68,44 @@ public class HomepageActivity extends AppCompatActivity {
         selectedFragment = new MedicalRecordFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, selectedFragment).commit();
 
+    }
 
-        findViewById(R.id.btnLogout).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Perform logout action
-                FirebaseAuth.getInstance().signOut();
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
-                // Show logout message
-                Toast.makeText(HomepageActivity.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
 
-                // Navigate back to the login activity
-                Intent intent = new Intent(HomepageActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish(); // Finish the current activity to prevent going back to it
-            }
-        });
+        if (id == R.id.menu_profile) {
+            // Handle profile option
+            startActivity(new Intent(HomepageActivity.this, ProfileActivity.class));
+            return true;
+        } else if (id == R.id.menu_font_size) {
+            // Handle font size option
+            startActivity(new Intent(HomepageActivity.this, FontSizeActivity.class));
+            return true;
+        } else if (id == R.id.menu_daily_schedule) {
+            // Handle daily schedule option
+            startActivity(new Intent(HomepageActivity.this, DailyScheduleActivity.class));
+            return true;
+        } else if (id == R.id.menu_contact_us) {
+            // Handle contact us option
+            startActivity(new Intent(HomepageActivity.this, ContactUsActivity.class));
+            return true;
+        } else if (id == R.id.menu_logout) {
+            // Handle logout option
+            FirebaseAuth.getInstance().signOut();
+            Toast.makeText(HomepageActivity.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(HomepageActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

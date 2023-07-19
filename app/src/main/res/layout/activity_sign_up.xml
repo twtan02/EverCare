@@ -73,6 +73,27 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="Date of Birth"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/dateOfBirthTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Choose Date of Birth"
+        android:inputType="date"
+        android:layout_marginTop="16dp"
+        android:padding="12dp"
+        android:textColor="@color/black"
+        android:background="@drawable/edittext_rounded_bg"
+        android:clickable="true"
+        android:focusable="false" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="Select your role"
         android:textColor="@color/black"
         android:textSize="16sp"
@@ -82,7 +103,7 @@
         android:id="@+id/roleRadioGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/passwordEditText"
+        android:layout_below="@id/dateOfBirthTextView"
         android:layout_marginTop="16dp">
 
         <RadioButton

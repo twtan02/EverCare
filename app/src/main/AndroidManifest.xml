@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="my.edu.utar.evercare">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/evercare"
@@ -9,6 +12,31 @@
         android:roundIcon="@mipmap/evercare"
         android:supportsRtl="true"
         android:theme="@style/Theme.EverCare">
+        <activity
+            android:name=".CalendarDate"
+            android:exported="false" />
+        <activity
+            android:name=".DailySchedule"
+            android:exported="false" />
+        <activity
+            android:name=".CalendarItem"
+            android:exported="false" />
+        <activity
+            android:name=".CalendarAdapter"
+            android:exported="false" />
+        <activity
+            android:name=".ContactUsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DailyScheduleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FontSizeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".RemoteMonitoringActivity"
             android:exported="false"
@@ -43,8 +71,7 @@
         <activity
             android:name=".HomepageActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

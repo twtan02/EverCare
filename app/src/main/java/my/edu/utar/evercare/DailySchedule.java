@@ -4,11 +4,20 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class DailySchedule extends AppCompatActivity {
+public class DailySchedule {
+    private String day;
+    private String event;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_daily_schedule2);
+    public DailySchedule(String day, String event) {
+        this.day = day;
+        this.event = event;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public String getEvent() {
+        return event;
     }
 }

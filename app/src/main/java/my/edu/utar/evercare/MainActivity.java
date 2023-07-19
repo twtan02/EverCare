@@ -3,9 +3,12 @@ package my.edu.utar.evercare;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -51,6 +54,22 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, SignUpActivity.class));
             }
         });
+
+        // Set the editor action listener for the password EditText
+        editTextPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    // When "Done" action is triggered on the keyboard, perform login
+                    String email = editTextEmail.getText().toString().trim();
+                    String password = editTextPassword.getText().toString().trim();
+                    isValidLogin(email, password);
+                    return true; // Return true to indicate that the event has been handled
+                }
+                return false; // Return false if the event has not been handled
+            }
+        });
+
     }
 
     private void isValidLogin(String email, String password) {
