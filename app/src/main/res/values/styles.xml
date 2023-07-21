@@ -3,7 +3,7 @@
     <!-- Base application theme -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here -->
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/light_blue</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
@@ -23,8 +23,34 @@
     <style name="ToolbarTheme" parent="Widget.AppCompat.Toolbar">
         <!-- Customize the text color to black -->
         <item name="android:textColor">@android:color/black</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:background">#AED6F1</item>
+        <item name="android:contentInsetStart">8dp</item>
     </style>
+
+    <style name="CustomBottomNavItemStyle" parent="@style/Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemIconTint">@color/custom_bottom_nav_item_color</item>
+        <item name="itemTextAppearanceActive">@style/CustomBottomNavTextAppearanceActive</item>
+        <item name="itemTextAppearanceInactive">@style/CustomBottomNavTextAppearanceInactive</item>
+        <item name="itemBackground">@drawable/custom_bottom_nav_item_background</item>
+    </style>
+
+    <style name="CustomBottomNavTextAppearanceActive" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/custom_bottom_nav_item_color</item>
+    </style>
+
+    <style name="CustomBottomNavTextAppearanceInactive" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/custom_bottom_nav_item_color_inactive</item>
+    </style>
+
+    <style name="CustomBottomNavActiveTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/custom_bottom_nav_item_color</item>
+    </style>
+
+    <style name="CustomBottomNavInactiveTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/custom_bottom_nav_item_color_inactive</item>
+    </style>
+
+
 
 
     <!-- Other styles -->

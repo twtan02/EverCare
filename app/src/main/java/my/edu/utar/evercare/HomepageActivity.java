@@ -4,16 +4,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-
 
 public class HomepageActivity extends AppCompatActivity {
 
@@ -27,12 +29,23 @@ public class HomepageActivity extends AppCompatActivity {
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         Toolbar toolbar = findViewById(R.id.toolbar);
-
-        // Set the title
-        toolbar.setTitle("HOME");
-
-        // Set the toolbar as the ActionBar
         setSupportActionBar(toolbar);
+
+        // Set the custom title text
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setCustomView(R.layout.custom_toolbar_title);
+
+        // Set the Welcome Message and Notification
+        String welcomeMessage = "Welcome to EVERCARE";
+        String notification = "About Us";
+
+        TextView customTitleTextView = findViewById(R.id.customToolbarTitle);
+        customTitleTextView.setText("HOME");
+
+        WebView longParagraphWebView = findViewById(R.id.longParagraphWebView);
+        String longParagraph = getResources().getString(R.string.long_paragraph);
+        longParagraphWebView.loadDataWithBaseURL(null, longParagraph, "text/html", "utf-8", null);
 
         // Set the listener for item selection
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
@@ -64,9 +77,6 @@ public class HomepageActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-        selectedFragment = new MedicalRecordFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, selectedFragment).commit();
 
     }
 
