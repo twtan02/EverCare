@@ -1,51 +1,63 @@
 package my.edu.utar.evercare;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.CalendarView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import com.google.firebase.FirebaseApp;
+
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
 public class DailyScheduleActivity extends AppCompatActivity {
 
     private CalendarView calendarView;
-    private List<CalendarDate> eventList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_daily_schedule);
 
+        // Initialize Firebase
+        FirebaseApp.initializeApp(this);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // Set the custom title text
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setCustomView(R.layout.custom_toolbar_title);
+
+        TextView customTitleTextView = findViewById(R.id.customToolbarTitle);
+        customTitleTextView.setText("Daily Schedule");
+
+        // Enable the back button on the toolbar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         calendarView = findViewById(R.id.calendarView);
 
-        // Set up the list of events
-        eventList = new ArrayList<>();
-        // Add your events to the list
-        // eventList.add(new CalendarDate(getDate(year, month, day), "Event 1"));
-        // eventList.add(new CalendarDate(getDate(year, month, day), "Event 2"));
-        // eventList.add(new CalendarDate(getDate(year, month, day), "Event 3"));
-        // Add more events as needed
-
-        // Set the date change listener for the CalendarView
+        // When the user selects a date from the CalendarView, start ScheduleDetailActivity
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
                 Date selectedDate = getDate(year, month, dayOfMonth);
-                String selectedEvent = getEventForDate(selectedDate);
-                if (selectedEvent != null) {
-                    Toast.makeText(DailyScheduleActivity.this, selectedEvent, Toast.LENGTH_SHORT).show();
-                }
+
+                // Convert the Date object to a timestamp (long value)
+                long selectedDateTimestamp = selectedDate.getTime();
+
+                // Start the ScheduleDetailActivity and pass the selected date as an extra
+                Intent intent = new Intent(DailyScheduleActivity.this, ScheduleDetailActivity.class);
+                intent.putExtra("selected_date", selectedDateTimestamp);
+                startActivity(intent);
             }
         });
     }
@@ -56,15 +68,13 @@ public class DailyScheduleActivity extends AppCompatActivity {
         return calendar.getTime();
     }
 
-    private String getEventForDate(Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        String dateString = dateFormat.format(date);
-        for (CalendarDate calendarDate : eventList) {
-            String eventDateString = dateFormat.format(calendarDate.getDate());
-            if (dateString.equals(eventDateString)) {
-                return calendarDate.getEvent();
-            }
+    // Handle back button click event
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
         }
-        return null;
+        return super.onOptionsItemSelected(item);
     }
 }

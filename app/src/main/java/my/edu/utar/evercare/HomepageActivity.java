@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class HomepageActivity extends AppCompatActivity {
+public class HomepageActivity extends BaseActivity  {
 
     private BottomNavigationView bottomNavigationView;
     private Fragment selectedFragment = null;

@@ -3,13 +3,16 @@ package my.edu.utar.evercare;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,6 +38,20 @@ public class MedicalRecordActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // Set the custom title text
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setCustomView(R.layout.custom_toolbar_title);
+
+        TextView customTitleTextView = findViewById(R.id.customToolbarTitle);
+        customTitleTextView.setText("Medical Record");
+
+        // Enable the back button on the toolbar
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Add sample medical records to the list (you can fetch data from a database or API)
         medicalRecords.add(new MedicalRecord("John Doe", "Medicine A", "2 tablets"));
@@ -88,6 +105,16 @@ public class MedicalRecordActivity extends AppCompatActivity {
 
         // Show dialog
         builder.create().show();
+    }
+
+    // Handle back button click event
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
 

@@ -1,40 +1,66 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/activity_font_size.xml -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
 
-    <!-- Sample text view to show the font size change -->
-    <TextView
-        android:id="@+id/textViewSampleText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sample Text"
-        android:textSize="18sp"
-        android:layout_marginTop="16dp"
-        android:layout_centerHorizontal="true" />
-
-    <!-- Seek bar to select font size -->
-    <SeekBar
-        android:id="@+id/seekBarFontSize"
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textViewSampleText"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:progress="18"
-        android:max="36"
-        android:layout_centerHorizontal="true" />
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="4dp"
+        android:theme="@style/ToolbarTheme" />
 
-    <!-- Apply button to apply the selected font size -->
-    <Button
-        android:id="@+id/buttonApply"
+    <!-- Font Size Options -->
+    <RadioGroup
+        android:id="@+id/fontSizeRadioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Apply"
-        android:layout_below="@id/seekBarFontSize"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/radioButtonSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Small" />
+
+        <RadioButton
+            android:id="@+id/radioButtonMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Medium" />
+
+        <RadioButton
+            android:id="@+id/radioButtonLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Large" />
+
+    </RadioGroup>
+
+    <!-- Apply Button -->
+    <Button
+        android:id="@+id/applyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fontSizeRadioGroup"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:layout_centerHorizontal="true" />
+        android:text="Apply"
+        android:textColor="@android:color/black" />
+
+    <!-- Sample TextView -->
+    <TextView
+        android:id="@+id/sampleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/applyButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="EVERCARE"
+        android:textSize="18sp"
+        android:textColor="@android:color/black" />
 
 </RelativeLayout>

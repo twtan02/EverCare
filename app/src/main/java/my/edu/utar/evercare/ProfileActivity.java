@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -50,14 +51,19 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        // Find the Toolbar in the layout
         Toolbar toolbar = findViewById(R.id.toolbar);
-
-        // Set the title
-        toolbar.setTitle("User Profile");
-
-        // Set the custom Toolbar as the ActionBar
         setSupportActionBar(toolbar);
+
+        // Set the custom title text
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setCustomView(R.layout.custom_toolbar_title);
+
+        TextView customTitleTextView = findViewById(R.id.customToolbarTitle);
+        customTitleTextView.setText("User Profile");
+
+        // Enable the back button on the toolbar
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Find views by their IDs
         profileImageView = findViewById(R.id.profileImageView);
@@ -214,5 +220,15 @@ public class ProfileActivity extends AppCompatActivity {
                         // Handle error if image upload fails
                     }
                 });
+    }
+
+    // Handle back button click event
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -12,11 +12,28 @@
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
+    <!-- Custom Title -->
+    <TextView
+        android:id="@+id/customToolbarTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
+
     <!-- CalendarView -->
     <CalendarView
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/toolbar" />
+
+    <!-- RecyclerView to display tasks -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewTasks"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/calendarView"
+        android:visibility="gone" />
 
 </RelativeLayout>

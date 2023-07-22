@@ -5,6 +5,14 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="4dp"
+        android:theme="@style/ToolbarTheme" />
+
     <TextView
         android:id="@+id/textViewData"
         android:layout_width="match_parent"

@@ -1,120 +1,131 @@
 package my.edu.utar.evercare;
 
-import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.SeekBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 
-public class FontSizeActivity extends AppCompatActivity {
+public class FontSizeActivity extends BaseActivity {
 
-    private TextView textViewSampleText;
-    private SeekBar seekBarFontSize;
-    private Button buttonApply;
+    private static final String PREF_KEY_FONT_SIZE = "font_size";
+    private SharedPreferences sharedPreferences;
+    private TextView sampleTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_font_size);
 
-        textViewSampleText = findViewById(R.id.textViewSampleText);
-        seekBarFontSize = findViewById(R.id.seekBarFontSize);
-        buttonApply = findViewById(R.id.buttonApply);
+        sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        int selectedFontSize = sharedPreferences.getInt(PREF_KEY_FONT_SIZE, 18); // Default font size: 18sp
 
-        // Set the initial font size
-        int initialFontSize = 18; // You can set any initial font size you want
-        textViewSampleText.setTextSize(initialFontSize);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        // Set the seek bar progress to the initial font size
-        seekBarFontSize.setProgress(initialFontSize);
+        // Set the custom title text
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setCustomView(R.layout.custom_toolbar_title);
 
-        seekBarFontSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        TextView customTitleTextView = findViewById(R.id.customToolbarTitle);
+        customTitleTextView.setText("Change Font");
+
+        // Enable the back button on the toolbar
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        RadioGroup fontSizeRadioGroup = findViewById(R.id.fontSizeRadioGroup);
+        fontSizeRadioGroup.check(getFontSizeRadioButtonId(selectedFontSize));
+        fontSizeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                // Update the font size of the sample text view based on the seek bar progress
-                textViewSampleText.setTextSize(progress);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // Not used in this example
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // Not used in this example
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                int selectedFontSize = getSelectedFontSize(fontSizeRadioGroup);
+                applyFontSize(selectedFontSize);
             }
         });
 
-        buttonApply.setOnClickListener(new View.OnClickListener() {
+        Button applyButton = findViewById(R.id.applyButton);
+        applyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Get the selected font size from the seek bar and apply it to the app's UI
-                int selectedFontSize = seekBarFontSize.getProgress();
-                // You can save this font size in SharedPreferences or other storage methods to apply it throughout the app
-                // For this example, we're just updating the sample text view's font size
-                textViewSampleText.setTextSize(selectedFontSize);
+                int selectedFontSize = getSelectedFontSize(fontSizeRadioGroup);
+                applyFontSize(selectedFontSize);
+                // Save the selected font size to shared preferences
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt(PREF_KEY_FONT_SIZE, selectedFontSize);
+                editor.apply();
+
+                // Update font sizes for all relevant activities
+                updateFontSizesForActivities(selectedFontSize);
             }
         });
+
+        // Sample TextView for preview
+        sampleTextView = findViewById(R.id.sampleTextView);
+        sampleTextView.setText("EVERCARE"); // You can set the sample text here
+        sampleTextView.setTextSize(selectedFontSize);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_font, menu);
-        return true;
+    private int getFontSizeRadioButtonId(int fontSize) {
+        switch (fontSize) {
+            case 18:
+                return R.id.radioButtonSmall;
+            case 22:
+                return R.id.radioButtonMedium;
+            case 26:
+                return R.id.radioButtonLarge;
+            default:
+                return R.id.radioButtonMedium;
+        }
     }
 
+    private int getSelectedFontSize(RadioGroup fontSizeRadioGroup) {
+        int checkedId = fontSizeRadioGroup.getCheckedRadioButtonId();
+        switch (checkedId) {
+            case R.id.radioButtonSmall:
+                return 18;
+            case R.id.radioButtonMedium:
+                return 22;
+            case R.id.radioButtonLarge:
+                return 26;
+            default:
+                return 22; // Default font size: 22sp
+        }
+    }
+
+    // Handle back button click event
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.menu_font_size) {
-            // Show a dialog or any other UI to allow the user to set the font size
-            // You can use a SeekBar, NumberPicker, or any other UI component to let the user choose the font size.
-            // Once the user selects the font size, you can apply it to your app's text views and save the preference for future usage.
-
-            // Example: Show a simple dialog with a seek bar to select the font size
-            showFontSizeDialog();
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
-    private void showFontSizeDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Choose Font Size");
+    @Override
+    protected void updateFontSizesForActivities(int fontSize) {
+        // Get the list of relevant activities
+        Class[] activitiesToUpdate = new Class[]{
+                HomepageActivity.class,
+                PillReminderActivity.class,
+                MedicalRecordActivity.class,
+                ChatActivity.class,
+                EmergencyHelpActivity.class,
+                RemoteMonitoringActivity.class
+        };
 
-        // Add a SeekBar to the dialog
-        SeekBar seekBar = new SeekBar(this);
-        seekBar.setMax(30); // Adjust the maximum value as needed
-        int currentFontSize = 16; // Get the current font size from preferences or set a default value
-        seekBar.setProgress(currentFontSize);
-        builder.setView(seekBar);
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                int selectedFontSize = seekBar.getProgress();
-                // Apply the selected font size to your app's text views
-                // You can use a shared preference to save the font size for future usage
-
-                // For example, to set the font size for a TextView, you can use:
-                // textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, selectedFontSize);
-            }
-        });
-
-        builder.setNegativeButton("Cancel", null);
-
-        builder.show();
+        // Update the font size for each activity
+        for (Class activityClass : activitiesToUpdate) {
+            Intent intent = new Intent(this, activityClass);
+            intent.putExtra("FONT_SIZE", fontSize);
+        }
     }
-
-
-
 }

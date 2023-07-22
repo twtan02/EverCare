@@ -27,30 +27,6 @@
         <item name="android:contentInsetStart">8dp</item>
     </style>
 
-    <style name="CustomBottomNavItemStyle" parent="@style/Widget.MaterialComponents.BottomNavigationView">
-        <item name="itemIconTint">@color/custom_bottom_nav_item_color</item>
-        <item name="itemTextAppearanceActive">@style/CustomBottomNavTextAppearanceActive</item>
-        <item name="itemTextAppearanceInactive">@style/CustomBottomNavTextAppearanceInactive</item>
-        <item name="itemBackground">@drawable/custom_bottom_nav_item_background</item>
-    </style>
-
-    <style name="CustomBottomNavTextAppearanceActive" parent="TextAppearance.AppCompat">
-        <item name="android:textColor">@color/custom_bottom_nav_item_color</item>
-    </style>
-
-    <style name="CustomBottomNavTextAppearanceInactive" parent="TextAppearance.AppCompat">
-        <item name="android:textColor">@color/custom_bottom_nav_item_color_inactive</item>
-    </style>
-
-    <style name="CustomBottomNavActiveTextAppearance" parent="TextAppearance.AppCompat">
-        <item name="android:textColor">@color/custom_bottom_nav_item_color</item>
-    </style>
-
-    <style name="CustomBottomNavInactiveTextAppearance" parent="TextAppearance.AppCompat">
-        <item name="android:textColor">@color/custom_bottom_nav_item_color_inactive</item>
-    </style>
-
-
 
 
     <!-- Other styles -->
