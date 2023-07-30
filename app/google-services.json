@@ -1,33 +1,34 @@
 {
   "project_info": {
-    "project_number": "902433633343",
-    "project_id": "evercare-5eb7a",
-    "storage_bucket": "evercare-5eb7a.appspot.com"
+    "project_number": "146535431003",
+    "firebase_url": "https://evercare-f89e8-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "evercare-f89e8",
+    "storage_bucket": "evercare-f89e8.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:902433633343:android:35cb993a17542bcb7cb48a",
+        "mobilesdk_app_id": "1:146535431003:android:cc36bda2209d446540f87e",
         "android_client_info": {
           "package_name": "my.edu.utar.evercare"
         }
       },
       "oauth_client": [
         {
-          "client_id": "902433633343-jc5p42ntbkh92519vqc1rh0m7cn9d3hr.apps.googleusercontent.com",
+          "client_id": "146535431003-6761epjbd9e445cs97161jejc204vom2.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAiCOjiSdwrXWs_fTuvFX1RRxMwcj1Qwww"
+          "current_key": "AIzaSyB0PnNcmsYK6Rq0uc4W-h0ohE_U3VLbaBQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "902433633343-akoevmra44m4br4a91pef19u59a9cibo.apps.googleusercontent.com",
+              "client_id": "146535431003-6761epjbd9e445cs97161jejc204vom2.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

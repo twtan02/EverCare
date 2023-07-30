@@ -99,16 +99,16 @@ public class ProfileActivity extends AppCompatActivity {
             // Get the user's unique ID
             String userId = currentUser.getUid();
 
-            // Access the Firestore database to get the user details
+            // Access the Firestore database to get the user details from the appropriate collection
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("users").document(userId).get()
+            db.collection("elderly_users").document(userId).get()
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             if (task.isSuccessful()) {
                                 DocumentSnapshot document = task.getResult();
                                 if (document != null && document.exists()) {
-                                    // Get the user details from the document
+                                    // Handle fetching data for elderly user
                                     String name = document.getString("username");
                                     String email = document.getString("email");
                                     String dateOfBirth = document.getString("dateOfBirth");
@@ -127,6 +127,10 @@ public class ProfileActivity extends AppCompatActivity {
                                     textViewName.setText("Name: " + name);
                                     textViewEmail.setText("Email: " + email);
                                     textViewAge.setText("Age: " + age);
+                                } else {
+                                    // If data is not found in elderly_users collection,
+                                    // try to fetch data from staff_users collection
+                                    fetchStaffUserData(userId);
                                 }
                             } else {
                                 // Handle error if unable to fetch user details
@@ -138,9 +142,48 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    private void openImageChooser() {
-        // Use the ActivityResultLauncher to launch the image chooser
-        imageChooserLauncher.launch("image/*");
+    private void fetchStaffUserData(String userId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("staff_users").document(userId).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document != null && document.exists()) {
+                                // Handle fetching data for staff user (if needed)
+                                // ...
+                            } else {
+                                // If data is not found in staff_users collection,
+                                // try to fetch data from caregiver_users collection
+                                fetchCaregiverUserData(userId);
+                            }
+                        } else {
+                            // Handle error if unable to fetch user details
+                        }
+                    }
+                });
+    }
+
+    private void fetchCaregiverUserData(String userId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("caregiver_users").document(userId).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document != null && document.exists()) {
+                                // Handle fetching data for caregiver user (if needed)
+                                // ...
+                            } else {
+                                // User data not found in any collection, handle this scenario
+                            }
+                        } else {
+                            // Handle error if unable to fetch user details
+                        }
+                    }
+                });
     }
 
     // Method to calculate the age from the date of birth
@@ -165,6 +208,12 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    private void openImageChooser() {
+        // Use the ActivityResultLauncher to launch the image chooser
+        imageChooserLauncher.launch("image/*");
+    }
+
+    // Method to upload the selected profile picture to Firebase Storage
     private void uploadProfilePic(Uri imageUri) {
         // Get the current logged-in user from Firebase Authentication
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -192,7 +241,7 @@ public class ProfileActivity extends AppCompatActivity {
                                 // Save the download URL in Firestore to associate it with the user
                                 String imageUrl = downloadUri.toString();
                                 FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                db.collection("users").document(userId)
+                                db.collection("elderly_users").document(userId)
                                         .update("profileImageUrl", imageUrl)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override

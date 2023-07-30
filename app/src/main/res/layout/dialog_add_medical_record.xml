@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="8dp">
 
     <EditText
         android:id="@+id/elderly_name_edittext"
@@ -17,17 +18,42 @@
         android:layout_height="wrap_content"
         android:hint="Medicine Name" />
 
-    <EditText
-        android:id="@+id/dosage_edittext"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Dosage" />
-
-    <Button
-        android:id="@+id/add_button"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add" />
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/dosage_edittext"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="5"
+            android:hint="Dosage"
+            android:gravity="center"
+            android:text="0" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="end">
+
+            <Button
+                android:id="@+id/increment_dosage_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/decrement_dosage_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>
-

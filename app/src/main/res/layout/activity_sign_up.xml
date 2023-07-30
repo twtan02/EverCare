@@ -1,137 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
     android:padding="16dp"
     android:background="@color/white">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Register Your Account"
-        android:textSize="20sp"
-        android:textColor="@color/black"
-        android:layout_marginBottom="32dp" />
-
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Username"
-        android:textColor="@color/black"
-        android:textSize="16sp" />
+        android:orientation="vertical"
+        android:gravity="center">
 
-    <EditText
-        android:id="@+id/usernameEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter your username"
-        android:padding="12dp"
-        android:textColor="@color/black"
-        android:background="@drawable/edittext_rounded_bg"
-        android:imeOptions="actionNext" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Email"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:layout_marginTop="16dp" />
-
-    <EditText
-        android:id="@+id/emailEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter your email"
-        android:inputType="textEmailAddress"
-        android:padding="12dp"
-        android:textColor="@color/black"
-        android:background="@drawable/edittext_rounded_bg"
-        android:imeOptions="actionNext" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Password"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:layout_marginTop="16dp" />
-
-    <EditText
-        android:id="@+id/passwordEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter your password"
-        android:inputType="textPassword"
-        android:padding="12dp"
-        android:textColor="@color/black"
-        android:background="@drawable/edittext_rounded_bg"
-        android:imeOptions="actionDone" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Date of Birth"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:layout_marginTop="16dp" />
-
-    <EditText
-        android:id="@+id/dateOfBirthTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Choose Date of Birth"
-        android:inputType="date"
-        android:layout_marginTop="16dp"
-        android:padding="12dp"
-        android:textColor="@color/black"
-        android:background="@drawable/edittext_rounded_bg"
-        android:clickable="true"
-        android:focusable="false" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Select your role"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:layout_marginTop="16dp" />
-
-    <RadioGroup
-        android:id="@+id/roleRadioGroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/dateOfBirthTextView"
-        android:layout_marginTop="16dp">
-
-        <RadioButton
-            android:id="@+id/elderlyRadioButton"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Elderly" />
+            android:text="Register Your Account"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:layout_marginBottom="32dp" />
 
-        <RadioButton
-            android:id="@+id/staffRadioButton"
-            android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Staff" />
+            android:text="Username"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
 
-        <RadioButton
-            android:id="@+id/caregiverRadioButton"
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/usernameEditText"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Caregiver" />
-    </RadioGroup>
+            android:hint="Enter your username"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:background="@drawable/edittext_rounded_bg"
+            android:imeOptions="actionNext" />
 
-    <Button
-        android:id="@+id/signUpButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Sign Up"
-        android:textColor="@color/black"
-        android:background="@drawable/button_rounded_bg"
-        android:layout_marginTop="24dp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Email"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp" />
 
-</LinearLayout>
+        <EditText
+            android:id="@+id/emailEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter your email"
+            android:inputType="textEmailAddress"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:background="@drawable/edittext_rounded_bg"
+            android:imeOptions="actionNext" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Password"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp" />
+
+        <EditText
+            android:id="@+id/passwordEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter your password"
+            android:inputType="textPassword"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:background="@drawable/edittext_rounded_bg"
+            android:imeOptions="actionDone" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Date of Birth"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp" />
+
+        <EditText
+            android:id="@+id/dateOfBirthTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Choose Date of Birth"
+            android:inputType="date"
+            android:layout_marginTop="16dp"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:background="@drawable/edittext_rounded_bg"
+            android:clickable="true"
+            android:focusable="false" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Gender"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp" />
+
+        <Spinner
+            android:id="@+id/genderSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Select Gender"
+            android:layout_marginTop="16dp"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:background="@drawable/edittext_rounded_bg" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select your role"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp" />
+
+        <RadioGroup
+            android:id="@+id/roleRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/dateOfBirthTextView"
+            android:layout_marginTop="16dp">
+
+            <RadioButton
+                android:id="@+id/elderlyRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Elderly" />
+
+            <RadioButton
+                android:id="@+id/staffRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Staff" />
+
+            <RadioButton
+                android:id="@+id/caregiverRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Caregiver" />
+        </RadioGroup>
+
+        <!-- Additional EditText for elderly parent's name (visible only for Caregiver role) -->
+        <EditText
+            android:id="@+id/elderlyParentNameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Elderly Parent's Name"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/signUpButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sign Up"
+            android:textColor="@color/black"
+            android:background="@drawable/button_rounded_bg"
+            android:layout_marginTop="24dp" />
+
+    </LinearLayout>
+</ScrollView>

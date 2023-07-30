@@ -1,14 +1,173 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="#FFFFFF">
 
-    <!-- Contact information TextView -->
-    <TextView
-        android:id="@+id/textViewContactInfo"
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="4dp"
+        android:theme="@style/ToolbarTheme" />
+
+    <!-- Container for Contact Information -->
+    <LinearLayout
+        android:id="@+id/contactInfoContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp" />
+        android:layout_below="@id/toolbar"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Big Title -->
+        <TextView
+            android:id="@+id/contactTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Contact Information"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:fontFamily="@font/poppins_light" />
+
+        <!-- Phone Number TextView -->
+        <TextView
+            android:id="@+id/phoneTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="Phone: +601158703767"
+            android:textColor="@color/black"
+            android:fontFamily="@font/poppins_light"
+            android:textStyle="bold"
+            android:clickable="true"
+            android:onClick="onPhoneClick" />
+
+        <!-- Email TextView -->
+        <TextView
+            android:id="@+id/emailTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"
+            android:text="Email: Evercare@gmail.com"
+            android:textColor="@color/black"
+            android:fontFamily="@font/poppins_light"
+            android:textStyle="bold"
+            android:clickable="true"
+            android:onClick="onEmailClick" />
+
+        <TextView
+            android:id="@+id/SocialmediaTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"
+            android:text="Social Media:"
+            android:textColor="@color/black"
+            android:fontFamily="@font/poppins_light"
+            android:textStyle="bold" />
+
+        <!-- Social Media Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/emailTextView"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <!-- Facebook -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginEnd="8dp"
+                android:gravity="center"
+                android:clickable="true"
+                android:onClick="onFacebookClick">
+
+                <ImageView
+                    android:id="@+id/facebookButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/facebook"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Facebook" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="EvercareHealth"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/poppins_light"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <!-- Instagram -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginEnd="8dp"
+                android:gravity="center"
+                android:clickable="true"
+                android:onClick="onInstagramClick">
+
+                <ImageView
+                    android:id="@+id/instagramButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/instagram"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Instagram" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="EvercareOfficial"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/poppins_light"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <!-- Twitter -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:clickable="true"
+                android:onClick="onTwitterClick">
+
+                <ImageView
+                    android:id="@+id/twitterButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/twitter"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Twitter" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="EvercareGroup"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/poppins_light"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>

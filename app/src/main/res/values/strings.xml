@@ -17,5 +17,10 @@
     <b>Emergency Help:</b> In case of emergencies, users can quickly access the emergency help feature, which notifies designated contacts and emergency services for immediate assistance.<br>
     <b>Remote Monitoring:</b> EVERCARE offers remote monitoring functionality, allowing caregivers and family members to monitor the health and well-being of elderly individuals from a distance.<br>
     ]]></string>
+    <string-array name="gender_array">
+        <item>Select Gender</item>
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
 
 </resources>

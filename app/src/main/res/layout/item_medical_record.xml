@@ -1,30 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="8dp">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/profile_pic_imageview"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/default_profile_image"
+            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/elderly_name_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:textColor="@android:color/black" />
+            android:layout_toRightOf="@id/profile_pic_imageview"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_centerVertical="true"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/medicine_name_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="@android:color/darker_gray" />
+            android:layout_toRightOf="@id/profile_pic_imageview"
+            android:layout_below="@id/elderly_name_textview"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/dosage_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="@android:color/darker_gray" />
+            android:layout_toRightOf="@id/profile_pic_imageview"
+            android:layout_below="@id/medicine_name_textview"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:textSize="16sp" />
 
-</LinearLayout>
+</RelativeLayout>

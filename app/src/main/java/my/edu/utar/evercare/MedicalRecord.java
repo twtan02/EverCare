@@ -1,14 +1,31 @@
 package my.edu.utar.evercare;
 
-public class MedicalRecord {
-    private String elderlyName;
-    private String medicineName;
-    private String dosage;
+import java.util.List;
 
-    public MedicalRecord(String elderlyName, String medicineName, String dosage) {
+public class MedicalRecord {
+    private String elderlyId;
+    private String elderlyName;
+    private String profilePicUrl;
+    private List<Medication> medications;
+    private ElderlyUser elderlyUser;
+
+    public MedicalRecord() {
+        // Empty constructor needed for Firebase
+    }
+
+    public MedicalRecord(String elderlyId, String elderlyName, String profilePicUrl, List<Medication> medications) {
+        this.elderlyId = elderlyId;
         this.elderlyName = elderlyName;
-        this.medicineName = medicineName;
-        this.dosage = dosage;
+        this.profilePicUrl = profilePicUrl;
+        this.medications = medications;
+    }
+
+    public String getElderlyId() {
+        return elderlyId;
+    }
+
+    public void setElderlyId(String elderlyId) {
+        this.elderlyId = elderlyId;
     }
 
     public String getElderlyName() {
@@ -19,21 +36,27 @@ public class MedicalRecord {
         this.elderlyName = elderlyName;
     }
 
-    public String getMedicineName() {
-        return medicineName;
+    public String getProfilePicUrl() {
+        return profilePicUrl;
     }
 
-    public void setMedicineName(String medicineName) {
-        this.medicineName = medicineName;
+    public void setProfilePicUrl(String profilePicUrl) {
+        this.profilePicUrl = profilePicUrl;
     }
 
-    public String getDosage() {
-        return dosage;
+    public List<Medication> getMedications() {
+        return medications;
     }
 
-    public void setDosage(String dosage) {
-        this.dosage = dosage;
+    public void setMedications(List<Medication> medications) {
+        this.medications = medications;
+    }
+
+    public ElderlyUser getElderlyUser() {
+        return elderlyUser;
+    }
+
+    public void setElderlyUser(ElderlyUser elderlyUser) {
+        this.elderlyUser = elderlyUser;
     }
 }
-
-

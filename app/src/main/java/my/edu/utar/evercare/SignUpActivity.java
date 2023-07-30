@@ -1,15 +1,16 @@
 package my.edu.utar.evercare;
 
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,7 +35,9 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText usernameEditText;
     private EditText emailEditText;
     private EditText passwordEditText;
-    private EditText dateOfBirthEditText; // Use EditText for date of birth
+    private EditText dateOfBirthEditText;
+    private EditText elderlyparentnameEditText;
+    private Spinner genderSpinner;
     private RadioGroup roleRadioGroup;
     private Button signUpButton;
 
@@ -55,8 +58,10 @@ public class SignUpActivity extends AppCompatActivity {
         usernameEditText = findViewById(R.id.usernameEditText);
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
-        dateOfBirthEditText = findViewById(R.id.dateOfBirthTextView); // Use EditText for date of birth
+        dateOfBirthEditText = findViewById(R.id.dateOfBirthTextView);
+        genderSpinner = findViewById(R.id.genderSpinner);
         roleRadioGroup = findViewById(R.id.roleRadioGroup);
+        elderlyparentnameEditText = findViewById(R.id.elderlyParentNameEditText);
         signUpButton = findViewById(R.id.signUpButton);
 
         // Initialize calendar with the current date
@@ -79,6 +84,27 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
+        // Gender Spinner
+        ArrayAdapter<CharSequence> genderAdapter = ArrayAdapter.createFromResource(this,
+                R.array.gender_array, android.R.layout.simple_spinner_item);
+        genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        genderSpinner.setAdapter(genderAdapter);
+
+        roleRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton radioButton = findViewById(checkedId);
+                String role = radioButton.getText().toString();
+
+                // Show/hide the elderly parent's name EditText based on the selected role
+                if ("Caregiver".equals(role)) {
+                    elderlyparentnameEditText.setVisibility(View.VISIBLE);
+                } else {
+                    elderlyparentnameEditText.setVisibility(View.GONE);
+                }
+            }
+        });
+
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,8 +113,9 @@ public class SignUpActivity extends AppCompatActivity {
                 String password = passwordEditText.getText().toString().trim();
                 String role = getSelectedRole();
                 String dateOfBirth = dateOfBirthEditText.getText().toString(); // Get date of birth from EditText
+                String gender = genderSpinner.getSelectedItem().toString(); // Get selected gender from the spinner
 
-                if (username.isEmpty() || email.isEmpty() || password.isEmpty() || role.isEmpty() || dateOfBirth.isEmpty()) {
+                if (username.isEmpty() || email.isEmpty() || password.isEmpty() || role.isEmpty() || dateOfBirth.isEmpty() || gender.isEmpty()) {
                     Toast.makeText(SignUpActivity.this, "Please fill in all the fields", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -102,7 +129,7 @@ public class SignUpActivity extends AppCompatActivity {
                                     FirebaseUser user = firebaseAuth.getCurrentUser();
                                     if (user != null) {
                                         String userId = user.getUid(); // Get the user ID
-                                        storeUserData(userId, username, email, dateOfBirth, role); // Pass the dateOfBirth to the storeUserData method
+                                        storeUserData(userId, username, email, dateOfBirth, role, gender); // Pass the role and gender to the storeUserData method
                                     } else {
                                         // Error getting user, show error message
                                         Toast.makeText(SignUpActivity.this, "Error getting user", Toast.LENGTH_SHORT).show();
@@ -141,17 +168,42 @@ public class SignUpActivity extends AppCompatActivity {
         }
     };
 
-    private void storeUserData(String userId, String username, String email, String dateOfBirth, String role) {
-        // Create a new document in the "users" collection with the user's ID
-        DocumentReference userRef = firestore.collection("users").document(userId);
+    private void storeUserData(String userId, String username, String email, String dateOfBirth, String role, String gender) {
+        // Determine the collection name based on the user's role
+        String collectionName;
+        if ("Elderly".equals(role)) {
+            collectionName = "elderly_users";
+        } else if ("Staff".equals(role)) {
+            collectionName = "staff_users";
+        } else if ("Caregiver".equals(role)) {
+            collectionName = "caregiver_users";
+        } else {
+            // Default to "users" collection if the role is not recognized
+            collectionName = "users";
+        }
+
+        // Create a new document in the specified collection with the user's ID
+        DocumentReference userRef = firestore.collection(collectionName).document(userId);
 
         // Create a Map object to store the user data
         Map<String, Object> userData = new HashMap<>();
-        userData.put("userId", userId); // Add the user ID to the user data
+        userData.put("userId", userId);
         userData.put("username", username);
-        userData.put("email", email); // Store the email in Firestore
-        userData.put("dateOfBirth", dateOfBirth); // Store the date of birth in Firestore
-        userData.put("role", role); // Store the role in Firestore
+        userData.put("email", email);
+        userData.put("dateOfBirth", dateOfBirth);
+        userData.put("role", role);
+        userData.put("gender", gender); // Add the gender to the user data
+
+        // Add a check for the "Caregiver" role to store the elderly parent's name
+        if ("Caregiver".equals(role)) {
+            String elderlyParentName = elderlyparentnameEditText.getText().toString().trim();
+            if (elderlyParentName.isEmpty()) {
+                // Show an error message if the elderly parent's name is not provided
+                Toast.makeText(this, "Please enter the elderly parent's name", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            userData.put("elderlyParentName", elderlyParentName); // Add the elderly parent's name to the user data
+        }
 
         // Set the user data in the document
         userRef.set(userData)
@@ -160,7 +212,6 @@ public class SignUpActivity extends AppCompatActivity {
                     public void onSuccess(Void aVoid) {
                         // User data stored successfully, navigate back to the login page
                         Toast.makeText(SignUpActivity.this, "Registration successful", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(SignUpActivity.this, MainActivity.class));
                         finish(); // Add this line to close the current activity
                     }
                 })
@@ -172,5 +223,4 @@ public class SignUpActivity extends AppCompatActivity {
                     }
                 });
     }
-
 }

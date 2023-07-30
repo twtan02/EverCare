@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -26,8 +25,12 @@ import java.util.Locale;
 
 public class TaskDialogFragment extends DialogFragment {
 
-    // Keys for dialog arguments
     private static final String ARG_SELECTED_DATE = "selected_date";
+    private Date selectedDate;
+
+    public TaskDialogFragment() {
+        // Required empty public constructor
+    }
 
     public static TaskDialogFragment newInstance(Date selectedDate) {
         TaskDialogFragment fragment = new TaskDialogFragment();
@@ -37,12 +40,17 @@ public class TaskDialogFragment extends DialogFragment {
         return fragment;
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            selectedDate = (Date) getArguments().getSerializable(ARG_SELECTED_DATE);
+        }
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        // Get the selected date from arguments
-        Date selectedDate = (Date) getArguments().getSerializable(ARG_SELECTED_DATE);
-
         // Create the custom dialog UI layout
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_task, null);
@@ -82,8 +90,6 @@ public class TaskDialogFragment extends DialogFragment {
     }
 
     private void saveTaskToFirebase(String taskTitle, String taskDescription, Date selectedDate) {
-        Log.d("TaskLog", "saveTaskToFirebase called");
-
         // Get a reference to your Firebase Realtime Database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference tasksRef = database.getReference("tasks");
@@ -104,20 +110,23 @@ public class TaskDialogFragment extends DialogFragment {
                     @Override
                     public void onSuccess(Void aVoid) {
                         // Task saved successfully
-                        Toast.makeText(requireContext(), "Task saved to Firebase", Toast.LENGTH_SHORT).show();
+                        if (isAdded()) {
+                            Log.d("TaskLog", "Task saved to Firebase");
+                            Toast.makeText(requireContext(), "Task saved to Firebase", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         // Failed to save the task
-                        Toast.makeText(requireContext(), "Failed to save task: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        if (isAdded()) {
+                            Log.e("TaskLog", "Failed to save task: " + e.getMessage());
+                            Toast.makeText(requireContext(), "Failed to save task: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
     }
-
-
-
 
     // Helper method to format the date for display in the dialog
     private String formatDate(Date date) {

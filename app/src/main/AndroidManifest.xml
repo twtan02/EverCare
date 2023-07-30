@@ -18,18 +18,6 @@
             android:name=".ScheduleDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".CalendarDate"
-            android:exported="false" />
-        <activity
-            android:name=".DailySchedule"
-            android:exported="false" />
-        <activity
-            android:name=".CalendarItem"
-            android:exported="false" />
-        <activity
-            android:name=".CalendarAdapter"
-            android:exported="false" />
-        <activity
             android:name=".ContactUsActivity"
             android:exported="false" />
         <activity

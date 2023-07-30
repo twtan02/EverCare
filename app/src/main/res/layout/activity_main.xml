@@ -1,10 +1,10 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    android:orientation="vertical"
     tools:context=".HomepageActivity">
 
     <!-- Toolbar -->
@@ -13,70 +13,89 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:elevation="4dp"
-        android:theme="@style/ToolbarTheme" />
+        android:theme="@style/ToolbarTheme"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Container for Welcome Message and Notification -->
-    <LinearLayout
-        android:id="@+id/welcomeNotificationContainer"
+    <!-- NestedScrollView for scrolling content -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/toolbar"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView">
 
-        <!-- Welcome Message TextView -->
-        <TextView
-            android:id="@+id/welcomeMessageTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:text="Welcome to EVERCARE"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:fontFamily="@font/poppins_light" />
-
-        <!-- Notification (About Us) TextView -->
-        <TextView
-            android:id="@+id/notificationTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textSize="18sp"
-            android:textColor="@color/black"
-            android:text="About Us"
-            android:fontFamily="@font/poppins_light" />
-
-    </LinearLayout>
-
-    <!-- ScrollView -->
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/bottomNavigationView"
-        android:layout_below="@id/welcomeNotificationContainer"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="16dp">
-
-        <!-- WebView for Long Paragraph -->
-        <WebView
-            android:id="@+id/longParagraphWebView"
+        <!-- LinearLayout as the parent container for Welcome Message and WebView -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    </ScrollView>
+            <!-- Container for Welcome Message and Notification -->
+            <LinearLayout
+                android:id="@+id/welcomeNotificationContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Welcome Message TextView -->
+                <TextView
+                    android:id="@+id/welcomeMessageTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:text="Welcome to EVERCARE"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/poppins_light" />
+
+                <ImageView
+                    android:id="@+id/welcomeimageview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/homepagewelcome"
+                    android:adjustViewBounds="true" />
+
+                <!-- Notification (About Us) TextView -->
+                <TextView
+                    android:id="@+id/notificationTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:text="About Us"
+                    android:fontFamily="@font/poppins_light" />
+
+            </LinearLayout>
+
+            <!-- WebView for Long Paragraph -->
+            <WebView
+                android:id="@+id/longParagraphWebView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="16dp" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
     <!-- Bottom Navigation View -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
         android:background="@color/custom_bottom_nav_background_color"
         app:itemIconSize="@dimen/custom_bottom_nav_icon_size"
         app:menu="@menu/bottom_navigation_menu"
         app:itemTextColor="@color/black"
-        app:labelVisibilityMode="labeled" />
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
