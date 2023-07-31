@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- activity_medical_record.xml -->
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -11,6 +13,7 @@
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
+    <!-- Custom Toolbar Title -->
     <TextView
         android:id="@+id/customToolbarTitle"
         android:layout_width="wrap_content"
@@ -20,6 +23,7 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
+    <!-- RecyclerView to display medical records -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/medical_record_recyclerview"
         android:layout_width="match_parent"
@@ -27,6 +31,7 @@
         android:layout_below="@id/toolbar"
         android:padding="8dp" />
 
+    <!-- FloatingActionButton to add medical records -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_medical_record"
         android:layout_width="wrap_content"

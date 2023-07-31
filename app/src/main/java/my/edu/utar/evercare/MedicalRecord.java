@@ -1,16 +1,18 @@
 package my.edu.utar.evercare;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
-public class MedicalRecord {
+public class MedicalRecord implements Parcelable {
     private String elderlyId;
     private String elderlyName;
     private String profilePicUrl;
     private List<Medication> medications;
-    private ElderlyUser elderlyUser;
 
     public MedicalRecord() {
-        // Empty constructor needed for Firebase
+        // Required empty constructor for Firestore
     }
 
     public MedicalRecord(String elderlyId, String elderlyName, String profilePicUrl, List<Medication> medications) {
@@ -19,6 +21,25 @@ public class MedicalRecord {
         this.profilePicUrl = profilePicUrl;
         this.medications = medications;
     }
+
+    protected MedicalRecord(Parcel in) {
+        elderlyId = in.readString();
+        elderlyName = in.readString();
+        profilePicUrl = in.readString();
+        medications = in.createTypedArrayList(Medication.CREATOR);
+    }
+
+    public static final Creator<MedicalRecord> CREATOR = new Creator<MedicalRecord>() {
+        @Override
+        public MedicalRecord createFromParcel(Parcel in) {
+            return new MedicalRecord(in);
+        }
+
+        @Override
+        public MedicalRecord[] newArray(int size) {
+            return new MedicalRecord[size];
+        }
+    };
 
     public String getElderlyId() {
         return elderlyId;
@@ -52,11 +73,16 @@ public class MedicalRecord {
         this.medications = medications;
     }
 
-    public ElderlyUser getElderlyUser() {
-        return elderlyUser;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public void setElderlyUser(ElderlyUser elderlyUser) {
-        this.elderlyUser = elderlyUser;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(elderlyId);
+        dest.writeString(elderlyName);
+        dest.writeString(profilePicUrl);
+        dest.writeTypedList(medications);
     }
 }

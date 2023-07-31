@@ -2,6 +2,7 @@ package my.edu.utar.evercare;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -10,18 +11,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,8 +30,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -38,16 +39,24 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MedicalRecordActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class MedicalRecordActivity extends AppCompatActivity implements MedicalRecordAdapter.OnMedicalRecordClickListener {
 
-    private ListView elderlyListView;
     private List<ElderlyUser> elderlyUsers;
+    private List<MedicalRecord> medicalRecords = new ArrayList<>();
+    private MedicalRecordAdapter medicalRecordAdapter;
     private FirebaseFirestore firestore;
+    private RecyclerView medicalRecordRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_medical_record);
+
+        // Initialize views and variables
+        elderlyUsers = new ArrayList<>();
+        medicalRecords = new ArrayList<>();
+        firestore = FirebaseFirestore.getInstance();
+        medicalRecordRecyclerView = findViewById(R.id.medical_record_recyclerview);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -63,22 +72,35 @@ public class MedicalRecordActivity extends AppCompatActivity implements AdapterV
         // Enable the back button on the toolbar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        // Set up the RecyclerView with a LinearLayoutManager
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        medicalRecordRecyclerView.setLayoutManager(layoutManager);
 
-        elderlyListView.setOnItemClickListener(this);
-        elderlyUsers = new ArrayList<>();
+        // Fetch elderly users from Firestore
+        fetchElderlyUsersFromFirestore();
+        // Setup RecyclerView with empty medicalRecords
+        setupRecyclerView();
 
-        firestore = FirebaseFirestore.getInstance();
+        // Check if there's an elderly user available
+        if (!elderlyUsers.isEmpty()) {
+            // Fetch and display medical records for the first elderly user
+            fetchMedicalRecordsFromFirestore(elderlyUsers.get(0));
+        }
 
-        FloatingActionButton addButton = findViewById(R.id.fab_add_medical_record);
-        addButton.setOnClickListener(new View.OnClickListener() {
+        // Set up the FloatingActionButton click listener
+        FloatingActionButton fabAddMedicalRecord = findViewById(R.id.fab_add_medical_record);
+        fabAddMedicalRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Show the dialog to add a medical record
-                showSelectElderlyUserDialog();
+                // Show the dialog to select the elderly user first
+                if (elderlyUsers.size() > 0) {
+                    showChooseElderlyUserDialog();
+                } else {
+                    Toast.makeText(MedicalRecordActivity.this, "No elderly users found.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
-        fetchElderlyUsersFromFirestore();
     }
 
     private void fetchElderlyUsersFromFirestore() {
@@ -95,7 +117,9 @@ public class MedicalRecordActivity extends AppCompatActivity implements AdapterV
                                     elderlyUsers.add(elderlyUser);
                                 }
                             }
-
+                            // Update the RecyclerView with the new data
+                            medicalRecordAdapter.setElderlyUsers(elderlyUsers);
+                            medicalRecordAdapter.notifyDataSetChanged();
                         } else {
                             Log.e("MedicalRecordActivity", "Error getting elderly users: ", task.getException());
                         }
@@ -103,27 +127,47 @@ public class MedicalRecordActivity extends AppCompatActivity implements AdapterV
                 });
     }
 
+    private void fetchMedicalRecordsFromFirestore(ElderlyUser selectedElderlyUser) {
+        firestore.collection("medical_records")
+                .whereEqualTo("elderlyId", selectedElderlyUser.getUserId())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            medicalRecords.clear();
+                            for (DocumentSnapshot document : task.getResult()) {
+                                MedicalRecord medicalRecord = document.toObject(MedicalRecord.class);
+                                if (medicalRecord != null) {
+                                    medicalRecords.add(medicalRecord);
+                                }
+                            }
+                            // Update the RecyclerView with the new data
+                            medicalRecordAdapter.notifyDataSetChanged();
+                        } else {
+                            Log.e("MedicalRecordActivity", "Error getting medical records: ", task.getException());
+                        }
+                    }
+                });
+    }
 
-    private void showSelectElderlyUserDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Select an Elderly User");
-
-        // Set the list of elderly users to choose from
+    private void showChooseElderlyUserDialog() {
         List<String> elderlyUserNames = new ArrayList<>();
         for (ElderlyUser elderlyUser : elderlyUsers) {
             elderlyUserNames.add(elderlyUser.getUsername());
         }
 
-        builder.setItems(elderlyUserNames.toArray(new String[0]), new DialogInterface.OnClickListener() {
+        String[] elderlyUserArray = elderlyUserNames.toArray(new String[0]);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose Elderly User");
+        builder.setItems(elderlyUserArray, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // User clicked on an elderly user
                 ElderlyUser selectedElderlyUser = elderlyUsers.get(which);
-                // Show the add medical record dialog with the selected elderly user
                 showAddMedicalRecordDialog(selectedElderlyUser);
             }
         });
-
         builder.show();
     }
 
@@ -148,10 +192,12 @@ public class MedicalRecordActivity extends AppCompatActivity implements AdapterV
                     .error(R.drawable.default_failure_profile)
                     .into(profileImageView);
         } else {
-            // Handle the case when the profileImageUrl is null or empty
             profileImageView.setImageResource(R.drawable.default_profile_image);
         }
         elderlyNameTextView.setText(selectedElderlyUser.getUsername());
+
+        // Set the initial dosage to 0 by default
+        dosageEditText.setText("0");
 
         // Set the click listener for increment and decrement dosage buttons
         Button incrementButton = dialogView.findViewById(R.id.increment_dosage_button);
@@ -170,85 +216,120 @@ public class MedicalRecordActivity extends AppCompatActivity implements AdapterV
             }
         });
 
-        // Rest of the code for the dialog remains unchanged
-        // ...
-
         builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // Get the values entered by the user
+                // Save the medical record to Firestore
                 String medicineName = medicineNameEditText.getText().toString();
-                String dosage = dosageEditText.getText().toString();
+                String dosageString = dosageEditText.getText().toString();
+                if (!TextUtils.isEmpty(medicineName) && !TextUtils.isEmpty(dosageString)) {
+                    int dosage = Integer.parseInt(dosageString);
+                    saveMedicalRecord(selectedElderlyUser, medicineName, dosage);
+                }
 
-                // Validate input (you can add your validation logic here)
-
-                // Create a Medication object with the entered data
-                Medication medication = new Medication(medicineName, dosage);
-
-                // Save the medical record with the selected elderly user and medication
-                saveMedicalRecord(selectedElderlyUser, medication);
+                // After saving the medical record, fetch and update the medical records for the selected elderly user
+                fetchMedicalRecordsFromFirestore(selectedElderlyUser);
             }
         });
 
-        builder.setNegativeButton("Cancel", (dialog, which) -> {
-            dialog.dismiss();
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
         });
 
-        builder.create().show();
+        builder.show();
     }
 
+
     private void incrementDosage(EditText dosageEditText) {
-        String currentDosage = dosageEditText.getText().toString();
-        int dosage = 0;
-        if (!TextUtils.isEmpty(currentDosage)) {
-            dosage = Integer.parseInt(currentDosage);
+        String dosageString = dosageEditText.getText().toString();
+        if (!TextUtils.isEmpty(dosageString)) {
+            int dosage = Integer.parseInt(dosageString);
+            dosage++;
+            dosageEditText.setText(String.valueOf(dosage));
         }
-        dosage++;
-        dosageEditText.setText(String.valueOf(dosage));
     }
 
     private void decrementDosage(EditText dosageEditText) {
-        String currentDosage = dosageEditText.getText().toString();
-        int dosage = 0;
-        if (!TextUtils.isEmpty(currentDosage)) {
-            dosage = Integer.parseInt(currentDosage);
-            if (dosage > 0) {
-                dosage--;
-                dosageEditText.setText(String.valueOf(dosage));
-            }
+        String dosageString = dosageEditText.getText().toString();
+        if (!TextUtils.isEmpty(dosageString)) {
+            int dosage = Integer.parseInt(dosageString);
+            dosage--;
+            dosage = Math.max(0, dosage); // Ensure dosage is non-negative
+            dosageEditText.setText(String.valueOf(dosage));
         }
     }
 
-    private void saveMedicalRecord(ElderlyUser elderlyUser, Medication medication) {
-        // Get a reference to the Firebase Realtime Database
-        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+    private void saveMedicalRecord(ElderlyUser elderlyUser, String medicineName, int dosage) {
+        // Convert the dosage integer to a String
+        String dosageString = String.valueOf(dosage);
 
-        // Generate a unique ID for the medical record
-        String recordId = databaseRef.push().getKey();
+        // Get a reference to the Firestore collection where medical records will be stored
+        CollectionReference medicalRecordsRef = firestore.collection("medical_records");
 
-        // Get the elderly's ID, name, and profile pic URL
+        // Create a new Medication object
+        Medication medication = new Medication(medicineName, dosageString);
+        List<Medication> medications = new ArrayList<>();
+        medications.add(medication);
+
+        // Create a new MedicalRecord object
         String elderlyId = elderlyUser.getUserId();
         String elderlyName = elderlyUser.getUsername();
         String profilePicUrl = elderlyUser.getProfileImageUrl();
+        MedicalRecord medicalRecord = new MedicalRecord(elderlyId, elderlyName, profilePicUrl, medications);
 
-
-
+        // Save the medical record to Firestore
+        medicalRecordsRef.add(medicalRecord)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d("MedicalRecordActivity", "Medical record added with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("MedicalRecordActivity", "Error adding medical record", e);
+                    }
+                });
     }
 
-    public class InputFilterOnlyNumeric implements InputFilter {
+    @Override
+    public void onMedicalRecordClick(MedicalRecord medicalRecord) {
+        // Handle the click event for the medical record here
+        // You can open a detailed view or perform any other action
+        // based on the clicked medical record
+
+        // For example, you can pass the medical record to another activity for detailed view
+        Intent intent = new Intent(this, MedicalRecordActivity.class);
+        intent.putExtra("medicalRecord", medicalRecord);
+        startActivity(intent);
+    }
+
+    // Additional utility class for input filter to allow only numeric input
+    private class InputFilterOnlyNumeric implements InputFilter {
         @Override
         public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-            StringBuilder builder = new StringBuilder();
+            StringBuilder stringBuilder = new StringBuilder();
             for (int i = start; i < end; i++) {
-                char currentChar = source.charAt(i);
-                if (Character.isDigit(currentChar)) {
-                    builder.append(currentChar);
+                char character = source.charAt(i);
+                if (Character.isDigit(character)) {
+                    stringBuilder.append(character);
                 }
             }
-            return builder.toString();
+            return stringBuilder.toString();
         }
     }
 
+    private void setupRecyclerView() {
+        medicalRecordAdapter = new MedicalRecordAdapter(this, medicalRecords, this);
+        medicalRecordRecyclerView.setAdapter(medicalRecordAdapter);
+        medicalRecordRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    // Handle back button click event
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -256,15 +337,5 @@ public class MedicalRecordActivity extends AppCompatActivity implements AdapterV
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        // Retrieve the selected elderly user's ID
-        String selectedElderlyUserId = elderlyUsers.get(position).getUserId();
-        // Retrieve the medical records of the selected elderly user from Firestore
-
-        // Show the add medical record dialog with the selected elderly user
-        showAddMedicalRecordDialog(elderlyUsers.get(position));
     }
 }
