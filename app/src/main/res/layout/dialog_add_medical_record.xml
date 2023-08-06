@@ -1,63 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/profile_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <!-- Profile Image -->
-    <ImageView
-        android:id="@+id/profile_pic_imageview"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:src="@drawable/default_profile_image"
-    android:scaleType="centerCrop"
-    android:layout_gravity="center_horizontal" />
-
-    <!-- Elderly Name -->
-    <TextView
-        android:id="@+id/elderly_name_textview"
-        android:layout_width="wrap_content"
+    <!-- Profile and Name Item -->
+    <LinearLayout
+        android:id="@+id/profile_and_name_item"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:padding="8dp" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
 
-    <!-- Medicine Name -->
+        <!-- Profile Picture -->
+        <ImageView
+            android:id="@+id/profile_pic_imageview"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:src="@drawable/default_profile_image"
+            android:contentDescription="Profile Picture"
+            android:scaleType="centerCrop" />
+
+        <!-- Elderly Name -->
+        <TextView
+            android:id="@+id/elderly_name_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- Medicine Name EditText -->
     <EditText
         android:id="@+id/medicine_name_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Medicine Name"
-        android:padding="8dp" />
+        android:inputType="textCapWords"
+        android:layout_marginBottom="16dp" />
 
-    <!-- Dosage -->
-    <LinearLayout
+    <!-- Dosage EditText -->
+    <EditText
+        android:id="@+id/dosage_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:hint="Dosage"
+        android:inputType="number"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Increment and Decrement Dosage Buttons -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="8dp">
+        android:layout_gravity="center">
+
+        <Button
+            android:id="@+id/increment_dosage_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+"
+            android:layout_marginEnd="8dp" />
 
         <Button
             android:id="@+id/decrement_dosage_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="-" />
-
-        <EditText
-            android:id="@+id/dosage_edittext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:inputType="number"
-            android:padding="8dp" />
-
-        <Button
-            android:id="@+id/increment_dosage_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="+" />
     </LinearLayout>
-
 </LinearLayout>

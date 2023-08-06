@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- Pill Name -->
+    <TextView
+        android:id="@+id/elderly_Text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Elderly Name:" />
+
+    <!-- Spinner for Elderly User -->
+    <Spinner
+        android:id="@+id/spinner_elderly_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Select Elderly User"
+        android:layout_below="@+id/elderly_Text" />
+
+    <!-- Pill Name -->
+    <TextView
+        android:id="@+id/pill_Text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_below="@+id/spinner_elderly_user"
+        android:text="Pill Name:" />
+
+    <EditText
+        android:id="@+id/edit_pill_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pill_Text" />
+
+    <!-- Dosage -->
+    <TextView
+        android:id="@+id/dosage_Text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edit_pill_name"
+        android:layout_marginTop="16dp"
+        android:padding="8dp"
+        android:text="Dosage:" />
+
+    <EditText
+        android:id="@+id/edit_dosage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dosage_Text"
+        android:inputType="number" />
+
+    <!-- Frequency -->
+    <TextView
+        android:id="@+id/frequency"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edit_dosage"
+        android:layout_marginTop="16dp"
+        android:padding="8dp"
+        android:text="Select Frequencies:" />
+
+    <Spinner
+        android:id="@+id/spinner_frequency"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/frequency"
+        android:hint="Select Frequencies" />
+
+    <!-- Reminder Date and Time -->
+    <LinearLayout
+        android:id="@+id/textviewlayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinner_frequency"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/edit_reminder_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp" />
+
+        <View
+            android:layout_width="20dp"
+            android:layout_height="1dp" />
+
+        <TextView
+            android:id="@+id/edit_reminder_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp" />
+
+    </LinearLayout>
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:id="@+id/buttonLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textviewlayout"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_show_date_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choose Date"
+            android:padding="8dp"
+            android:textColor="@color/black" />
+
+        <View
+            android:layout_width="20dp"
+            android:layout_height="1dp" />
+
+        <Button
+            android:id="@+id/btn_show_time_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choose Time"
+            android:padding="8dp"
+            android:textColor="@color/black" />
+
+    </LinearLayout>
+
+</RelativeLayout>

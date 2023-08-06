@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
     <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
@@ -11,13 +9,13 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:elevation="4dp"
-        android:theme="@style/ToolbarTheme" />
+        android:theme="@style/ToolbarTheme"/>
 
     <TextView
         android:id="@+id/textViewData"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
         android:background="#E8E8E8"
         android:padding="8dp"
         android:text="Data will be displayed here"
@@ -29,7 +27,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Refresh Data"
-        android:layout_gravity="end"
+        android:layout_below="@id/textViewData"
+        android:layout_alignParentEnd="true"
         android:layout_marginTop="8dp" />
 
-</LinearLayout>
+</RelativeLayout>

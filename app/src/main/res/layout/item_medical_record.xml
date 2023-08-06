@@ -1,46 +1,57 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp"
+    android:background="@drawable/round_background_color"
+    android:layout_marginBottom="8dp">
 
         <ImageView
             android:id="@+id/profile_pic_imageview"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:src="@drawable/default_profile_image"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginEnd="16dp" />
 
         <TextView
             android:id="@+id/elderly_name_textview"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/profile_pic_imageview"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_centerVertical="true"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="4dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/profile_pic_imageview"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
-            android:id="@+id/medicine_name_textview"
-            android:layout_width="wrap_content"
+            android:id="@+id/medications_textview"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/profile_pic_imageview"
-            android:layout_below="@id/elderly_name_textview"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="4dp"
+            app:layout_constraintTop_toBottomOf="@id/elderly_name_textview"
+            app:layout_constraintStart_toEndOf="@id/profile_pic_imageview"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
-            android:id="@+id/dosage_textview"
-            android:layout_width="wrap_content"
+            android:id="@+id/quantity_textview"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/profile_pic_imageview"
-            android:layout_below="@id/medicine_name_textview"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginStart="8dp"
+            app:layout_constraintTop_toBottomOf="@id/medications_textview"
+            app:layout_constraintStart_toEndOf="@id/profile_pic_imageview"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

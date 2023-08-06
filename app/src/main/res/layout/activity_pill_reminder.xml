@@ -1,15 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:layout_height="match_parent">
 
     <!-- Toolbar -->
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:elevation="4dp"
-        android:theme="@style/ToolbarTheme" />
+        android:theme="@style/ToolbarTheme"/>
+
+    <!-- Custom Title -->
+    <TextView
+        android:id="@+id/customToolbarTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
+
+    <!-- RecyclerView to display existing pill reminders -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/pill_reminder_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:padding="8dp" />
+
+    <!-- Button to add new pill reminder -->
+    <Button
+        android:id="@+id/btn_add_pill_reminder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Pill Reminder"
+        android:textColor="@color/black"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="16dp" />
 
 </RelativeLayout>

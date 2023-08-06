@@ -1,6 +1,5 @@
 package my.edu.utar.evercare;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,37 +10,32 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class MedicalRecordAdapter extends RecyclerView.Adapter<MedicalRecordAdapter.ViewHolder> {
+public class MedicalRecordAdapter extends RecyclerView.Adapter<MedicalRecordAdapter.MedicalRecordViewHolder> {
 
-    private Context context;
     private List<MedicalRecord> medicalRecords;
-    private List<ElderlyUser> elderlyUsers;
-    private OnMedicalRecordClickListener listener;
+    private OnMedicalRecordClickListener clickListener;
 
-    public MedicalRecordAdapter(Context context, List<MedicalRecord> medicalRecords, OnMedicalRecordClickListener listener) {
-        this.context = context;
+    public MedicalRecordAdapter(List<MedicalRecord> medicalRecords, OnMedicalRecordClickListener clickListener) {
         this.medicalRecords = medicalRecords;
-        this.listener = listener;
+        this.clickListener = clickListener;
     }
 
-    public void setElderlyUsers(List<ElderlyUser> elderlyUsers) {
-        this.elderlyUsers = elderlyUsers;
+    public void setMedicalRecords(List<MedicalRecord> medicalRecords) {
+        this.medicalRecords = medicalRecords;
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_medical_record, parent, false);
-        return new ViewHolder(view);
+    public MedicalRecordViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_medical_record, parent, false);
+        return new MedicalRecordViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MedicalRecordViewHolder holder, int position) {
         MedicalRecord medicalRecord = medicalRecords.get(position);
-        if (medicalRecord != null && elderlyUsers != null && elderlyUsers.size() > position) {
-            ElderlyUser elderlyUser = elderlyUsers.get(position);
-            holder.bind(medicalRecord, elderlyUser);
-        }
+        holder.bind(medicalRecord);
     }
 
     @Override
@@ -49,43 +43,40 @@ public class MedicalRecordAdapter extends RecyclerView.Adapter<MedicalRecordAdap
         return medicalRecords.size();
     }
 
-    public void setMedicalRecords(List<MedicalRecord> medicalRecords) {
-        this.medicalRecords = medicalRecords;
+    public interface OnMedicalRecordClickListener {
+        void onMedicalRecordClick(MedicalRecord medicalRecord);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class MedicalRecordViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView elderlyNameTextView;
         private TextView medicineNameTextView;
         private TextView dosageTextView;
 
-        public ViewHolder(@NonNull View itemView) {
+        MedicalRecordViewHolder(@NonNull View itemView) {
             super(itemView);
             elderlyNameTextView = itemView.findViewById(R.id.elderly_name_textview);
-            medicineNameTextView = itemView.findViewById(R.id.medicine_name_textview);
-            dosageTextView = itemView.findViewById(R.id.dosage_textview);
+            medicineNameTextView = itemView.findViewById(R.id.medications_textview);
+            dosageTextView = itemView.findViewById(R.id.quantity_textview);
             itemView.setOnClickListener(this);
         }
 
-        public void bind(MedicalRecord medicalRecord, ElderlyUser elderlyUser) {
-            elderlyNameTextView.setText(elderlyUser.getUsername());
-            medicineNameTextView.setText(medicalRecord.getMedications().get(0).getMedicineName());
-            dosageTextView.setText(medicalRecord.getMedications().get(0).getDosage());
+        void bind(MedicalRecord medicalRecord) {
+            elderlyNameTextView.setText(medicalRecord.getElderlyName());
+            StringBuilder medicineText = new StringBuilder();
+            for (Medication medication : medicalRecord.getMedications()) {
+                medicineText.append(medication.getMedicineName()).append("\n");
+                medicineText.append(medication.getDosage()).append("\n\n");
+            }
+            medicineNameTextView.setText(medicineText.toString().trim());
+            dosageTextView.setVisibility(View.GONE);
         }
 
         @Override
         public void onClick(View v) {
-            if (listener != null) {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION) {
-                    MedicalRecord clickedRecord = medicalRecords.get(position);
-                    listener.onMedicalRecordClick(clickedRecord);
-                }
+            if (clickListener != null) {
+                clickListener.onMedicalRecordClick(medicalRecords.get(getAdapterPosition()));
             }
         }
-    }
-
-    public interface OnMedicalRecordClickListener {
-        void onMedicalRecordClick(MedicalRecord medicalRecord);
     }
 }

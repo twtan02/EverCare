@@ -8,24 +8,31 @@ import java.util.List;
 public class MedicalRecord implements Parcelable {
     private String elderlyId;
     private String elderlyName;
-    private String profilePicUrl;
+    private String profileImageUrl;
     private List<Medication> medications;
 
     public MedicalRecord() {
         // Required empty constructor for Firestore
     }
 
-    public MedicalRecord(String elderlyId, String elderlyName, String profilePicUrl, List<Medication> medications) {
+    public MedicalRecord(String elderlyId, String elderlyName, String profileImageUrl, List<Medication> medications) {
         this.elderlyId = elderlyId;
         this.elderlyName = elderlyName;
-        this.profilePicUrl = profilePicUrl;
+        this.profileImageUrl = profileImageUrl;
+        this.medications = medications;
+    }
+
+    public MedicalRecord(ElderlyUser elderlyUser, List<Medication> medications) {
+        this.elderlyId = elderlyUser.getUserId();
+        this.elderlyName = elderlyUser.getUsername();
+        this.profileImageUrl = elderlyUser.getProfileImageUrl();
         this.medications = medications;
     }
 
     protected MedicalRecord(Parcel in) {
         elderlyId = in.readString();
         elderlyName = in.readString();
-        profilePicUrl = in.readString();
+        profileImageUrl = in.readString();
         medications = in.createTypedArrayList(Medication.CREATOR);
     }
 
@@ -57,12 +64,12 @@ public class MedicalRecord implements Parcelable {
         this.elderlyName = elderlyName;
     }
 
-    public String getProfilePicUrl() {
-        return profilePicUrl;
+    public String getProfileImageUrl() {
+        return profileImageUrl;
     }
 
-    public void setProfilePicUrl(String profilePicUrl) {
-        this.profilePicUrl = profilePicUrl;
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 
     public List<Medication> getMedications() {
@@ -82,7 +89,7 @@ public class MedicalRecord implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(elderlyId);
         dest.writeString(elderlyName);
-        dest.writeString(profilePicUrl);
+        dest.writeString(profileImageUrl);
         dest.writeTypedList(medications);
     }
 }

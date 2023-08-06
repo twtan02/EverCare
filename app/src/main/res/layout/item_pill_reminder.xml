@@ -1,0 +1,60 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="@drawable/rounded_rectangle_background"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_pill_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            style="@style/BlackText"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_dosage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            style="@style/BlackText"/>
+
+        <TextView
+            android:id="@+id/tv_frequency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            style="@style/BlackText"/>
+
+        <TextView
+            android:id="@+id/tv_reminder_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            style="@style/BlackText"/>
+
+        <TextView
+            android:id="@+id/tv_reminder_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            style="@style/BlackText"/>
+
+        <TextView
+            android:id="@+id/tv_elderly_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            style="@style/BlackText"/>
+
+    </LinearLayout>
+
+</LinearLayout>

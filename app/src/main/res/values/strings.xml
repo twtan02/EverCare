@@ -9,6 +9,9 @@
     <string name="title_activity_remote_monitoring">Remote Monitoring</string>
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
+    <string name="dosage_format">Dosage: %d</string>
+    <string name="frequency_format">Frequency: %s</string>
+    <string name="elderly_user_format">%s - %s</string>
 
     <string name="long_paragraph"><![CDATA[
     <b>Medical Record Management:</b> EVERCARE is a mobile application that assists elderly people, staff, and caregivers to manage medical records, including tracking medical appointments and recording vital signs.<br>
@@ -22,5 +25,12 @@
         <item>Male</item>
         <item>Female</item>
     </string-array>
+    <string-array name="frequency_array">
+        <item>Once a day</item>
+        <item>Twice a day</item>
+        <item>Three times a day</item>
+        <item>Custom frequency</item>
+    </string-array>
+
 
 </resources>

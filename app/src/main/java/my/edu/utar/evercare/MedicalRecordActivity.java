@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -37,31 +36,30 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MedicalRecordActivity extends AppCompatActivity implements MedicalRecordAdapter.OnMedicalRecordClickListener {
 
-    private List<ElderlyUser> elderlyUsers;
-    private List<MedicalRecord> medicalRecords = new ArrayList<>();
+    private List<ElderlyUser> elderlyUsers = new ArrayList<>();
+    private Map<String, List<MedicalRecord>> medicalRecordsMap = new HashMap<>();
     private MedicalRecordAdapter medicalRecordAdapter;
     private FirebaseFirestore firestore;
     private RecyclerView medicalRecordRecyclerView;
+    private MedicalRecordItemAdapter medicalRecordItemAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_medical_record);
 
-        // Initialize views and variables
-        elderlyUsers = new ArrayList<>();
-        medicalRecords = new ArrayList<>();
         firestore = FirebaseFirestore.getInstance();
         medicalRecordRecyclerView = findViewById(R.id.medical_record_recyclerview);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Set the custom title text
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setCustomView(R.layout.custom_toolbar_title);
@@ -69,38 +67,25 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
         TextView customTitleTextView = findViewById(R.id.customToolbarTitle);
         customTitleTextView.setText("Medical Record");
 
-        // Enable the back button on the toolbar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Set up the RecyclerView with a LinearLayoutManager
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         medicalRecordRecyclerView.setLayoutManager(layoutManager);
 
-        // Fetch elderly users from Firestore
         fetchElderlyUsersFromFirestore();
-        // Setup RecyclerView with empty medicalRecords
         setupRecyclerView();
 
-        // Check if there's an elderly user available
-        if (!elderlyUsers.isEmpty()) {
-            // Fetch and display medical records for the first elderly user
-            fetchMedicalRecordsFromFirestore(elderlyUsers.get(0));
-        }
-
-        // Set up the FloatingActionButton click listener
         FloatingActionButton fabAddMedicalRecord = findViewById(R.id.fab_add_medical_record);
         fabAddMedicalRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Show the dialog to select the elderly user first
-                if (elderlyUsers.size() > 0) {
+                if (!elderlyUsers.isEmpty()) {
                     showChooseElderlyUserDialog();
                 } else {
                     Toast.makeText(MedicalRecordActivity.this, "No elderly users found.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
     }
 
     private void fetchElderlyUsersFromFirestore() {
@@ -117,9 +102,11 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
                                     elderlyUsers.add(elderlyUser);
                                 }
                             }
-                            // Update the RecyclerView with the new data
-                            medicalRecordAdapter.setElderlyUsers(elderlyUsers);
-                            medicalRecordAdapter.notifyDataSetChanged();
+                            if (!elderlyUsers.isEmpty()) {
+                                fetchMedicalRecordsForElderlyUsers();
+                            } else {
+                                medicalRecordAdapter.setMedicalRecords(new ArrayList<>());
+                            }
                         } else {
                             Log.e("MedicalRecordActivity", "Error getting elderly users: ", task.getException());
                         }
@@ -127,29 +114,58 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
                 });
     }
 
-    private void fetchMedicalRecordsFromFirestore(ElderlyUser selectedElderlyUser) {
-        firestore.collection("medical_records")
-                .whereEqualTo("elderlyId", selectedElderlyUser.getUserId())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            medicalRecords.clear();
-                            for (DocumentSnapshot document : task.getResult()) {
-                                MedicalRecord medicalRecord = document.toObject(MedicalRecord.class);
-                                if (medicalRecord != null) {
-                                    medicalRecords.add(medicalRecord);
+    private void fetchMedicalRecordsForElderlyUsers() {
+        medicalRecordsMap.clear();
+        for (ElderlyUser elderlyUser : elderlyUsers) {
+            firestore.collection("medical_records")
+                    .whereEqualTo("elderlyId", elderlyUser.getUserId())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                List<MedicalRecord> medicalRecords = new ArrayList<>();
+                                for (DocumentSnapshot document : task.getResult()) {
+                                    MedicalRecord medicalRecord = document.toObject(MedicalRecord.class);
+                                    if (medicalRecord != null) {
+                                        medicalRecords.add(medicalRecord);
+                                    }
                                 }
+                                medicalRecordsMap.put(elderlyUser.getUserId(), medicalRecords);
+                                updateRecyclerView();
+                            } else {
+                                Log.e("MedicalRecordActivity", "Error getting medical records: ", task.getException());
                             }
-                            // Update the RecyclerView with the new data
-                            medicalRecordAdapter.notifyDataSetChanged();
-                        } else {
-                            Log.e("MedicalRecordActivity", "Error getting medical records: ", task.getException());
                         }
-                    }
-                });
+                    });
+        }
     }
+
+    private void updateRecyclerView() {
+        List<MedicalRecord> allMedicalRecords = new ArrayList<>();
+
+        for (String elderlyUserId : medicalRecordsMap.keySet()) {
+            List<MedicalRecord> records = medicalRecordsMap.get(elderlyUserId);
+            MedicalRecord groupRecord = new MedicalRecord();
+
+            groupRecord.setElderlyId(records.get(0).getElderlyId());
+            groupRecord.setElderlyName(records.get(0).getElderlyName());
+            groupRecord.setProfileImageUrl(records.get(0).getProfileImageUrl());
+
+            List<Medication> medications = new ArrayList<>();
+            for (MedicalRecord record : records) {
+                medications.addAll(record.getMedications());
+            }
+            groupRecord.setMedications(medications);
+
+            allMedicalRecords.add(groupRecord);
+        }
+
+        MedicalRecordItemAdapter itemAdapter = new MedicalRecordItemAdapter(allMedicalRecords);
+        medicalRecordRecyclerView.setAdapter(itemAdapter);
+    }
+
+
 
     private void showChooseElderlyUserDialog() {
         List<String> elderlyUserNames = new ArrayList<>();
@@ -159,7 +175,7 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
 
         String[] elderlyUserArray = elderlyUserNames.toArray(new String[0]);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialogStyle);
         builder.setTitle("Choose Elderly User");
         builder.setItems(elderlyUserArray, new DialogInterface.OnClickListener() {
             @Override
@@ -173,7 +189,7 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
 
     private void showAddMedicalRecordDialog(ElderlyUser selectedElderlyUser) {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_medical_record, null);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialogStyle);
         builder.setTitle("ADD");
         builder.setView(dialogView);
 
@@ -226,9 +242,6 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
                     int dosage = Integer.parseInt(dosageString);
                     saveMedicalRecord(selectedElderlyUser, medicineName, dosage);
                 }
-
-                // After saving the medical record, fetch and update the medical records for the selected elderly user
-                fetchMedicalRecordsFromFirestore(selectedElderlyUser);
             }
         });
 
@@ -241,7 +254,6 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
 
         builder.show();
     }
-
 
     private void incrementDosage(EditText dosageEditText) {
         String dosageString = dosageEditText.getText().toString();
@@ -257,35 +269,30 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
         if (!TextUtils.isEmpty(dosageString)) {
             int dosage = Integer.parseInt(dosageString);
             dosage--;
-            dosage = Math.max(0, dosage); // Ensure dosage is non-negative
+            dosage = Math.max(0, dosage);
             dosageEditText.setText(String.valueOf(dosage));
         }
     }
 
     private void saveMedicalRecord(ElderlyUser elderlyUser, String medicineName, int dosage) {
-        // Convert the dosage integer to a String
         String dosageString = String.valueOf(dosage);
-
-        // Get a reference to the Firestore collection where medical records will be stored
         CollectionReference medicalRecordsRef = firestore.collection("medical_records");
 
-        // Create a new Medication object
         Medication medication = new Medication(medicineName, dosageString);
         List<Medication> medications = new ArrayList<>();
         medications.add(medication);
 
-        // Create a new MedicalRecord object
         String elderlyId = elderlyUser.getUserId();
         String elderlyName = elderlyUser.getUsername();
         String profilePicUrl = elderlyUser.getProfileImageUrl();
         MedicalRecord medicalRecord = new MedicalRecord(elderlyId, elderlyName, profilePicUrl, medications);
 
-        // Save the medical record to Firestore
         medicalRecordsRef.add(medicalRecord)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d("MedicalRecordActivity", "Medical record added with ID: " + documentReference.getId());
+                        fetchMedicalRecordsForElderlyUsers();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -296,19 +303,6 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
                 });
     }
 
-    @Override
-    public void onMedicalRecordClick(MedicalRecord medicalRecord) {
-        // Handle the click event for the medical record here
-        // You can open a detailed view or perform any other action
-        // based on the clicked medical record
-
-        // For example, you can pass the medical record to another activity for detailed view
-        Intent intent = new Intent(this, MedicalRecordActivity.class);
-        intent.putExtra("medicalRecord", medicalRecord);
-        startActivity(intent);
-    }
-
-    // Additional utility class for input filter to allow only numeric input
     private class InputFilterOnlyNumeric implements InputFilter {
         @Override
         public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
@@ -324,12 +318,12 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
     }
 
     private void setupRecyclerView() {
-        medicalRecordAdapter = new MedicalRecordAdapter(this, medicalRecords, this);
-        medicalRecordRecyclerView.setAdapter(medicalRecordAdapter);
+        medicalRecordItemAdapter = new MedicalRecordItemAdapter(new ArrayList<>());
+        medicalRecordRecyclerView.setAdapter(medicalRecordItemAdapter);
         medicalRecordRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    // Handle back button click event
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -337,5 +331,12 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onMedicalRecordClick(MedicalRecord medicalRecord) {
+        Intent intent = new Intent(this, MedicalRecordActivity.class);
+        intent.putExtra("medicalRecord", medicalRecord);
+        startActivity(intent);
     }
 }
