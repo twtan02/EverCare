@@ -47,6 +47,9 @@ public class HomepageActivity extends BaseActivity  {
         String longParagraph = getResources().getString(R.string.long_paragraph);
         longParagraphWebView.loadDataWithBaseURL(null, longParagraph, "text/html", "utf-8", null);
 
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String currentUserId = auth.getCurrentUser().getUid();
+
         // Set the listener for item selection
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
@@ -59,7 +62,9 @@ public class HomepageActivity extends BaseActivity  {
                         return true;
                     case R.id.menu_chat:
                         // Handle chat selection
-                        startActivity(new Intent(HomepageActivity.this, ChatActivity.class));
+                        Intent chatIntent = new Intent(HomepageActivity.this, ChatActivity.class);
+                        chatIntent.putExtra("userId", currentUserId); // Pass the user ID
+                        startActivity(chatIntent);
                         return true;
                     case R.id.menu_pill_reminder:
                         // Handle pill reminder selection

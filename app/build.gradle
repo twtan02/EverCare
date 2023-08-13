@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "my.edu.utar.evercare"
-        minSdkVersion 21
+        minSdkVersion 26
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -52,6 +52,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:22.0.0'
     implementation 'com.google.firebase:firebase-firestore:24.6.1'
     implementation 'com.google.firebase:firebase-firestore-ktx:24.6.1'
+    implementation 'com.firebaseui:firebase-ui-firestore:8.0.0'
     implementation 'androidx.navigation:navigation-fragment:2.5.3'
     implementation 'androidx.navigation:navigation-ui:2.5.3'
     implementation 'com.google.firebase:firebase-storage:20.2.1'

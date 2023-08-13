@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,33 +9,21 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:elevation="4dp"
-        android:theme="@style/ToolbarTheme"/>
+        android:theme="@style/ToolbarTheme" />
 
-    <TextView
-        android:id="@+id/textViewChatLog"
+    <!-- FrameLayout for fragment container -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="#E8E8E8"
-        android:padding="8dp"
-        android:scrollbars="vertical"
-        android:textColor="#000000"
-        android:textSize="14sp" />
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar" />
 
-    <EditText
-        android:id="@+id/editTextMessage"
+    <!-- RecyclerView to display chat messages -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter your message"
-        android:inputType="text"
-        android:layout_marginTop="8dp" />
-
-    <Button
-        android:id="@+id/buttonSend"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Send"
-        android:layout_gravity="end"
-        android:layout_marginTop="8dp" />
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:padding="8dp" />
 
 </RelativeLayout>

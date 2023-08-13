@@ -174,8 +174,14 @@ public class PillReminderActivity extends AppCompatActivity {
             }
         });
 
+
         dialog = builder.create();
         dialog.show();
+
+        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        positiveButton.setTextColor(getResources().getColor(R.color.black));
+        Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        negativeButton.setTextColor(getResources().getColor(R.color.black));
     }
 
     private void addPillReminderToFirestore(PillReminder pillReminder) {

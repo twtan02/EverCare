@@ -2,30 +2,36 @@ package my.edu.utar.evercare;
 
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentTransaction;
 
 public class ChatActivity extends AppCompatActivity {
 
-    private EditText editTextMessage;
-    private Button buttonSend;
-    private TextView textViewChatLog;
+    private String receiverUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        editTextMessage = findViewById(R.id.editTextMessage);
-        buttonSend = findViewById(R.id.buttonSend);
-        textViewChatLog = findViewById(R.id.textViewChatLog);
+        // Set the title for the activity
+        setTitle("Start Chatting with Your Friend");
 
+        if (savedInstanceState == null) {
+            // Start with the UserSelectionFragment
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new UserSelectionFragment())
+                    .commit();
+        }
+
+        // Get the receiver's user ID from the intent
+        receiverUserId = getIntent().getStringExtra("selectedUserId");
+
+        // Set up the custom toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -39,26 +45,10 @@ public class ChatActivity extends AppCompatActivity {
 
         // Enable the back button on the toolbar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        buttonSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String message = editTextMessage.getText().toString().trim();
-                if (!message.isEmpty()) {
-                    // Append the message to the chat log
-                    textViewChatLog.append(message + "\n");
-                    // Clear the message input field
-                    editTextMessage.setText("");
-                } else {
-                    Toast.makeText(ChatActivity.this, "Please enter a message", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 
-    // Handle back button click event
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
             return true;

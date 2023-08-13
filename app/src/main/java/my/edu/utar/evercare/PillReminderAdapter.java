@@ -37,9 +37,6 @@ public class PillReminderAdapter extends RecyclerView.Adapter<PillReminderAdapte
         holder.bind(pillReminder);
     }
 
-
-
-
     @Override
     public int getItemCount() {
         return pillReminders.size();

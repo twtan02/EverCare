@@ -1,39 +1,51 @@
 package my.edu.utar.evercare;
 
-// Import necessary packages
-
-import android.app.PendingIntent;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 public class NotificationReceiver extends BroadcastReceiver {
+
     @Override
     public void onReceive(Context context, Intent intent) {
         String reminderTitle = intent.getStringExtra("reminderTitle");
         String reminderText = intent.getStringExtra("reminderText");
-        int notificationId = intent.getIntExtra("notificationId", 0); // Retrieve the notification ID
+        int notificationId = intent.getIntExtra("notificationId", 0);
 
-        // Build the notification
-        String channelId = "pill_reminder_channel";
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle(reminderTitle)
-                .setContentText(reminderText)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true);
+        // Create a sound Uri for the notification sound
+        Uri soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.notification);
 
-        // Create an explicit intent for your PillReminderActivity
-        Intent activityIntent = new Intent(context, PillReminderActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationId, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(pendingIntent);
+        // Create a custom vibration pattern (example: long array of milliseconds)
+        long[] vibrationPattern = {0, 500, 250, 500, 250, 500};
 
-        // Show the notification
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.notify(notificationId, builder.build());
+        // Create a notification channel
+        NotificationChannel notificationChannel = new NotificationChannel("PillReminderChannel", "Pill Reminder Channel", NotificationManager.IMPORTANCE_HIGH);
+        notificationChannel.setVibrationPattern(vibrationPattern); // Set the custom vibration pattern
+        notificationChannel.enableVibration(true);
+
+        // Get the notification manager
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (notificationManager != null) {
+            // Create the notification channel
+            notificationManager.createNotificationChannel(notificationChannel);
+
+            // Build the notification
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "PillReminderChannel")
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setContentTitle(reminderTitle)
+                    .setContentText(reminderText)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setAutoCancel(true)
+                    .setSound(soundUri);
+
+            // Show the notification
+            notificationManager.notify(notificationId, builder.build());
+        }
     }
 }
-

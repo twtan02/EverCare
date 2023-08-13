@@ -4,62 +4,79 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
-import java.util.List;
+public class ElderlyUserAdapter extends FirestoreRecyclerAdapter<ElderlyUser, ElderlyUserAdapter.ViewHolder> {
 
-public class ElderlyUserAdapter extends ArrayAdapter<ElderlyUser> {
-
+    private OnItemClickListener listener;
     private Context context;
-    private List<ElderlyUser> elderlyUsers;
 
-    public ElderlyUserAdapter(Context context, List<ElderlyUser> elderlyUsers) {
-        super(context, 0, elderlyUsers);
-        this.context = context;
-        this.elderlyUsers = elderlyUsers;
+    public interface OnItemClickListener {
+        void onItemClick(ElderlyUser elderlyUser); // Modify the listener to pass the clicked user
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
+    public ElderlyUserAdapter(@NonNull FirestoreRecyclerOptions<ElderlyUser> options) {
+        super(options);
+    }
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_elderly_user, parent, false);
+        context = parent.getContext();
+        return new ViewHolder(view);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder;
-
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_elderly_user, parent, false);
-
-            viewHolder = new ViewHolder();
-            viewHolder.profileImageView = convertView.findViewById(R.id.profile_pic_imageview);
-            viewHolder.usernameTextView = convertView.findViewById(R.id.username_textview);
-            convertView.setTag(viewHolder);
-        } else {
-            viewHolder = (ViewHolder) convertView.getTag();
-        }
-
-        // Get the current ElderlyUser object
-        ElderlyUser elderlyUser = elderlyUsers.get(position);
-
-        // Set the username in the TextView
-        viewHolder.usernameTextView.setText(elderlyUser.getUsername());
-
-        // Load the profile picture using Glide
-        if (!elderlyUser.getProfileImageUrl().isEmpty()) {
-            Glide.with(context)
-                    .load(elderlyUser.getProfileImageUrl())
-                    .placeholder(R.drawable.default_profile_image)
-                    .error(R.drawable.default_failure_profile)
-                    .into(viewHolder.profileImageView);
-        } else {
-            viewHolder.profileImageView.setImageResource(R.drawable.default_profile_image);
-        }
-
-        return convertView;
+    protected void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull ElderlyUser elderlyUser) {
+        holder.bind(elderlyUser);
     }
 
-    private static class ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         ImageView profileImageView;
         TextView usernameTextView;
+
+        ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            profileImageView = itemView.findViewById(R.id.profile_pic_imageview);
+            usernameTextView = itemView.findViewById(R.id.username_textview);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getBindingAdapterPosition(); // Use getBindingAdapterPosition() or getAbsoluteAdapterPosition()
+                    if (position != RecyclerView.NO_POSITION && listener != null) {
+                        listener.onItemClick(getItem(position)); // Pass the clicked user object
+                    }
+                }
+            });
+        }
+
+        void bind(ElderlyUser elderlyUser) {
+            usernameTextView.setText(elderlyUser.getUsername());
+
+            if (!elderlyUser.getProfileImageUrl().isEmpty()) {
+                Glide.with(context)
+                        .load(elderlyUser.getProfileImageUrl())
+                        .placeholder(R.drawable.default_profile_image)
+                        .error(R.drawable.default_failure_profile)
+                        .into(profileImageView);
+            } else {
+                profileImageView.setImageResource(R.drawable.default_profile_image);
+            }
+        }
     }
 }
+
