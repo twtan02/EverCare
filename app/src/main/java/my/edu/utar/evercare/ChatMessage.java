@@ -1,7 +1,7 @@
 package my.edu.utar.evercare;
 
 public class ChatMessage {
-    private String senderId;
+    private String senderID;
     private String text;
     private long timestamp;
 
@@ -9,18 +9,18 @@ public class ChatMessage {
         // Default constructor required for Firestore
     }
 
-    public ChatMessage(String senderId, String text, long timestamp) {
-        this.senderId = senderId;
+    public ChatMessage(String senderID, String text, long timestamp) {
+        this.senderID = senderID;
         this.text = text;
         this.timestamp = timestamp;
     }
 
-    public String getSenderId() {
-        return senderId;
+    public String getSenderID() {
+        return senderID;
     }
 
-    public void setSenderId(String senderId) {
-        this.senderId = senderId;
+    public void setSenderID(String senderID) {
+        this.senderID = senderID;
     }
 
     public String getText() {

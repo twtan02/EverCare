@@ -64,6 +64,7 @@ public class ChatFragment extends Fragment {
 
         // Set up the RecyclerView and ChatAdapter
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setStackFromEnd(true); // Display messages from the bottom
         recyclerView.setLayoutManager(layoutManager);
 
         Query chatMessagesQuery = chatManager.getChatMessagesQuery();
@@ -71,7 +72,7 @@ public class ChatFragment extends Fragment {
                 .setQuery(chatMessagesQuery, ChatMessage.class)
                 .build();
 
-        chatAdapter = new ChatAdapter(options);
+        chatAdapter = new ChatAdapter(options, currentUserId);
         recyclerView.setAdapter(chatAdapter);
 
         // Inside your ChatFragment's onCreateView method

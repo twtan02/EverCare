@@ -1,5 +1,7 @@
 package my.edu.utar.evercare;
 
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,34 +13,65 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
-public class ChatAdapter extends FirestoreRecyclerAdapter<ChatMessage, ChatAdapter.ChatViewHolder> {
+public class ChatAdapter extends FirestoreRecyclerAdapter<ChatMessage, ChatAdapter.MessageViewHolder> {
+    private String currentUserId;
+    private static final int OUTGOING_MESSAGE = 1;
+    private static final int INCOMING_MESSAGE = 2;
 
-    public ChatAdapter(@NonNull FirestoreRecyclerOptions<ChatMessage> options) {
+    public ChatAdapter(FirestoreRecyclerOptions<ChatMessage> options, String currentUserId) {
         super(options);
-    }
-
-    @Override
-    protected void onBindViewHolder(@NonNull ChatViewHolder holder, int position, @NonNull ChatMessage model) {
-        holder.bind(model);
+        this.currentUserId = currentUserId;
     }
 
     @NonNull
     @Override
-    public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message, parent, false);
-        return new ChatViewHolder(view);
+    public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        int layoutId = (viewType == OUTGOING_MESSAGE) ?
+                R.layout.item_outgoing_message : R.layout.item_incoming_message;
+
+        View view = LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false);
+        return new MessageViewHolder(view);
     }
 
-    static class ChatViewHolder extends RecyclerView.ViewHolder {
-        private TextView messageTextView;
+    @Override
+    protected void onBindViewHolder(@NonNull MessageViewHolder holder, int position, @NonNull ChatMessage model) {
+        holder.setMessage(model.getText());
 
-        public ChatViewHolder(@NonNull View itemView) {
+        // Check if the message sender is the current user and update the style if needed
+        if (currentUserId != null && currentUserId.equals(model.getSenderID())) {
+            // If the message sender is the current user, change the background style of the message content
+            holder.messageText.setBackgroundResource(R.drawable.bg_message_outgoing);
+
+            // Set the text alignment to right for outgoing messages
+            holder.messageText.setGravity(Gravity.END); // or Gravity.RIGHT
+        } else {
+            // Otherwise, use the default background style and left-aligned text
+            holder.messageText.setBackgroundResource(R.drawable.bg_message_incoming);
+            holder.messageText.setGravity(Gravity.START); // or Gravity.LEFT
+        }
+    }
+
+
+
+    @Override
+    public int getItemViewType(int position) {
+        ChatMessage message = getItem(position);
+        if (message != null && currentUserId != null && currentUserId.equals(message.getSenderID())) {
+            return OUTGOING_MESSAGE;
+        }
+        return INCOMING_MESSAGE;
+    }
+
+    class MessageViewHolder extends RecyclerView.ViewHolder {
+        private TextView messageText;
+
+        MessageViewHolder(@NonNull View itemView) {
             super(itemView);
-            messageTextView = itemView.findViewById(R.id.messageTextView);
+            messageText = itemView.findViewById(R.id.messageText);
         }
 
-        public void bind(ChatMessage message) {
-            messageTextView.setText(message.getText());
+        void setMessage(String text) {
+            messageText.setText(text);
         }
     }
 }

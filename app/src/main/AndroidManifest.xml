@@ -58,15 +58,6 @@
             android:name=".SignUpActivity"
             android:exported="false" />
         <activity
-            android:name=".ElderlyUserActivity"
-            android:label="Elderly User Activity" />
-        <activity
-            android:name=".StaffUserActivity"
-            android:label="Staff User Activity" />
-        <activity
-            android:name=".CaregiverUserActivity"
-            android:label="Caregiver User Activity" />
-        <activity
             android:name=".HomepageActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
