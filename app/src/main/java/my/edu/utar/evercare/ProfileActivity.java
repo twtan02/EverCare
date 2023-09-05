@@ -151,8 +151,25 @@ public class ProfileActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
                             if (document != null && document.exists()) {
-                                // Handle fetching data for staff user (if needed)
-                                // ...
+                                // Handle fetching data for staff user
+                                String name = document.getString("username");
+                                String email = document.getString("email");
+                                String dateOfBirth = document.getString("dateOfBirth");
+                                String profileImageUrl = document.getString("profileImageUrl");
+
+                                // Load the user's profile image using Glide
+                                Glide.with(ProfileActivity.this)
+                                        .load(profileImageUrl)
+                                        .placeholder(R.drawable.default_profile_image)
+                                        .into(profileImageView);
+
+                                // Calculate the user's age from the date of birth
+                                int age = calculateAge(dateOfBirth);
+
+                                // Update the views with the user details
+                                textViewName.setText("Name: " + name);
+                                textViewEmail.setText("Email: " + email);
+                                textViewAge.setText("Age: " + age);
                             } else {
                                 // If data is not found in staff_users collection,
                                 // try to fetch data from caregiver_users collection
@@ -174,8 +191,25 @@ public class ProfileActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
                             if (document != null && document.exists()) {
-                                // Handle fetching data for caregiver user (if needed)
-                                // ...
+                                // Handle fetching data for caregiver user
+                                String name = document.getString("username");
+                                String email = document.getString("email");
+                                String dateOfBirth = document.getString("dateOfBirth");
+                                String profileImageUrl = document.getString("profileImageUrl");
+
+                                // Load the user's profile image using Glide
+                                Glide.with(ProfileActivity.this)
+                                        .load(profileImageUrl)
+                                        .placeholder(R.drawable.default_profile_image)
+                                        .into(profileImageView);
+
+                                // Calculate the user's age from the date of birth
+                                int age = calculateAge(dateOfBirth);
+
+                                // Update the views with the user details
+                                textViewName.setText("Name: " + name);
+                                textViewEmail.setText("Email: " + email);
+                                textViewAge.setText("Age: " + age);
                             } else {
                                 // User data not found in any collection, handle this scenario
                             }
@@ -257,6 +291,26 @@ public class ProfileActivity extends AppCompatActivity {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
                                                 // Handle error if unable to save profile picture URL in Firestore
+                                            }
+                                        });
+
+                                // Update the profile picture URL for staff users if applicable
+                                db.collection("staff_users").document(userId)
+                                        .update("profileImageUrl", imageUrl)
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                // Handle error if unable to save profile picture URL in Firestore for staff users
+                                            }
+                                        });
+
+                                // Update the profile picture URL for caregiver users if applicable
+                                db.collection("caregiver_users").document(userId)
+                                        .update("profileImageUrl", imageUrl)
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                // Handle error if unable to save profile picture URL in Firestore for caregiver users
                                             }
                                         });
                             }
