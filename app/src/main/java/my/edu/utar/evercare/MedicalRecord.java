@@ -65,7 +65,11 @@ public class MedicalRecord implements Parcelable {
     }
 
     public String getProfileImageUrl() {
-        return profileImageUrl;
+        if (profileImageUrl != null) {
+            return profileImageUrl;
+        } else {
+            return "";
+        }
     }
 
     public void setProfileImageUrl(String profileImageUrl) {

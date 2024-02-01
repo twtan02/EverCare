@@ -4,6 +4,7 @@ public class ChatMessage {
     private String senderID;
     private String text;
     private long timestamp;
+    private String imageUrl;
 
     public ChatMessage() {
         // Default constructor required for Firestore
@@ -37,5 +38,13 @@ public class ChatMessage {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

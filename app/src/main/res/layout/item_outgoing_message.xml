@@ -1,21 +1,41 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="end">
 
-    <!-- Your message text view -->
-    <TextView
-        android:id="@+id/messageText"
+    <!-- Parent LinearLayout for both text and image with background -->
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:textColor="#000"
-        android:textSize="16sp"
-        android:layout_alignParentEnd="true"
         android:background="@drawable/bg_message_outgoing"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:layout_alignParentEnd="true"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:gravity="start" />
+        android:gravity="end">
+
+        <!-- ImageView to display selected image -->
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:contentDescription="Selected Image"
+            android:visibility="gone" />
+
+        <!-- Your message text view -->
+        <TextView
+            android:id="@+id/messageText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000"
+            android:textSize="16sp"
+            android:text="Outgoing Message"
+            android:layout_alignParentEnd="true" />
+
+    </LinearLayout>
 </RelativeLayout>

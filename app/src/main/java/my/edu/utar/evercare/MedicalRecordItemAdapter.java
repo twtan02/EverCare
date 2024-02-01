@@ -3,10 +3,14 @@ package my.edu.utar.evercare;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 
 import java.util.List;
 
@@ -39,6 +43,14 @@ public class MedicalRecordItemAdapter extends RecyclerView.Adapter<MedicalRecord
         }
 
         holder.medicationDetailsTextView.setText(medicationDetails.toString().trim());
+
+        // Load profile image for the group
+        Glide.with(holder.itemView.getContext())
+                .load(medicalRecord.getProfileImageUrl())
+                .placeholder(R.drawable.default_profile_image)
+                .error(R.drawable.default_failure_profile)
+                .transform(new CircleCrop())
+                .into(holder.profileImageView);
     }
 
     @Override
@@ -49,11 +61,13 @@ public class MedicalRecordItemAdapter extends RecyclerView.Adapter<MedicalRecord
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView elderlyNameTextView;
         TextView medicationDetailsTextView;
+        ImageView profileImageView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             elderlyNameTextView = itemView.findViewById(R.id.elderly_name_textview);
             medicationDetailsTextView = itemView.findViewById(R.id.medications_textview);
+            profileImageView = itemView.findViewById(R.id.profile_pic_imageview); // Make sure to add an ImageView in your XML layout with the ID "profile_pic_imageview"
         }
     }
 }

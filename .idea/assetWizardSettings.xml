@@ -23,7 +23,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$USER_HOME$/.gradle/icons/material/materialicons/send/baseline_send_24.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio1/plugins/android/lib/android.jar!/images/material/icons/materialicons/attach_file/baseline_attach_file_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -33,8 +33,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="bubble" />
+                            <entry key="outputName" value="ic_upload" />
                             <entry key="sourceFile" value="C:\Users\User\Downloads\realistic-bubbles-isolated\9281764.psd" />
                           </map>
                         </option>

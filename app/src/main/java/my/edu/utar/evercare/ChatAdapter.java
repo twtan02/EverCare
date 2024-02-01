@@ -1,15 +1,16 @@
 package my.edu.utar.evercare;
 
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
@@ -44,14 +45,32 @@ public class ChatAdapter extends FirestoreRecyclerAdapter<ChatMessage, ChatAdapt
 
             // Set the text alignment to right for outgoing messages
             holder.messageText.setGravity(Gravity.END); // or Gravity.RIGHT
+
+            // Display selected image in the ImageView for outgoing messages
+            if (model.getImageUrl() != null && !model.getImageUrl().isEmpty()) {
+                holder.imageView.setVisibility(View.VISIBLE);
+                // Load the image using your preferred image loading library or method
+                // For simplicity, assuming you are using Glide
+                 Glide.with(holder.itemView).load(model.getImageUrl()).into(holder.imageView);
+            } else {
+                holder.imageView.setVisibility(View.GONE);
+            }
         } else {
             // Otherwise, use the default background style and left-aligned text
             holder.messageText.setBackgroundResource(R.drawable.bg_message_incoming);
             holder.messageText.setGravity(Gravity.START); // or Gravity.LEFT
+
+            // Display selected image in the ImageView for incoming messages
+            if (model.getImageUrl() != null && !model.getImageUrl().isEmpty()) {
+                holder.imageView.setVisibility(View.VISIBLE);
+                // Load the image using your preferred image loading library or method
+                // For simplicity, assuming you are using Glide
+                 Glide.with(holder.itemView).load(model.getImageUrl()).into(holder.imageView);
+            } else {
+                holder.imageView.setVisibility(View.GONE);
+            }
         }
     }
-
-
 
     @Override
     public int getItemViewType(int position) {
@@ -62,12 +81,14 @@ public class ChatAdapter extends FirestoreRecyclerAdapter<ChatMessage, ChatAdapt
         return INCOMING_MESSAGE;
     }
 
-    class MessageViewHolder extends RecyclerView.ViewHolder {
+    static class MessageViewHolder extends RecyclerView.ViewHolder {
         private TextView messageText;
+        private ImageView imageView;
 
         MessageViewHolder(@NonNull View itemView) {
             super(itemView);
             messageText = itemView.findViewById(R.id.messageText);
+            imageView = itemView.findViewById(R.id.imageView); // Add this line to initialize imageView
         }
 
         void setMessage(String text) {

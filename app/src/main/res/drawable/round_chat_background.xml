@@ -1,4 +1,16 @@
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#a5cf61"/>
-    <corners android:radius="10dp"/>
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background -->
+    <item>
+        <shape>
+            <solid android:color="#000000"/>
+            <corners android:radius="10dp"/>
+        </shape>
+    </item>
+    <!-- Border -->
+    <item android:right="2dp" android:left="2dp" android:top="2dp" android:bottom="2dp">
+        <shape>
+            <solid android:color="#b2c5b2"/>
+            <corners android:radius="10dp"/>
+        </shape>
+    </item>
+</layer-list>
