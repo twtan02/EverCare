@@ -4,6 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/EverCare.iml" filepath="$PROJECT_DIR$/.idea/modules/EverCare.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/EverCare.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/EverCare.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/EverCare.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/EverCare.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/EverCare.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/EverCare.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/EverCare.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/EverCare.app.unitTest.iml" />
     </modules>
   </component>
 </project>

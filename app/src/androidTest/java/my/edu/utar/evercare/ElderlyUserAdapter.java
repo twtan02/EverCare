@@ -4,51 +4,78 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.List;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
-public class ElderlyUserAdapter extends BaseAdapter {
+import com.bumptech.glide.Glide;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
+public class ElderlyUserAdapter extends FirestoreRecyclerAdapter<ElderlyUser, ElderlyUserAdapter.ViewHolder> {
+
+    private OnItemClickListener listener;
     private Context context;
-    private List<ElderlyUser> elderlyUsers;
 
-    public ElderlyUserAdapter(Context context, List<ElderlyUser> elderlyUsers) {
-        this.context = context;
-        this.elderlyUsers = elderlyUsers;
+    public interface OnItemClickListener {
+        void onItemClick(ElderlyUser elderlyUser); // Modify the listener to pass the clicked user
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
+    public ElderlyUserAdapter(@NonNull FirestoreRecyclerOptions<ElderlyUser> options) {
+        super(options);
+    }
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_elderly_user, parent, false);
+        context = parent.getContext();
+        return new ViewHolder(view);
     }
 
     @Override
-    public int getCount() {
-        return elderlyUsers.size();
+    protected void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull ElderlyUser elderlyUser) {
+        holder.bind(elderlyUser);
     }
 
-    @Override
-    public Object getItem(int position) {
-        return elderlyUsers.get(position);
-    }
+    class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView profileImageView;
+        TextView usernameTextView;
 
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
+        ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            profileImageView = itemView.findViewById(R.id.profile_pic_imageview);
+            usernameTextView = itemView.findViewById(R.id.username_textview);
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_elderly_user, parent, false);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getBindingAdapterPosition(); // Use getBindingAdapterPosition() or getAbsoluteAdapterPosition()
+                    if (position != RecyclerView.NO_POSITION && listener != null) {
+                        listener.onItemClick(getItem(position)); // Pass the clicked user object
+                    }
+                }
+            });
         }
 
-        TextView usernameTextView = convertView.findViewById(R.id.usernameTextView);
-        TextView ageTextView = convertView.findViewById(R.id.ageTextView);
-        TextView genderTextView = convertView.findViewById(R.id.genderTextView);
+        void bind(ElderlyUser elderlyUser) {
+            usernameTextView.setText(elderlyUser.getUsername());
 
-        ElderlyUser elderlyUser = elderlyUsers.get(position);
-
-        usernameTextView.setText(elderlyUser.getUsername());
-        ageTextView.setText("Age: " + elderlyUser.getAge());
-
-        return convertView;
+            if (!elderlyUser.getProfileImageUrl().isEmpty()) {
+                Glide.with(context)
+                        .load(elderlyUser.getProfileImageUrl())
+                        .placeholder(R.drawable.default_profile_image)
+                        .error(R.drawable.default_failure_profile)
+                        .into(profileImageView);
+            } else {
+                profileImageView.setImageResource(R.drawable.default_profile_image);
+            }
+        }
     }
 }

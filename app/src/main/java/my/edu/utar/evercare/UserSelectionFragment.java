@@ -14,13 +14,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 public class UserSelectionFragment extends Fragment {
 
     private RecyclerView userRecyclerView;
-    private ElderlyUserAdapter userAdapter;
+    private ElderlyUserAdapter elderlyUserAdapter;
+    private CaregiverUserAdapter caregiverUserAdapter;
+    private StaffUserAdapter staffUserAdapter;
+    private AllUserAdapter allUserAdapter;
+    private TabLayout tabLayout;
 
     @Nullable
     @Override
@@ -29,42 +35,123 @@ public class UserSelectionFragment extends Fragment {
 
         // Initialize views
         userRecyclerView = view.findViewById(R.id.userRecyclerView);
-
-        // Initialize Firebase Firestore
-        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        tabLayout = view.findViewById(R.id.tabLayout);
 
         // Set up the RecyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         userRecyclerView.setLayoutManager(layoutManager);
 
-        // Load and display users
-        Query usersQuery = firestore.collection("elderly_users");
-        FirestoreRecyclerOptions<ElderlyUser> options = new FirestoreRecyclerOptions.Builder<ElderlyUser>()
-                .setQuery(usersQuery, ElderlyUser.class)
-                .build();
+        // Add tabs for All, Family, and Staff
+        tabLayout.addTab(tabLayout.newTab().setText("All"));
+        tabLayout.addTab(tabLayout.newTab().setText("Family"));
+        tabLayout.addTab(tabLayout.newTab().setText("Staff"));
 
-        userAdapter = new ElderlyUserAdapter(options);
-        userRecyclerView.setAdapter(userAdapter);
+        // Default: Show all users
+        loadUsers("all_users");
 
-        // Set up item click listener
-        userAdapter.setOnItemClickListener(new ElderlyUserAdapter.OnItemClickListener() {
+        // Set a listener to handle tab selection
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onItemClick(ElderlyUser user) {
-                navigateToChatFragment(user.getUserId()); // Pass the user's ID to the navigation method
+            public void onTabSelected(TabLayout.Tab tab) {
+                // Handle tab selection, update RecyclerView data based on the selected category
+                switch (tab.getPosition()) {
+                    case 0:
+                        // Show all users
+                        loadUsers("all_users");
+                        break;
+                    case 1:
+                        // Show family users
+                        loadUsers("caregiver_users");
+                        break;
+                    case 2:
+                        // Show staff users
+                        loadUsers("staff_users");
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                // Handle tab unselection if needed
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                // Handle tab reselection if needed
             }
         });
 
-        // Set the title for the Fragment container
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        if (activity != null) {
-            ActionBar actionBar = activity.getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.setTitle("Start Chatting with Your Friend");
-            }
-        }
-
-
         return view;
+    }
+
+
+    private void loadUsers(String collectionReference) {
+        // Initialize Firebase Firestore
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        Query usersQuery = firestore.collection(collectionReference);
+
+        if (collectionReference.equals("all_users")) {
+            if (allUserAdapter != null) {
+                allUserAdapter.stopListening();
+            }
+
+            FirestoreRecyclerOptions<AllUser> options = new FirestoreRecyclerOptions.Builder<AllUser>()
+                    .setQuery(usersQuery, AllUser.class)
+                    .build();
+
+            allUserAdapter = new AllUserAdapter(options);
+            userRecyclerView.setAdapter(allUserAdapter);
+            allUserAdapter.startListening();
+
+            // Set up item click listener
+            allUserAdapter.setOnItemClickListener(new AllUserAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(AllUser user) {
+                    navigateToChatFragment(user.getUserId()); // Pass the user's ID to the navigation method
+                }
+            });
+        } else if (collectionReference.equals("caregiver_users")) {
+            if (caregiverUserAdapter != null) {
+                caregiverUserAdapter.stopListening();
+            }
+
+            FirestoreRecyclerOptions<CaregiverUser> options = new FirestoreRecyclerOptions.Builder<CaregiverUser>()
+                    .setQuery(usersQuery, CaregiverUser.class)
+                    .build();
+
+            caregiverUserAdapter = new CaregiverUserAdapter(options);
+            userRecyclerView.setAdapter(caregiverUserAdapter);
+            caregiverUserAdapter.startListening();
+
+            // Set up item click listener
+            caregiverUserAdapter.setOnItemClickListener(new CaregiverUserAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(CaregiverUser user) {
+                    navigateToChatFragment(user.getUserId()); // Pass the user's ID to the navigation method
+                }
+            });
+
+        } else if (collectionReference.equals("staff_users")) {
+            if (staffUserAdapter != null) {
+                staffUserAdapter.stopListening();
+            }
+
+            FirestoreRecyclerOptions<StaffUser> options = new FirestoreRecyclerOptions.Builder<StaffUser>()
+                    .setQuery(usersQuery, StaffUser.class)
+                    .build();
+
+            staffUserAdapter = new StaffUserAdapter(options);
+            userRecyclerView.setAdapter(staffUserAdapter);
+            staffUserAdapter.startListening();
+
+            // Set up item click listener
+            staffUserAdapter.setOnItemClickListener(new StaffUserAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(StaffUser user) {
+                    navigateToChatFragment(user.getUserId()); // Pass the user's ID to the navigation method
+                }
+            });
+        }
     }
 
     private void navigateToChatFragment(String selectedUserId) {
@@ -84,12 +171,28 @@ public class UserSelectionFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        userAdapter.startListening();
+        if (elderlyUserAdapter != null) {
+            elderlyUserAdapter.startListening();
+        }
+        if (caregiverUserAdapter != null) {
+            caregiverUserAdapter.startListening();
+        }
+        if (staffUserAdapter != null) {
+            staffUserAdapter.startListening();
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        userAdapter.stopListening();
+        if (elderlyUserAdapter != null) {
+            elderlyUserAdapter.stopListening();
+        }
+        if (caregiverUserAdapter != null) {
+            caregiverUserAdapter.stopListening();
+        }
+        if (staffUserAdapter != null) {
+            staffUserAdapter.stopListening();
+        }
     }
 }

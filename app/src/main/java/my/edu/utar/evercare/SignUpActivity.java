@@ -2,9 +2,11 @@ package my.edu.utar.evercare;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -25,9 +27,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -39,6 +45,7 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText elderlyparentnameEditText;
     private Spinner genderSpinner;
     private RadioGroup roleRadioGroup;
+    private Spinner elderlyParentSpinner;
     private Button signUpButton;
 
     private FirebaseAuth firebaseAuth;
@@ -61,7 +68,7 @@ public class SignUpActivity extends AppCompatActivity {
         dateOfBirthEditText = findViewById(R.id.dateOfBirthTextView);
         genderSpinner = findViewById(R.id.genderSpinner);
         roleRadioGroup = findViewById(R.id.roleRadioGroup);
-        elderlyparentnameEditText = findViewById(R.id.elderlyParentNameEditText);
+        elderlyParentSpinner = findViewById(R.id.elderlyParentSpinner);
         signUpButton = findViewById(R.id.signUpButton);
 
         // Initialize calendar with the current date
@@ -96,14 +103,17 @@ public class SignUpActivity extends AppCompatActivity {
                 RadioButton radioButton = findViewById(checkedId);
                 String role = radioButton.getText().toString();
 
-                // Show/hide the elderly parent's name EditText based on the selected role
+                // Show/hide the elderly parent's name Spinner based on the selected role
                 if ("Caregiver".equals(role)) {
-                    elderlyparentnameEditText.setVisibility(View.VISIBLE);
+                    elderlyParentSpinner.setVisibility(View.VISIBLE);
+                    // Fetch existing elderly user names for Spinner
+                    fetchElderlyUserNamesForSpinner();
                 } else {
-                    elderlyparentnameEditText.setVisibility(View.GONE);
+                    elderlyParentSpinner.setVisibility(View.GONE);
                 }
             }
         });
+
 
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,6 +194,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         // Create a new document in the specified collection with the user's ID
         DocumentReference userRef = firestore.collection(collectionName).document(userId);
+        DocumentReference userRef2 = firestore.collection("all_users").document(userId);
 
         // Create a Map object to store the user data
         Map<String, Object> userData = new HashMap<>();
@@ -196,13 +207,15 @@ public class SignUpActivity extends AppCompatActivity {
 
         // Add a check for the "Caregiver" role to store the elderly parent's name
         if ("Caregiver".equals(role)) {
-            String elderlyParentName = elderlyparentnameEditText.getText().toString().trim();
-            if (elderlyParentName.isEmpty()) {
+            String selectedElderlyName = elderlyParentSpinner.getSelectedItem().toString();
+            userData.put("elderlyParentName", selectedElderlyName); // Add the selected elderly parent's name to the user data
+
+            if (selectedElderlyName.isEmpty()) {
                 // Show an error message if the elderly parent's name is not provided
                 Toast.makeText(this, "Please enter the elderly parent's name", Toast.LENGTH_SHORT).show();
                 return;
             }
-            userData.put("elderlyParentName", elderlyParentName); // Add the elderly parent's name to the user data
+            userData.put("elderlyParentName", selectedElderlyName); // Add the elderly parent's name to the user data
         }
 
         // Set the user data in the document
@@ -222,5 +235,40 @@ public class SignUpActivity extends AppCompatActivity {
                         Toast.makeText(SignUpActivity.this, "Error storing user data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+
+        // Set the user data in the document
+        userRef2.set(userData);
+
     }
+
+    private void fetchElderlyUserNamesForSpinner() {
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+        firestore.collection("elderly_users")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<String> elderlyUserNames = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String userName = document.getString("username");
+                                if (userName != null) {
+                                    elderlyUserNames.add(userName);
+                                }
+                            }
+                            setupElderlyParentSpinner(elderlyUserNames);
+                        } else {
+                            Log.e("SignUpActivity", "Error fetching elderly user names for Spinner: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    private void setupElderlyParentSpinner(List<String> elderlyUserNames) {
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, elderlyUserNames);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        elderlyParentSpinner.setAdapter(spinnerAdapter);
+    }
+
 }

@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="16dp"
-    android:background="@color/white">
+    android:background="@drawable/app_background">
 
     <TextView
         android:layout_width="wrap_content"
@@ -27,12 +27,12 @@
         android:id="@+id/emailEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email"
-        android:padding="8dp"
-        android:textColor="@color/black"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/edittext_bg"
+        android:hint="Email"
         android:imeOptions="actionNext"
-        android:layout_marginBottom="16dp" />
+        android:padding="8dp"
+        android:textColor="@color/black" />
 
     <EditText
         android:id="@+id/passwordEditText"

@@ -1,0 +1,46 @@
+<!-- res/drawable/button_background.xml -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Normal state -->
+    <item android:state_pressed="false" android:state_enabled="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <corners android:radius="16dp" />
+                    <solid android:color="#FF03DAC5" /> <!-- Your desired normal background color -->
+                </shape>
+            </item>
+
+            <!-- Border -->
+            <item>
+                <shape android:shape="rectangle">
+                    <corners android:radius="16dp" />
+                    <stroke
+                        android:width="2dp"
+                        android:color="@android:color/black" /> <!-- Your desired border color and width -->
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <!-- Pressed/Focused state (hover effect) -->
+    <item android:state_pressed="true" android:state_enabled="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <corners android:radius="16dp" />
+                    <solid android:color="#E5E5E5" /> <!-- Your desired hover background color -->
+                </shape>
+            </item>
+
+            <!-- Border -->
+            <item>
+                <shape android:shape="rectangle">
+                    <corners android:radius="16dp" />
+                    <stroke
+                        android:width="2dp"
+                        android:color="@android:color/black" /> <!-- Your desired border color and width -->
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

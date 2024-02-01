@@ -313,6 +313,16 @@ public class ProfileActivity extends AppCompatActivity {
                                                 // Handle error if unable to save profile picture URL in Firestore for caregiver users
                                             }
                                         });
+
+                                // Update the profile picture URL for all users if applicable
+                                db.collection("all_users").document(userId)
+                                        .update("profileImageUrl", imageUrl)
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                // Handle error if unable to save profile picture URL in Firestore for all users
+                                            }
+                                        });
                             }
                         });
                     }

@@ -31,6 +31,7 @@
         <item>Three times a day</item>
         <item>Custom frequency</item>
     </string-array>
+    <string name="dropdown_menu_description">Dropdown Menu</string>
 
 
 </resources>

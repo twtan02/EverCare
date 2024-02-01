@@ -18,9 +18,6 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        // Set the title for the activity
-        setTitle("Start Chatting with Your Friend");
-
         if (savedInstanceState == null) {
             // Start with the UserSelectionFragment
             getSupportFragmentManager().beginTransaction()

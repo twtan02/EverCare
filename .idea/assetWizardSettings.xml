@@ -33,8 +33,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_send" />
-                            <entry key="sourceFile" value="C:\Users\User\AndroidStudioProjects\EverCare" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="bubble" />
+                            <entry key="sourceFile" value="C:\Users\User\Downloads\realistic-bubbles-isolated\9281764.psd" />
                           </map>
                         </option>
                       </PersistentState>

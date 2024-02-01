@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
@@ -72,6 +73,7 @@ public class ElderlyUserAdapter extends FirestoreRecyclerAdapter<ElderlyUser, El
                         .load(elderlyUser.getProfileImageUrl())
                         .placeholder(R.drawable.default_profile_image)
                         .error(R.drawable.default_failure_profile)
+                        .transform(new CircleCrop())
                         .into(profileImageView);
             } else {
                 profileImageView.setImageResource(R.drawable.default_profile_image);

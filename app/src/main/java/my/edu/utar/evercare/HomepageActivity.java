@@ -4,26 +4,27 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.WebView;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.gridlayout.widget.GridLayout;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-public class HomepageActivity extends BaseActivity {
 
-    private BottomNavigationView bottomNavigationView;
-    private Fragment selectedFragment = null;
+public class HomepageActivity extends AppCompatActivity {
+
+    private GridLayout gridLayout;
+    private Button btnMedicalRecord, btnChat, btnPillReminder, btnEmergencyHelp, btnRemoteMonitoring;
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -32,25 +33,12 @@ public class HomepageActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        // Set the custom title text
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayShowCustomEnabled(true);
-        getSupportActionBar().setCustomView(R.layout.custom_toolbar_title);
-
-        // Set the Welcome Message and Notification
-        String welcomeMessage = "Welcome to EVERCARE";
-        String notification = "About Us";
-
-        TextView customTitleTextView = findViewById(R.id.customToolbarTitle);
-        customTitleTextView.setText("HOME");
-
-        WebView longParagraphWebView = findViewById(R.id.longParagraphWebView);
-        String longParagraph = getResources().getString(R.string.long_paragraph);
-        longParagraphWebView.loadDataWithBaseURL(null, longParagraph, "text/html", "utf-8", null);
+        gridLayout = findViewById(R.id.gridLayout);
+        btnMedicalRecord = findViewById(R.id.btnMedicalRecord);
+        btnChat = findViewById(R.id.btnChat);
+        btnPillReminder = findViewById(R.id.btnPillReminder);
+        btnEmergencyHelp = findViewById(R.id.btnEmergencyHelp);
+        btnRemoteMonitoring = findViewById(R.id.btnRemoteMonitoring);
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         String currentUserId = auth.getCurrentUser().getUid();
@@ -77,61 +65,67 @@ public class HomepageActivity extends BaseActivity {
                     }
                 });
 
-        // Set the listener for item selection
-        bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
+
+        // Set up button click listeners
+        btnMedicalRecord.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                // Handle item selection here
-                switch (item.getItemId()) {
-                    case R.id.menu_medical_record:
-                        // Handle medical record selection
-                        if (isMedicalRecordEnabled) {
-                            startActivity(new Intent(HomepageActivity.this, MedicalRecordActivity.class));
-                        } else {
-                            // Show a message or dialog indicating that this feature is not available
-                            showFeatureNotAvailableMessage("Medical Record");
-                        }
-                        return true;
-                    case R.id.menu_chat:
-                        // Handle chat selection
-                        if (isChatEnabled) {
-                            Intent chatIntent = new Intent(HomepageActivity.this, ChatActivity.class);
-                            chatIntent.putExtra("userId", currentUserId); // Pass the user ID
-                            startActivity(chatIntent);
-                        } else {
-                            // Show a message or dialog indicating that this feature is not available
-                            showFeatureNotAvailableMessage("Chat");
-                        }
-                        return true;
-                    case R.id.menu_pill_reminder:
-                        // Handle pill reminder selection
-                        if (isPillReminderEnabled) {
-                            startActivity(new Intent(HomepageActivity.this, PillReminderActivity.class));
-                        } else {
-                            // Show a message or dialog indicating that this feature is not available
-                            showFeatureNotAvailableMessage("Pill Reminder");
-                        }
-                        return true;
-                    case R.id.menu_emergency_help:
-                        // Handle emergency help selection
-                        if (isEmergencyHelpEnabled) {
-                            startActivity(new Intent(HomepageActivity.this, EmergencyHelpActivity.class));
-                        } else {
-                            // Show a message or dialog indicating that this feature is not available
-                            showFeatureNotAvailableMessage("Emergency Help");
-                        }
-                        return true;
-                    case R.id.menu_remote_monitoring:
-                        // Handle remote monitoring selection
-                        if (isRemoteMonitoringEnabled) {
-                            startActivity(new Intent(HomepageActivity.this, RemoteMonitoringActivity.class));
-                        } else {
-                            // Show a message or dialog indicating that this feature is not available
-                            showFeatureNotAvailableMessage("Remote Monitoring");
-                        }
-                        return true;
+            public void onClick(View v) {
+                if (isMedicalRecordEnabled) {
+                    startActivity(new Intent(HomepageActivity.this, MedicalRecordActivity.class));
+                } else {
+                    // Show a message or dialog indicating that this feature is not available
+                    showFeatureNotAvailableMessage("Medical Record");
                 }
-                return false;
+            }
+        });
+
+        btnChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isChatEnabled) {
+                    Intent chatIntent = new Intent(HomepageActivity.this, ChatActivity.class);
+                    chatIntent.putExtra("userId", currentUserId); // Pass the user ID
+                    startActivity(chatIntent);
+                } else {
+                    // Show a message or dialog indicating that this feature is not available
+                    showFeatureNotAvailableMessage("Chat");
+                }
+            }
+        });
+
+        btnPillReminder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isPillReminderEnabled) {
+                    startActivity(new Intent(HomepageActivity.this, PillReminderActivity.class));
+                } else {
+                    // Show a message or dialog indicating that this feature is not available
+                    showFeatureNotAvailableMessage("Pill Reminder");
+                }
+            }
+        });
+
+        btnEmergencyHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isEmergencyHelpEnabled) {
+                    startActivity(new Intent(HomepageActivity.this, EmergencyHelpActivity.class));
+                } else {
+                    // Show a message or dialog indicating that this feature is not available
+                    showFeatureNotAvailableMessage("Emergency Help");
+                }
+            }
+        });
+
+        btnRemoteMonitoring.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isRemoteMonitoringEnabled) {
+                    startActivity(new Intent(HomepageActivity.this, RemoteMonitoringActivity.class));
+                } else {
+                    // Show a message or dialog indicating that this feature is not available
+                    showFeatureNotAvailableMessage("Remote Monitoring");
+                }
             }
         });
 
@@ -218,45 +212,43 @@ public class HomepageActivity extends BaseActivity {
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    public void showDropdownMenu(View view) {
+        PopupMenu popupMenu = new PopupMenu(this, view);
+        popupMenu.inflate(R.menu.dropdown_menu); // Create a dropdown_menu.xml in the 'res/menu' folder
+
+        // Set click listeners for menu items in the dropdown menu
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                // Handle menu item clicks
+                switch (item.getItemId()) {
+                    case R.id.menu_profile:
+                        startActivity(new Intent(HomepageActivity.this, ProfileActivity.class));
+                        return true;
+                    case R.id.menu_font_size:
+                        startActivity(new Intent(HomepageActivity.this, FontSizeActivity.class));
+                        return true;
+                    case R.id.menu_daily_schedule:
+                        startActivity(new Intent(HomepageActivity.this, DailyScheduleActivity.class));
+                        return true;
+                    case R.id.menu_contact_us:
+                        startActivity(new Intent(HomepageActivity.this, ContactUsActivity.class));
+                        return true;
+                    case R.id.menu_logout:
+                        FirebaseAuth.getInstance().signOut();
+                        Toast.makeText(HomepageActivity.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(HomepageActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+
+        popupMenu.show();
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.menu_profile) {
-            // Handle profile option
-            startActivity(new Intent(HomepageActivity.this, ProfileActivity.class));
-            return true;
-        } else if (id == R.id.menu_font_size) {
-            // Handle font size option
-            startActivity(new Intent(HomepageActivity.this, FontSizeActivity.class));
-            return true;
-        } else if (id == R.id.menu_daily_schedule) {
-            // Handle daily schedule option
-            startActivity(new Intent(HomepageActivity.this, DailyScheduleActivity.class));
-            return true;
-        } else if (id == R.id.menu_contact_us) {
-            // Handle contact us option
-            startActivity(new Intent(HomepageActivity.this, ContactUsActivity.class));
-            return true;
-        } else if (id == R.id.menu_logout) {
-            // Handle logout option
-            FirebaseAuth.getInstance().signOut();
-            Toast.makeText(HomepageActivity.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(HomepageActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
 
 
 }

@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -147,24 +148,28 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
 
         for (String elderlyUserId : medicalRecordsMap.keySet()) {
             List<MedicalRecord> records = medicalRecordsMap.get(elderlyUserId);
-            MedicalRecord groupRecord = new MedicalRecord();
 
-            groupRecord.setElderlyId(records.get(0).getElderlyId());
-            groupRecord.setElderlyName(records.get(0).getElderlyName());
-            groupRecord.setProfileImageUrl(records.get(0).getProfileImageUrl());
+            if (!records.isEmpty()) {
+                MedicalRecord groupRecord = new MedicalRecord();
 
-            List<Medication> medications = new ArrayList<>();
-            for (MedicalRecord record : records) {
-                medications.addAll(record.getMedications());
+                groupRecord.setElderlyId(records.get(0).getElderlyId());
+                groupRecord.setElderlyName(records.get(0).getElderlyName());
+                groupRecord.setProfileImageUrl(records.get(0).getProfileImageUrl());
+
+                List<Medication> medications = new ArrayList<>();
+                for (MedicalRecord record : records) {
+                    medications.addAll(record.getMedications());
+                }
+                groupRecord.setMedications(medications);
+
+                allMedicalRecords.add(groupRecord);
             }
-            groupRecord.setMedications(medications);
-
-            allMedicalRecords.add(groupRecord);
         }
 
         MedicalRecordItemAdapter itemAdapter = new MedicalRecordItemAdapter(allMedicalRecords);
         medicalRecordRecyclerView.setAdapter(itemAdapter);
     }
+
 
 
 
@@ -207,6 +212,7 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
                     .load(selectedElderlyUser.getProfileImageUrl())
                     .placeholder(R.drawable.default_profile_image)
                     .error(R.drawable.default_failure_profile)
+                    .transform(new CircleCrop())
                     .into(profileImageView);
         } else {
             profileImageView.setImageResource(R.drawable.default_profile_image);

@@ -1,5 +1,5 @@
 <component name="libraryTable">
-  <library name="Gradle: com.google.gms:google-services:4.3.10">
+  <library name="Gradle: com.google.gms:google-services:4.3.10" external-system-id="GRADLE">
     <CLASSES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.gms/google-services/4.3.10/b21fa51458d644f4eb426f1d483f40775c28c15/google-services-4.3.10.jar!/" />
     </CLASSES>

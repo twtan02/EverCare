@@ -1,101 +1,119 @@
-<androidx.constraintlayout.widget.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    tools:context=".HomepageActivity">
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
-    <!-- Toolbar -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:elevation="4dp"
-        android:theme="@style/ToolbarTheme"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- NestedScrollView for scrolling content -->
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView">
-
-        <!-- LinearLayout as the parent container for Welcome Message and WebView -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <!-- Container for Welcome Message and Notification -->
-            <LinearLayout
-                android:id="@+id/welcomeNotificationContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <!-- Welcome Message TextView -->
-                <TextView
-                    android:id="@+id/welcomeMessageTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="24sp"
-                    android:text="Welcome to EVERCARE"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:fontFamily="@font/poppins_light" />
-
-                <ImageView
-                    android:id="@+id/welcomeimageview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/homepagewelcome"
-                    android:adjustViewBounds="true" />
-
-                <!-- Notification (About Us) TextView -->
-                <TextView
-                    android:id="@+id/notificationTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:textSize="18sp"
-                    android:textColor="@color/black"
-                    android:text="About Us"
-                    android:fontFamily="@font/poppins_light" />
-
-            </LinearLayout>
-
-            <!-- WebView for Long Paragraph -->
-            <WebView
-                android:id="@+id/longParagraphWebView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="16dp" />
-
-        </LinearLayout>
-
-    </androidx.core.widget.NestedScrollView>
-
-    <!-- Bottom Navigation View -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        android:layout_width="match_parent"
+    <!-- Big "MENU" text at the top left -->
+    <TextView
+        android:id="@+id/textMenu"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
-        android:background="@drawable/bottom_nav_background"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:itemIconTint="@null"
-        app:menu="@menu/bottom_navigation_menu" />
+        android:text="MENU"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"/>
+
+    <ImageButton
+        android:id="@+id/dropdownButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_dropdown"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:onClick="showDropdownMenu"
+        android:contentDescription="@string/dropdown_menu_description"/>
+
+    <!-- GridLayout for the grid of buttons -->
+    <androidx.gridlayout.widget.GridLayout
+        android:id="@+id/gridLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="visible"
+        app:columnCount="2"
+        app:orientation="horizontal"
+        app:columnOrderPreserved="false"
+        app:rowCount="3">
+
+        <!-- Button 1 - Medical Record -->
+        <Button
+            android:id="@+id/btnMedicalRecord"
+            style="@style/GridButton"
+            android:text="Medical Record"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            android:drawableTop="@drawable/ic_medical_record"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            app:layout_gravity="center" />
 
 
+        <!-- Button 2 - Chat -->
+        <Button
+            android:id="@+id/btnChat"
+            style="@style/GridButton"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            android:text="Chat"
+            android:drawableTop="@drawable/ic_chat"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            app:layout_gravity="center" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Button 3 - Pill Reminder -->
+        <Button
+            android:id="@+id/btnPillReminder"
+            style="@style/GridButton"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            android:text="Pill Reminder"
+            android:drawableTop="@drawable/ic_pill_reminder"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            app:strokeColor="@color/black"
+            app:strokeWidth="2dp"
+            app:layout_gravity="center" />
+
+        <!-- Button 4 - Emergency Help -->
+        <Button
+            android:id="@+id/btnEmergencyHelp"
+            style="@style/GridButton"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            android:text="Emergency Help"
+            android:drawableTop="@drawable/ic_emergency_help"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            app:strokeColor="@color/black"
+            app:strokeWidth="2dp"
+            app:layout_gravity="center" />
+
+        <!-- Button 5 - Remote Monitoring -->
+        <Button
+            android:id="@+id/btnRemoteMonitoring"
+            style="@style/GridButton"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            android:text="Remote Monitoring"
+            android:drawableTop="@drawable/ic_remote_monitoring"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            app:strokeColor="@color/black"
+            app:strokeWidth="2dp"
+            app:layout_gravity="center" />
+    </androidx.gridlayout.widget.GridLayout>
+
+    <!-- Additional views or buttons can be added here -->
+
+</RelativeLayout>

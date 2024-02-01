@@ -21,6 +21,7 @@
             android:layout_width="72dp"
             android:layout_height="72dp"
             android:src="@drawable/default_profile_image"
+            android:backgroundTint="@color/black"
             android:contentDescription="Profile Picture"
             android:scaleType="centerCrop" />
 
