@@ -38,16 +38,14 @@
         <activity
             android:name=".RemoteMonitoringActivity"
             android:exported="false"
-            android:label="@string/title_activity_remote_monitoring"
-            android:theme="@style/Theme.EverCare.NoActionBar" />
+            android:label="@string/title_activity_remote_monitoring" />
         <activity
             android:name=".EmergencyHelpActivity"
             android:exported="false" />
         <activity
             android:name=".ChatActivity"
             android:exported="false"
-            android:label="@string/title_activity_chat"
-            android:theme="@style/Theme.EverCare.NoActionBar" />
+            android:label="@string/title_activity_chat" />
         <activity
             android:name=".PillReminderActivity"
             android:exported="false" />
@@ -59,8 +57,7 @@
             android:exported="false" />
         <activity
             android:name=".HomepageActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="@string/app_name" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

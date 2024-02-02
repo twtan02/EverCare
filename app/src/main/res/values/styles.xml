@@ -48,6 +48,7 @@
         <item name="android:background">@drawable/button_background</item>
     </style>
 
+    <!-- Chat tab -->
     <style name="CustomTabLayout" parent="Widget.Design.TabLayout">
         <item name="tabIndicatorHeight">0dp</item>
         <item name="tabBackground">@drawable/tab_background</item>

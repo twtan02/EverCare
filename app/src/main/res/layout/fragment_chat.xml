@@ -37,6 +37,7 @@
                 android:contentDescription="Selected Image"
                 android:visibility="gone" />
 
+
             <!-- Message input field -->
             <EditText
                 android:id="@+id/editTextMessage"

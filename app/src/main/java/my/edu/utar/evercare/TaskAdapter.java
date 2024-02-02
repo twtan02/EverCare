@@ -3,6 +3,7 @@ package my.edu.utar.evercare;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -10,12 +11,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
     private List<Task> taskList;
+    private OnTaskItemClickListener onTaskItemClickListener; // Interface for handling item clicks
 
-    public TaskAdapter(List<Task> taskList) {
+    // Constructor that takes the interface as a parameter
+    public TaskAdapter(List<Task> taskList, OnTaskItemClickListener onTaskItemClickListener) {
         this.taskList = taskList;
+        this.onTaskItemClickListener = onTaskItemClickListener;
     }
 
     @NonNull
@@ -31,6 +36,23 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.textViewTaskTitle.setText(task.getTaskTitle());
         holder.textViewTaskDescription.setText(task.getTaskDescription());
         holder.textViewDate.setText(task.getDateString());
+
+        // Set click listeners for modify and delete buttons
+        holder.imageViewModifyTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Call the interface method when modify button is clicked
+                onTaskItemClickListener.onModifyTaskClick(task);
+            }
+        });
+
+        holder.imageViewDeleteTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Call the interface method when delete button is clicked
+                onTaskItemClickListener.onDeleteTaskClick(task);
+            }
+        });
     }
 
     @Override
@@ -43,12 +65,23 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         public TextView textViewTaskTitle;
         public TextView textViewTaskDescription;
         public TextView textViewDate;
+        public ImageView imageViewModifyTask;
+        public ImageView imageViewDeleteTask;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewTaskTitle = itemView.findViewById(R.id.textViewTaskTitle);
             textViewTaskDescription = itemView.findViewById(R.id.textViewTaskDescription);
             textViewDate = itemView.findViewById(R.id.textViewDate);
+            imageViewModifyTask = itemView.findViewById(R.id.imageViewModifyTask);
+            imageViewDeleteTask = itemView.findViewById(R.id.imageViewDeleteTask);
         }
     }
+
+    // Interface for handling button clicks
+    public interface OnTaskItemClickListener {
+        void onModifyTaskClick(Task task);
+        void onDeleteTaskClick(Task task);
+    }
+
 }

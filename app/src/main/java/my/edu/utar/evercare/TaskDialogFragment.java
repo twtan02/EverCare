@@ -112,7 +112,7 @@ public class TaskDialogFragment extends DialogFragment {
                         // Task saved successfully
                         if (isAdded()) {
                             Log.d("TaskLog", "Task saved to Firebase");
-                            Toast.makeText(requireContext(), "Task saved to Firebase", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), "Task saved", Toast.LENGTH_SHORT).show();
                         }
                     }
                 })

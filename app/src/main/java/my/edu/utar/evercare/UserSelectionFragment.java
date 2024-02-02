@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -86,9 +88,11 @@ public class UserSelectionFragment extends Fragment {
 
 
     private void loadUsers(String collectionReference) {
-        // Initialize Firebase Firestore
+        // Assuming you have a way to retrieve the current user's ID
+        String currentUserId = getCurrentUserId();
+
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-        Query usersQuery = firestore.collection(collectionReference);
+        Query usersQuery = firestore.collection(collectionReference).whereNotEqualTo("userId", currentUserId);
 
         if (collectionReference.equals("all_users")) {
             if (allUserAdapter != null) {
@@ -107,7 +111,10 @@ public class UserSelectionFragment extends Fragment {
             allUserAdapter.setOnItemClickListener(new AllUserAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(AllUser user) {
-                    navigateToChatFragment(user.getUserId()); // Pass the user's ID to the navigation method
+                    // Check if the clicked user is not the current user
+                    if (!user.getUserId().equals(currentUserId)) {
+                        navigateToChatFragment(user.getUserId());
+                    }
                 }
             });
         } else if (collectionReference.equals("caregiver_users")) {
@@ -151,6 +158,21 @@ public class UserSelectionFragment extends Fragment {
                     navigateToChatFragment(user.getUserId()); // Pass the user's ID to the navigation method
                 }
             });
+        }
+    }
+
+    private String getCurrentUserId() {
+        // Assuming you are using Firebase Authentication
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        // Check if the user is authenticated
+        if (currentUser != null) {
+            // The user is signed in, return their UID
+            return currentUser.getUid();
+        } else {
+            // No user is signed in, handle accordingly (e.g., redirect to login)
+            // Return an empty string or throw an exception based on your app's logic
+            return "";
         }
     }
 
