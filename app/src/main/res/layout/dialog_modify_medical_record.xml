@@ -1,0 +1,22 @@
+<!-- res/layout/dialog_modify_medical_record.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <Spinner
+        android:id="@+id/medication_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:entries="@array/medications_array"
+    android:prompt="@string/select_medication" />
+
+    <EditText
+        android:id="@+id/dosage_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Dosage"/>
+
+</LinearLayout>

@@ -57,4 +57,30 @@
             app:layout_constraintStart_toEndOf="@id/profile_pic_imageview"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- Modify Button -->
+        <ImageButton
+            android:id="@+id/modify_button"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_menu_edit"
+            android:background="?android:attr/selectableItemBackground"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:visibility="visible" />
+
+        <!-- Delete Button -->
+        <ImageButton
+            android:id="@+id/delete_button"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_menu_delete"
+            android:background="?android:attr/selectableItemBackground"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/modify_button"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:visibility="visible" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

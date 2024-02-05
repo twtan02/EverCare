@@ -6,6 +6,8 @@ import android.os.Parcelable;
 import java.util.List;
 
 public class MedicalRecord implements Parcelable {
+
+    private String id;
     private String elderlyId;
     private String elderlyName;
     private String profileImageUrl;
@@ -47,6 +49,14 @@ public class MedicalRecord implements Parcelable {
             return new MedicalRecord[size];
         }
     };
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getElderlyId() {
         return elderlyId;

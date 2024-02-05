@@ -1,0 +1,7 @@
+<resources>
+    <array name="medications_array">
+        <item>Medication 1</item>
+        <item>Medication 2</item>
+        <!-- Add more items as needed -->
+    </array>
+</resources>

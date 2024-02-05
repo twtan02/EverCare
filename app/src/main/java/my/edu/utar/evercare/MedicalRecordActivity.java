@@ -50,6 +50,7 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
     private RecyclerView medicalRecordRecyclerView;
     private MedicalRecordItemAdapter medicalRecordItemAdapter;
     private AlertDialog dialog;
+    private List<String> medicineNames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,11 +72,14 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        fetchElderlyUsersFromFirestore();
+        fetchMedicineNamesFromFirestore();
+        setupRecyclerView(new ArrayList<>());
+
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         medicalRecordRecyclerView.setLayoutManager(layoutManager);
 
-        fetchElderlyUsersFromFirestore();
-        setupRecyclerView();
+
 
         FloatingActionButton fabAddMedicalRecord = findViewById(R.id.fab_add_medical_record);
         fabAddMedicalRecord.setOnClickListener(new View.OnClickListener() {
@@ -166,11 +170,56 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
             }
         }
 
-        MedicalRecordItemAdapter itemAdapter = new MedicalRecordItemAdapter(allMedicalRecords);
+        MedicalRecordItemAdapter itemAdapter = new MedicalRecordItemAdapter(allMedicalRecords, medicineNames);
         medicalRecordRecyclerView.setAdapter(itemAdapter);
     }
 
+    private void fetchMedicineNamesFromFirestore() {
+        // Remove the local variable declaration here
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        CollectionReference medicalRecordsRef = firestore.collection("medical_records");
 
+        medicalRecordsRef.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            // Remove the local variable declaration here
+                            medicineNames = new ArrayList<>(); // Initialize the global variable here
+
+                            for (DocumentSnapshot document : task.getResult()) {
+                                List<Map<String, Object>> medications = (List<Map<String, Object>>) document.get("medications");
+
+                                if (medications != null) {
+                                    for (Map<String, Object> medication : medications) {
+                                        String medicineName = (String) medication.get("medicineName");
+                                        if (medicineName != null) {
+                                            medicineNames.add(medicineName);
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Now you have the list of all medicine names from Firestore
+                            // You can use this list as needed
+
+                            // For example, you can log the medicine names
+                            for (String name : medicineNames) {
+                                Log.d("MedicineName", name);
+                            }
+
+                            // Ensure that the adapter is not null and set the medicine names
+                            if (medicalRecordItemAdapter != null) {
+                                medicalRecordItemAdapter.setMedicineNames(medicineNames);
+                            } else {
+                                Log.e("MedicalRecordActivity", "Adapter is null");
+                            }
+                        } else {
+                            Log.e("MedicalRecordActivity", "Error getting medical records: ", task.getException());
+                        }
+                    }
+                });
+    }
 
 
     private void showChooseElderlyUserDialog() {
@@ -330,11 +379,12 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
         }
     }
 
-    private void setupRecyclerView() {
-        medicalRecordItemAdapter = new MedicalRecordItemAdapter(new ArrayList<>());
+    private void setupRecyclerView(List<String> medicineNames) {
+        medicalRecordItemAdapter = new MedicalRecordItemAdapter(new ArrayList<>(), medicineNames);
         medicalRecordRecyclerView.setAdapter(medicalRecordItemAdapter);
         medicalRecordRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
+
 
 
     @Override
