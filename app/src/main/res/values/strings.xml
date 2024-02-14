@@ -33,6 +33,7 @@
     </string-array>
     <string name="dropdown_menu_description">Dropdown Menu</string>
     <string name="select_medication">Select Medication</string>
+    <string name="title_activity_maps">MapsActivity</string>
 
 
 

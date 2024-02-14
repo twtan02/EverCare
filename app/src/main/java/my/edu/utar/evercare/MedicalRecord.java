@@ -12,6 +12,7 @@ public class MedicalRecord implements Parcelable {
     private String elderlyName;
     private String profileImageUrl;
     private List<Medication> medications;
+    private String documentId;
 
     public MedicalRecord() {
         // Required empty constructor for Firestore
@@ -56,6 +57,14 @@ public class MedicalRecord implements Parcelable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
     }
 
     public String getElderlyId() {

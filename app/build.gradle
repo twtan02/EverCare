@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 
 
 android {
@@ -64,6 +65,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:20.0.2'
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
 
+    //Google Maps
+    implementation 'com.google.android.gms:play-services-maps:18.2.0'
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.4.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0"
 
 
 // Use the AndroidX RecyclerView library

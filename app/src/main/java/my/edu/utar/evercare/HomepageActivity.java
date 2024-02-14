@@ -109,7 +109,7 @@ public class HomepageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isEmergencyHelpEnabled) {
-                    startActivity(new Intent(HomepageActivity.this, EmergencyHelpActivity.class));
+                    startActivity(new Intent(HomepageActivity.this, MapsActivity.class));
                 } else {
                     // Show a message or dialog indicating that this feature is not available
                     showFeatureNotAvailableMessage("Emergency Help");

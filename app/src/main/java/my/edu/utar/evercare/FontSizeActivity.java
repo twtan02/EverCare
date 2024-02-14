@@ -118,7 +118,7 @@ public class FontSizeActivity extends BaseActivity {
                 PillReminderActivity.class,
                 MedicalRecordActivity.class,
                 ChatActivity.class,
-                EmergencyHelpActivity.class,
+                MapsActivity.class,
                 RemoteMonitoringActivity.class
         };
 
