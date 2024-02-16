@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Medication implements Parcelable {
+    private String id;
     private String medicineName;
     private String dosage;
 
@@ -11,7 +12,8 @@ public class Medication implements Parcelable {
         // Required empty constructor for Firestore
     }
 
-    public Medication(String medicineName, String dosage) {
+    public Medication(String id, String medicineName, String dosage) {
+        this.id= id;
         this.medicineName = medicineName;
         this.dosage = dosage;
     }
@@ -32,6 +34,10 @@ public class Medication implements Parcelable {
             return new Medication[size];
         }
     };
+
+    public String getId() {
+        return id;
+    }
 
     public String getMedicineName() {
         return medicineName;

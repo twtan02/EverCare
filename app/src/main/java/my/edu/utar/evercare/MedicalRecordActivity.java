@@ -79,8 +79,6 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         medicalRecordRecyclerView.setLayoutManager(layoutManager);
 
-
-
         FloatingActionButton fabAddMedicalRecord = findViewById(R.id.fab_add_medical_record);
         fabAddMedicalRecord.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,21 +173,15 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
     }
 
     private void fetchMedicineNamesFromFirestore() {
-        // Remove the local variable declaration here
-        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-        CollectionReference medicalRecordsRef = firestore.collection("medical_records");
-
-        medicalRecordsRef.get()
+        medicineNames = new ArrayList<>();
+        FirebaseFirestore.getInstance().collection("medical_records")
+                .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            // Remove the local variable declaration here
-                            medicineNames = new ArrayList<>(); // Initialize the global variable here
-
                             for (DocumentSnapshot document : task.getResult()) {
                                 List<Map<String, Object>> medications = (List<Map<String, Object>>) document.get("medications");
-
                                 if (medications != null) {
                                     for (Map<String, Object> medication : medications) {
                                         String medicineName = (String) medication.get("medicineName");
@@ -199,28 +191,16 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
                                     }
                                 }
                             }
-
-                            // Now you have the list of all medicine names from Firestore
-                            // You can use this list as needed
-
-                            // For example, you can log the medicine names
-                            for (String name : medicineNames) {
-                                Log.d("MedicineName", name);
-                            }
-
-                            // Ensure that the adapter is not null and set the medicine names
+                            // Notify the adapter that medicine names are fetched
                             if (medicalRecordItemAdapter != null) {
                                 medicalRecordItemAdapter.setMedicineNames(medicineNames);
-                            } else {
-                                Log.e("MedicalRecordActivity", "Adapter is null");
                             }
                         } else {
-                            Log.e("MedicalRecordActivity", "Error getting medical records: ", task.getException());
+                            Log.e("MedicalRecordActivity", "Error getting medicine names: ", task.getException());
                         }
                     }
                 });
     }
-
 
     private void showChooseElderlyUserDialog() {
         List<String> elderlyUserNames = new ArrayList<>();
@@ -340,27 +320,83 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
         String dosageString = String.valueOf(dosage);
         CollectionReference medicalRecordsRef = firestore.collection("medical_records");
 
-        Medication medication = new Medication(medicineName, dosageString);
-        List<Medication> medications = new ArrayList<>();
-        medications.add(medication);
-
-        String elderlyId = elderlyUser.getUserId();
-        String elderlyName = elderlyUser.getUsername();
-        String profilePicUrl = elderlyUser.getProfileImageUrl();
-        MedicalRecord medicalRecord = new MedicalRecord(elderlyId, elderlyName, profilePicUrl, medications);
-
-        medicalRecordsRef.add(medicalRecord)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+        // Check if there is an existing medical record for the elderly user
+        medicalRecordsRef.whereEqualTo("elderlyId", elderlyUser.getUserId())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d("MedicalRecordActivity", "Medical record added with ID: " + documentReference.getId());
-                        fetchMedicalRecordsForElderlyUsers();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e("MedicalRecordActivity", "Error adding medical record", e);
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            // Check if there are any existing medical records for the elderly user
+                            if (!task.getResult().isEmpty()) {
+                                // If there is an existing medical record, update it with the new medication
+                                for (DocumentSnapshot document : task.getResult()) {
+                                    MedicalRecord existingMedicalRecord = document.toObject(MedicalRecord.class);
+                                    if (existingMedicalRecord != null) {
+                                        // Generate a random ID for the medication
+                                        String medicationId = medicalRecordsRef.document().getId();
+
+                                        // Create the new medication object
+                                        Medication medication = new Medication(medicationId, medicineName, dosageString);
+
+                                        // Add the new medication to the existing medications list
+                                        existingMedicalRecord.getMedications().add(medication);
+
+                                        // Update the medical record in Firestore
+                                        medicalRecordsRef.document(document.getId())
+                                                .set(existingMedicalRecord)
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("MedicalRecordActivity", "Medication added to existing medical record");
+                                                        fetchMedicalRecordsForElderlyUsers(); // Refresh the UI
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.e("MedicalRecordActivity", "Error updating medical record", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            } else {
+                                // If there is no existing medical record, create a new one with the new medication
+                                String elderlyId = elderlyUser.getUserId();
+                                String elderlyName = elderlyUser.getUsername();
+                                String profilePicUrl = elderlyUser.getProfileImageUrl();
+
+                                // Generate a random ID for the new medical record
+                                String medicalRecordId = medicalRecordsRef.document().getId();
+
+                                // Create the new medication object
+                                Medication medication = new Medication(medicalRecordId, medicineName, dosageString);
+                                List<Medication> medications = new ArrayList<>();
+                                medications.add(medication);
+
+                                // Create the new medical record object
+                                MedicalRecord medicalRecord = new MedicalRecord(elderlyId, elderlyName, profilePicUrl, medications);
+
+                                // Store the new medical record in Firestore
+                                medicalRecordsRef.document(medicalRecordId)
+                                        .set(medicalRecord)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d("MedicalRecordActivity", "New medical record with medication added");
+                                                fetchMedicalRecordsForElderlyUsers(); // Refresh the UI
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.e("MedicalRecordActivity", "Error adding new medical record", e);
+                                            }
+                                        });
+                            }
+                        } else {
+                            Log.e("MedicalRecordActivity", "Error getting medical records: ", task.getException());
+                        }
                     }
                 });
     }
@@ -384,8 +420,6 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
         medicalRecordRecyclerView.setAdapter(medicalRecordItemAdapter);
         medicalRecordRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -25,9 +25,6 @@
             android:exported="true" />
 
         <activity
-            android:name=".MapsActivity"
-            android:exported="true" />
-        <activity
             android:name=".ScheduleDetailActivity"
             android:exported="false" />
         <activity
@@ -48,8 +45,8 @@
             android:exported="false"
             android:label="@string/title_activity_remote_monitoring" />
         <activity
-            android:name=".EmergencyHelpActivity"
-            android:exported="false" />
+            android:name=".MapsActivity"
+            android:exported="true" />
         <activity
             android:name=".ChatActivity"
             android:exported="false"

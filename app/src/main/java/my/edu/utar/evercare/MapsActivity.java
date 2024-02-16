@@ -1,41 +1,31 @@
 package my.edu.utar.evercare;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private PlacesViewModel viewModel;
+    private FusedLocationProviderClient fusedLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +43,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        viewModel = new ViewModelProvider(this).get(PlacesViewModel.class);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -63,101 +53,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        viewModel.getNearbyPlaces();
-        viewModel.getPlaces().observe(this, places -> {
-            for (Place place : places) {
-                mMap.addMarker(new MarkerOptions().position(new LatLng(place.getLat(), place.getLng())).title(place.getName()));
-            }
-        });
+        // Check for location permission
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Request location permission if not granted
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
+        }
+        // If permission is granted, get current location and place a marker
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Place marker at current location
+                            LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                            mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Your Location"));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15)); // Zoom level 15
+                        }
+                    }
+                });
     }
 
-    public static class PlacesViewModel extends ViewModel {
-
-        private MutableLiveData<List<Place>> places = new MutableLiveData<>();
-
-        public void getNearbyPlaces() {
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            executor.submit(() -> {
-                String apiKey = "AIzaSyCAssxxUDeUevzN8Wn5JazMRTjMhgdQTGA";
-                String urlString = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?" +
-                        "location=4.2105,101.9758" + // Malaysia coordinates
-                        "&radius=50000" + // 50km radius
-                        "&type=hospital" +
-                        "&key=" + apiKey;
-
-                try {
-                    URL url = new URL(urlString);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestMethod("GET");
-
-                    StringBuilder response = new StringBuilder();
-                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                    String inputLine;
-                    while ((inputLine = in.readLine()) != null) {
-                        response.append(inputLine);
-                    }
-                    in.close();
-
-                    List<Place> placesList = parsePlacesResponse(response.toString());
-                    places.postValue(placesList);
-
-                    // Log out all the places
-                    for (Place place : placesList) {
-                        Log.d("PlacesViewModel", "Place: " + place.getName() + " - Lat: " + place.getLat() + " - Lng: " + place.getLng());
-                    }
-
-                    connection.disconnect();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-        }
-
-        public LiveData<List<Place>> getPlaces() {
-            return places;
-        }
-
-        private List<Place> parsePlacesResponse(String response) {
-            List<Place> placesList = new ArrayList<>();
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                JSONArray resultsArray = jsonObject.getJSONArray("results");
-                for (int i = 0; i < resultsArray.length(); i++) {
-                    JSONObject placeObject = resultsArray.getJSONObject(i);
-                    JSONObject locationObject = placeObject.getJSONObject("geometry").getJSONObject("location");
-                    double lat = locationObject.getDouble("lat");
-                    double lng = locationObject.getDouble("lng");
-                    String name = placeObject.getString("name");
-                    placesList.add(new Place(name, lat, lng));
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+    // Handle location permission request result
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, call onMapReady again to get current location
+                onMapReady(mMap);
+            } else {
+                // Permission denied
+                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
             }
-            return placesList;
-        }
-    }
-
-    public static class Place {
-        private String name;
-        private double lat;
-        private double lng;
-
-        public Place(String name, double lat, double lng) {
-            this.name = name;
-            this.lat = lat;
-            this.lng = lng;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public double getLat() {
-            return lat;
-        }
-
-        public double getLng() {
-            return lng;
         }
     }
 }
