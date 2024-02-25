@@ -181,12 +181,16 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (DocumentSnapshot document : task.getResult()) {
+                                String elderlyName = document.getString("elderlyName");
                                 List<Map<String, Object>> medications = (List<Map<String, Object>>) document.get("medications");
                                 if (medications != null) {
                                     for (Map<String, Object> medication : medications) {
                                         String medicineName = (String) medication.get("medicineName");
                                         if (medicineName != null) {
-                                            medicineNames.add(medicineName);
+                                            // Append the elderly name before or after the medicine name
+                                            // Here, we append it before the medicine name
+                                            String modifiedMedicineName = elderlyName + " - " + medicineName;
+                                            medicineNames.add(modifiedMedicineName);
                                         }
                                     }
                                 }
@@ -201,6 +205,7 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
                     }
                 });
     }
+
 
     private void showChooseElderlyUserDialog() {
         List<String> elderlyUserNames = new ArrayList<>();

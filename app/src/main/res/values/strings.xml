@@ -34,6 +34,15 @@
     <string name="dropdown_menu_description">Dropdown Menu</string>
     <string name="select_medication">Select Medication</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="select_option">Please select an option:</string>
+    <string name="instruction_detail">
+    <ul>
+        <li><b>If you want to use this device as the camera</b> to monitor the elderly, click on the <b>camera button</b>.</li>
+        <br/>
+        <li><b>If you want to view the live video stream</b>, click on the <b>view button</b>.</li>
+    </ul>
+</string>
+
 
 
 

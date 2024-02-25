@@ -32,7 +32,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MedicalRecordItemAdapter extends RecyclerView.Adapter<MedicalRecordItemAdapter.ViewHolder> {
 
@@ -73,13 +76,6 @@ public class MedicalRecordItemAdapter extends RecyclerView.Adapter<MedicalRecord
                 .transform(new CircleCrop())
                 .into(holder.profileImageView);
 
-        holder.modifyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showModifyDialog(holder.itemView.getContext(), medicineNames);
-            }
-        });
-
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,7 +99,6 @@ public class MedicalRecordItemAdapter extends RecyclerView.Adapter<MedicalRecord
         TextView elderlyNameTextView;
         TextView medicationDetailsTextView;
         ImageView profileImageView;
-        ImageButton modifyButton;
         ImageButton deleteButton;
 
         public ViewHolder(View itemView) {
@@ -111,47 +106,95 @@ public class MedicalRecordItemAdapter extends RecyclerView.Adapter<MedicalRecord
             elderlyNameTextView = itemView.findViewById(R.id.elderly_name_textview);
             medicationDetailsTextView = itemView.findViewById(R.id.medications_textview);
             profileImageView = itemView.findViewById(R.id.profile_pic_imageview);
-            modifyButton = itemView.findViewById(R.id.modify_button);
             deleteButton = itemView.findViewById(R.id.delete_button);
         }
     }
 
-    private void showModifyDialog(Context context, List<String> medicineNames) {
-        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_modify_medical_record, null);
-        Spinner medicationSpinner = dialogView.findViewById(R.id.medication_spinner);
-        EditText dosageEditText = dialogView.findViewById(R.id.dosage_edittext);
+    private void deleteMedicalRecord(MedicalRecord medicalRecord, String selectedMedicationName, int position) {
+        if (medicalRecord == null) {
+            Log.e("MedicalRecordItemAdapter", "Medical record is null");
+            return;
+        }
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, medicineNames);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        medicationSpinner.setAdapter(spinnerAdapter);
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        CollectionReference medicalRecordsRef = firestore.collection("medical_records");
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Modify");
-        builder.setView(dialogView);
+        medicalRecordsRef.whereEqualTo("elderlyId", medicalRecord.getElderlyId())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                List<Map<String, Object>> medications = (List<Map<String, Object>>) document.get("medications");
+                                if (medications != null) {
+                                    for (Map<String, Object> medication : medications) {
+                                        String medicineName = (String) medication.get("medicineName");
+                                        if (medicineName != null && medicineName.equals(selectedMedicationName)) {
+                                            // Found the medication to delete
+                                            medications.remove(medication);
+                                            // Update the medical record in Firestore
+                                            document.getReference().update("medications", medications)
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            Log.d("MedicalRecordItemAdapter", "Medication deleted successfully");
+                                                            // Check if position is valid before removing item
+                                                            if (position >= 0 && position < medicalRecord.getMedications().size()) {
+                                                                medicalRecord.getMedications().remove(position);
+                                                                // If medications list is empty, remove the MedicalRecord object
+                                                                if (medicalRecord.getMedications().isEmpty()) {
+                                                                    medicalRecords.remove(medicalRecord);
+                                                                    notifyDataSetChanged();
+                                                                } else {
+                                                                    notifyItemRemoved(position);
+                                                                }
+                                                                // Refresh medical records from Firestore to ensure synchronization
+                                                                refreshMedicalRecords();
+                                                            } else {
+                                                                Log.e("MedicalRecordItemAdapter", "Invalid position: " + position);
+                                                            }
+                                                        }
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String selectedMedication = medicationSpinner.getSelectedItem().toString();
-                String dosage = dosageEditText.getText().toString();
-                // Call method to save updated medication details
-                saveUpdatedMedicationDetails(selectedMedication, dosage);
-                dialog.dismiss();
-            }
-        });
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        builder.create().show();
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Log.e("MedicalRecordItemAdapter", "Error deleting medication", e);
+                                                        }
+                                                    });
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            Log.e("MedicalRecordItemAdapter", "Error getting medical records", task.getException());
+                        }
+                    }
+                });
     }
 
-    private void saveUpdatedMedicationDetails(String selectedMedication, String dosage) {
+    private void refreshMedicalRecords() {
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        CollectionReference medicalRecordsRef = firestore.collection("medical_records");
 
+        medicalRecordsRef.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            medicalRecords.clear(); // Clear existing data
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                MedicalRecord medicalRecord = document.toObject(MedicalRecord.class);
+                                medicalRecords.add(medicalRecord);
+                            }
+                            notifyDataSetChanged(); // Notify adapter of the updated data
+                        } else {
+                            Log.e("MedicalRecordItemAdapter", "Error refreshing medical records", task.getException());
+                        }
+                    }
+                });
     }
 
 
@@ -170,7 +213,10 @@ public class MedicalRecordItemAdapter extends RecyclerView.Adapter<MedicalRecord
         builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String selectedMedication = medicationSpinner.getSelectedItem().toString();
+                // Retrieve the selected medication (without elderly name appended)
+                String selectedSpinnerItem = (String) medicationSpinner.getSelectedItem();
+                String[] parts = selectedSpinnerItem.split(" - ");
+                String selectedMedication = parts[1]; // The medication name is in the second part
                 deleteMedicalRecord(medicalRecord, selectedMedication, position);
                 dialog.dismiss();
             }
@@ -184,105 +230,6 @@ public class MedicalRecordItemAdapter extends RecyclerView.Adapter<MedicalRecord
         });
 
         builder.create().show();
-    }
-
-    private void deleteMedicalRecord(MedicalRecord medicalRecord, String selectedMedication, int position) {
-        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-        CollectionReference medicalRecordsRef = firestore.collection("medical_records");
-
-        List<String> medicalRecordIds = new ArrayList<>();
-
-        medicalRecordsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        // Access the document ID
-                        String medicalRecordId = document.getId();
-                        // Add the medicalRecordId to the list
-                        medicalRecordIds.add(medicalRecordId);
-                    }
-
-                    // Now that we have the list of medical record IDs, find the ID for the specific medical record
-                    String medicalRecordId = medicalRecordIds.get(position);
-                    // Use this medical record ID to delete the medication
-                    deleteMedicationFromMedicalRecord(medicalRecord, selectedMedication, position);
-                } else {
-                    Log.e("Firestore", "Error getting documents: ", task.getException());
-                }
-            }
-        });
-    }
-
-    private void deleteMedicationFromMedicalRecord(MedicalRecord medicalRecord, String selectedMedicationId, int position) {
-
-        if (medicalRecord == null || selectedMedicationId == null) {
-            Log.e("MedicalRecordItemAdapter", "Medical record or selected medication is null");
-            return;
-        }
-        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-        CollectionReference medicalRecordsRef = firestore.collection("medical_records");
-
-        List<String> medicalRecordIds = new ArrayList<>();
-
-        medicalRecordsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        // Access the document ID
-                        String medicalRecordId = document.getId();
-                        // Add the medicalRecordId to the list
-                        medicalRecordIds.add(medicalRecordId);
-                        Log.d("medicalRecordIds", "medicalRecordIds: " + medicalRecordIds.toString());
-                    }
-
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        String medicalRecordId = document.getId();
-                        CollectionReference medicationsRef = firestore.collection("medical_records").document(medicalRecordId).collection("medications");
-                        Log.d("Firestore", "medicationsRef: " + medicationsRef.getPath());
-
-                        medicationsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot medicationDoc : task.getResult()) {
-                                        String medicationId = medicationDoc.getId();
-                                        Log.d("medicationId", "medicationId: " + medicationId);
-                                        if (selectedMedicationId.equals(medicationId)) {
-                                            // Medication document with selectedMedicationId found
-                                            // Delete the medication document and update the UI
-                                            medicationDoc.getReference().delete()
-                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void aVoid) {
-                                                            Log.d("MedicalRecordItemAdapter", "Medication record deleted successfully");
-                                                            medicalRecord.getMedications().remove(position);
-                                                            notifyItemRemoved(position);
-                                                        }
-                                                    })
-                                                    .addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
-                                                            Log.e("MedicalRecordItemAdapter", "Error deleting medication record", e);
-                                                        }
-                                                    });
-                                            return; // Exit the loop after deleting the medication
-                                        }
-                                    }
-                                } else {
-                                    Log.e("Firestore", "Error getting medication documents: ", task.getException());
-                                }
-                            }
-                        });
-                    }
-
-
-                } else {
-                    Log.e("Firestore", "Error getting documents: ", task.getException());
-                }
-            }
-        });
     }
 
 
