@@ -62,6 +62,27 @@
             android:name=".MedicalRecordActivity"
             android:exported="false" />
         <activity
+            android:name=".StatisticsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".BloodGlucoseActivity"
+            android:exported="false" />
+        <activity
+            android:name=".BloodPressureActivity"
+            android:exported="false" />
+        <activity
+            android:name=".HealthActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SleepActivity"
+            android:exported="false" />
+        <activity
+            android:name=".HeartRateActivity"
+            android:exported="false" />
+        <activity
+            android:name=".WeightActivity"
+            android:exported="false" />
+        <activity
             android:name=".SignUpActivity"
             android:exported="false" />
         <activity

@@ -16,7 +16,7 @@
         android:textStyle="bold"
         android:textColor="@color/black"
         android:layout_marginTop="16dp"
-        android:layout_marginLeft="16dp"/>
+        android:layout_marginStart="16dp"/>
 
     <ImageButton
         android:id="@+id/dropdownButton"
@@ -34,54 +34,14 @@
         android:id="@+id/gridLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/textMenu"
         android:layout_centerInParent="true"
         android:visibility="visible"
         app:columnCount="2"
         app:orientation="horizontal"
         app:columnOrderPreserved="false"
-        app:rowCount="3">
-
-        <!-- Button 1 - Medical Record -->
-        <Button
-            android:id="@+id/btnMedicalRecord"
-            style="@style/GridButton"
-            android:text="Medical Record"
-            android:textSize="18dp"
-            android:textColor="@color/black"
-            android:drawableTop="@drawable/ic_medical_record"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            app:layout_gravity="center" />
-
-
-        <!-- Button 2 - Chat -->
-        <Button
-            android:id="@+id/btnChat"
-            style="@style/GridButton"
-            android:textColor="@color/black"
-            android:textSize="18dp"
-            android:text="Chat"
-            android:drawableTop="@drawable/ic_chat"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            app:layout_gravity="center" />
-
-        <!-- Button 3 - Pill Reminder -->
-        <Button
-            android:id="@+id/btnPillReminder"
-            style="@style/GridButton"
-            android:textColor="@color/black"
-            android:textSize="18dp"
-            android:text="Pill Reminder"
-            android:drawableTop="@drawable/ic_pill_reminder"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            app:strokeColor="@color/black"
-            app:strokeWidth="2dp"
-            app:layout_gravity="center" />
+        android:layout_marginTop="60dp"
+        app:rowCount="5">
 
         <!-- Button 4 - Emergency Help -->
         <Button
@@ -92,8 +52,50 @@
             android:text="Emergency Help"
             android:drawableTop="@drawable/ic_emergency_help"
             android:layout_marginTop="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:strokeColor="@color/black"
+            app:strokeWidth="2dp"
+            app:layout_gravity="center" />
+
+        <!-- Button 2 - Chat -->
+        <Button
+            android:id="@+id/btnChat"
+            style="@style/GridButton"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            android:text="Chat"
+            android:drawableTop="@drawable/ic_chat"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_gravity="center" />
+
+        <!-- Button 1 - Medical Record -->
+        <Button
+            android:id="@+id/btnMedicalRecord"
+            style="@style/GridButton"
+            android:text="Medical Record"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            android:drawableTop="@drawable/ic_medical_record"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_gravity="center" />
+
+
+        <!-- Button 3 - Pill Reminder -->
+        <Button
+            android:id="@+id/btnPillReminder"
+            style="@style/GridButton"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            android:text="Pill Reminder"
+            android:drawableTop="@drawable/ic_pill_reminder"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             app:strokeColor="@color/black"
             app:strokeWidth="2dp"
             app:layout_gravity="center" />
@@ -107,13 +109,27 @@
             android:text="Remote Monitoring"
             android:drawableTop="@drawable/ic_remote_monitoring"
             android:layout_marginTop="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             app:strokeColor="@color/black"
             app:strokeWidth="2dp"
             app:layout_gravity="center" />
-    </androidx.gridlayout.widget.GridLayout>
 
-    <!-- Additional views or buttons can be added here -->
+        <!-- Button 6 - Statistics -->
+        <Button
+            android:id="@+id/btnStatistics"
+            style="@style/GridButton"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            android:text="Statistics"
+            android:drawableTop="@drawable/ic_statistics"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:strokeColor="@color/black"
+            app:strokeWidth="2dp"
+            app:layout_gravity="center" />
+
+    </androidx.gridlayout.widget.GridLayout>
 
 </RelativeLayout>

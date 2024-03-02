@@ -24,7 +24,7 @@ import com.google.android.gms.tasks.Task;
 public class HomepageActivity extends AppCompatActivity {
 
     private GridLayout gridLayout;
-    private Button btnMedicalRecord, btnChat, btnPillReminder, btnEmergencyHelp, btnRemoteMonitoring;
+    private Button btnMedicalRecord, btnChat, btnPillReminder, btnEmergencyHelp, btnRemoteMonitoring, btnStatistics;
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -39,6 +39,7 @@ public class HomepageActivity extends AppCompatActivity {
         btnPillReminder = findViewById(R.id.btnPillReminder);
         btnEmergencyHelp = findViewById(R.id.btnEmergencyHelp);
         btnRemoteMonitoring = findViewById(R.id.btnRemoteMonitoring);
+        btnStatistics = findViewById(R.id.btnStatistics);
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         String currentUserId = auth.getCurrentUser().getUid();
@@ -126,6 +127,14 @@ public class HomepageActivity extends AppCompatActivity {
                     // Show a message or dialog indicating that this feature is not available
                     showFeatureNotAvailableMessage("Remote Monitoring");
                 }
+            }
+        });
+
+        btnStatistics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Add logic to navigate to Statistics activity
+                startActivity(new Intent(HomepageActivity.this, StatisticsActivity.class));
             }
         });
 

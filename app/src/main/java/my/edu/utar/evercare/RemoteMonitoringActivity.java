@@ -209,6 +209,8 @@ public class RemoteMonitoringActivity extends AppCompatActivity implements Surfa
     private void storeLiveVideoStream() {
         // Assuming generateVideoUri() method generates the URI of the recorded video
         Uri videoUri = generateVideoUri();
+        Log.d(TAG, "Generated video URI: " + videoUri);
+
 
         if (videoUri != null) {
             StorageReference videoRef = FirebaseStorage.getInstance().getReference().child("videos").child("video1.mp4");

@@ -1,6 +1,7 @@
 package my.edu.utar.evercare;
 
 public class PillReminder {
+    private String documentId;
     private String pillName;
     private int dosage;
     private String frequency;
@@ -19,6 +20,14 @@ public class PillReminder {
         this.reminderDate = reminderDate;
         this.reminderTime = reminderTime;
         this.elderlyUser = elderlyUser;
+    }
+
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
     }
 
     public String getPillName() {

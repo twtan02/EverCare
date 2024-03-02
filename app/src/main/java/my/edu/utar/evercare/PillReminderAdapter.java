@@ -4,23 +4,31 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
-import java.util.Locale;
 
 public class PillReminderAdapter extends RecyclerView.Adapter<PillReminderAdapter.PillReminderViewHolder> {
 
     private List<PillReminder> pillReminders;
     private Context context;
+    private OnDeleteClickListener onDeleteClickListener;
+
+    public interface OnDeleteClickListener {
+        void onDeleteClick(PillReminder pillReminder);
+    }
 
     public PillReminderAdapter(List<PillReminder> pillReminders, Context context) {
         this.pillReminders = pillReminders;
         this.context = context;
+    }
+
+    public void setOnDeleteClickListener(OnDeleteClickListener listener) {
+        this.onDeleteClickListener = listener;
     }
 
     @NonNull
@@ -30,11 +38,21 @@ public class PillReminderAdapter extends RecyclerView.Adapter<PillReminderAdapte
         return new PillReminderViewHolder(view);
     }
 
-
     @Override
     public void onBindViewHolder(PillReminderViewHolder holder, int position) {
         PillReminder pillReminder = pillReminders.get(position);
         holder.bind(pillReminder);
+
+        // Set onClickListener for delete button
+        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Call the onDeleteClick method of the listener passing the pillReminder
+                if (onDeleteClickListener != null) {
+                    onDeleteClickListener.onDeleteClick(pillReminder);
+                }
+            }
+        });
     }
 
     @Override
@@ -44,6 +62,7 @@ public class PillReminderAdapter extends RecyclerView.Adapter<PillReminderAdapte
 
     public class PillReminderViewHolder extends RecyclerView.ViewHolder {
         TextView tvPillName, tvDosage, tvFrequency, tvReminderDate, tvReminderTime, tvElderlyUser;
+        ImageButton btnDelete;
 
         public PillReminderViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -53,6 +72,7 @@ public class PillReminderAdapter extends RecyclerView.Adapter<PillReminderAdapte
             tvReminderDate = itemView.findViewById(R.id.tv_reminder_date);
             tvReminderTime = itemView.findViewById(R.id.tv_reminder_time);
             tvElderlyUser = itemView.findViewById(R.id.tv_elderly_user);
+            btnDelete = itemView.findViewById(R.id.btn_delete);
         }
 
         public void bind(PillReminder pillReminder) {

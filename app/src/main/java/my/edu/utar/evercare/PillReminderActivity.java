@@ -29,6 +29,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -87,6 +89,18 @@ public class PillReminderActivity extends AppCompatActivity {
                 showAddPillReminderDialog();
             }
         });
+
+        pillReminderAdapter.setOnDeleteClickListener(new PillReminderAdapter.OnDeleteClickListener() {
+            @Override
+            public void onDeleteClick(PillReminder pillReminder) {
+                if (pillReminder.getDocumentId() != null) {
+                    deletePillReminderFromFirestore(pillReminder);
+                } else {
+                    Log.e("PillReminderActivity", "Document ID is null");
+                }
+            }
+        });
+
     }
 
     private void fetchPillRemindersFromFirestore() {
@@ -100,6 +114,7 @@ public class PillReminderActivity extends AppCompatActivity {
                             for (DocumentSnapshot document : task.getResult()) {
                                 PillReminder pillReminder = document.toObject(PillReminder.class);
                                 if (pillReminder != null) {
+                                    pillReminder.setDocumentId(document.getId()); // Set document ID
                                     pillReminders.add(pillReminder);
                                 }
                             }
@@ -110,6 +125,7 @@ public class PillReminderActivity extends AppCompatActivity {
                     }
                 });
     }
+
 
     private void showAddPillReminderDialog() {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.activity_add_pill_reminder, null);
@@ -148,7 +164,7 @@ public class PillReminderActivity extends AppCompatActivity {
         builder.setTitle("Add Pill Reminder");
         builder.setView(dialogView);
 
-        builder.setPositiveButton("Add", new DialogInterface.OnClickListener()  {
+        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String pillName = pillNameEditText.getText().toString();
@@ -156,16 +172,21 @@ public class PillReminderActivity extends AppCompatActivity {
                 String frequency = frequencySpinner.getSelectedItem().toString();
                 String reminderDate = editReminderDate.getText().toString();
                 String reminderTime = editReminderTime.getText().toString();
-                String selectedElderlyUser = spinnerElderly.getSelectedItem().toString();
+                String selectedElderlyUser = spinnerElderly.getSelectedItem().toString(); // Get the selected elderly user
 
-                int dosage = Integer.parseInt(dosageString);
+                int dosage = 0;
+                if (!dosageString.isEmpty()) {
+                    dosage = Integer.parseInt(dosageString);
+                } else {
+                    Toast.makeText(PillReminderActivity.this, "Invalid dosage", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 PillReminder newPillReminder = new PillReminder(pillName, dosage, frequency, reminderDate, reminderTime, selectedElderlyUser);
-                pillReminders.add(newPillReminder);
-                pillReminderAdapter.notifyDataSetChanged();
                 addPillReminderToFirestore(newPillReminder);
             }
         });
+
 
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
@@ -186,18 +207,26 @@ public class PillReminderActivity extends AppCompatActivity {
 
     private void addPillReminderToFirestore(PillReminder pillReminder) {
         firestore.collection("pill_reminders")
-                .add(pillReminder)
+                .add(pillReminder)  // Using add() to generate unique document ID
                 .addOnSuccessListener(documentReference -> {
-                    Log.d("PillReminderActivity", "Pill reminder added with ID: " + documentReference.getId());
+                    String documentId = documentReference.getId(); // Get the generated document ID
+                    Log.d("PillReminderActivity", "Pill reminder added with ID: " + documentId);
+                    // Set the document ID for the added pill reminder
+                    pillReminder.setDocumentId(documentId);
+                    // Notify adapter of data change
+                    pillReminders.add(pillReminder);
+                    pillReminderAdapter.notifyDataSetChanged();
                     Toast.makeText(this, "Pill reminder added successfully", Toast.LENGTH_SHORT).show();
                     // Schedule notification
-                    scheduleNotification(pillReminder);
+                    scheduleNotification(pillReminder, documentId); // Pass document ID to scheduleNotification
                 })
                 .addOnFailureListener(e -> {
                     Log.e("PillReminderActivity", "Error adding pill reminder", e);
                     Toast.makeText(this, "Error adding pill reminder", Toast.LENGTH_SHORT).show();
                 });
     }
+
+
 
     private void showDatePicker(View view) {
         TextView editReminderDate = view.findViewById(R.id.edit_reminder_date);
@@ -285,17 +314,18 @@ public class PillReminderActivity extends AppCompatActivity {
     }
 
 
-    private int calculateNotificationId(String reminderDate, String reminderTime) {
-        String combinedDateTime = reminderDate + " " + reminderTime;
-        return combinedDateTime.hashCode();
+    private int calculateNotificationId(String documentId) {
+        // Use document ID directly as notification ID
+        return documentId.hashCode();
     }
 
-    private void scheduleNotification(PillReminder pillReminder) {
+
+    private void scheduleNotification(PillReminder pillReminder, String documentId) {
         // Get the reminder date and time
         Calendar reminderDateTime = getReminderDateTime(pillReminder.getReminderDate(), pillReminder.getReminderTime());
 
         // Calculate the notification ID
-        int notificationId = calculateNotificationId(pillReminder.getReminderDate(), pillReminder.getReminderTime());
+        int notificationId = calculateNotificationId(documentId); // Use document ID for notification ID
 
         // Create an alarm intent
         Intent notificationIntent = new Intent(this, NotificationReceiver.class);
@@ -311,6 +341,58 @@ public class PillReminderActivity extends AppCompatActivity {
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, reminderDateTime.getTimeInMillis(), pendingIntent);
         }
     }
+
+    private void deletePillReminderFromFirestore(PillReminder pillReminder) {
+        String documentId = pillReminder.getDocumentId();
+        if (documentId != null) {
+            // Cancel the scheduled notification for this pill reminder
+            cancelNotification(pillReminder);
+
+            // Delete the pill reminder document from Firestore using its document ID
+            firestore.collection("pill_reminders")
+                    .document(documentId)
+                    .delete()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // Pill reminder deleted successfully
+                            Toast.makeText(PillReminderActivity.this, "Pill reminder deleted", Toast.LENGTH_SHORT).show();
+                            // Remove the deleted pill reminder from the list
+                            pillReminders.remove(pillReminder);
+                            // Notify the adapter of the removal
+                            pillReminderAdapter.notifyDataSetChanged();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // Failed to delete pill reminder
+                            Log.e("PillReminderActivity", "Error deleting pill reminder", e);
+                            Toast.makeText(PillReminderActivity.this, "Failed to delete pill reminder", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else {
+            // Handle the case where the document ID is null
+            Log.e("PillReminderActivity", "Error: Document ID is null");
+            Toast.makeText(PillReminderActivity.this, "Error: Document ID is null", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void cancelNotification(PillReminder pillReminder) {
+        // Calculate the notification ID based on the document ID
+        int notificationId = calculateNotificationId(pillReminder.getDocumentId());
+
+        // Create an intent for the scheduled notification
+        Intent notificationIntent = new Intent(this, NotificationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, notificationId, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        // Cancel the scheduled notification
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager != null) {
+            alarmManager.cancel(pendingIntent);
+        }
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
