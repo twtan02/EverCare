@@ -4,6 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CalendarAdapter">
+    tools:context=".DropDownMenu.DailySchedule.CalendarAdapter">
 
 </androidx.constraintlayout.widget.ConstraintLayout>

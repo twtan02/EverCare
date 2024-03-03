@@ -2,7 +2,6 @@ package my.edu.utar.evercare;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -11,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.gridlayout.widget.GridLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -19,6 +17,17 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.android.gms.tasks.Task;
+
+import my.edu.utar.evercare.Chat.ChatActivity;
+import my.edu.utar.evercare.DropDownMenu.ContactUs.ContactUsActivity;
+import my.edu.utar.evercare.DropDownMenu.DailySchedule.DailyScheduleActivity;
+import my.edu.utar.evercare.DropDownMenu.FontSize.FontSizeActivity;
+import my.edu.utar.evercare.DropDownMenu.Profile.ProfileActivity;
+import my.edu.utar.evercare.EmergencyHelp.MapsActivity;
+import my.edu.utar.evercare.MedicalRecord.MedicalRecordActivity;
+import my.edu.utar.evercare.PillReminder.PillReminderActivity;
+import my.edu.utar.evercare.RemoteMonitoring.RemoteMonitoringActivity;
+import my.edu.utar.evercare.Statistics.StatisticsActivity;
 
 
 public class HomepageActivity extends AppCompatActivity {

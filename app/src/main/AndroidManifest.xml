@@ -24,63 +24,63 @@
         android:theme="@style/AppTheme" >
 
         <receiver
-            android:name=".NotificationReceiver"
+            android:name=".PillReminder.NotificationReceiver"
             android:enabled="true"
             android:exported="true" />
 
         <activity
-            android:name=".ScheduleDetailActivity"
+            android:name=".DropDownMenu.DailySchedule.ScheduleDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".ContactUsActivity"
+            android:name=".DropDownMenu.ContactUs.ContactUsActivity"
             android:exported="false" />
         <activity
-            android:name=".DailyScheduleActivity"
+            android:name=".DropDownMenu.DailySchedule.DailyScheduleActivity"
             android:exported="false" />
         <activity
-            android:name=".FontSizeActivity"
+            android:name=".DropDownMenu.FontSize.FontSizeActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".ProfileActivity"
+            android:name=".DropDownMenu.Profile.ProfileActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".RemoteMonitoringActivity"
+            android:name=".RemoteMonitoring.RemoteMonitoringActivity"
             android:exported="false"
             android:label="@string/title_activity_remote_monitoring" />
         <activity
-            android:name=".MapsActivity"
+            android:name=".EmergencyHelp.MapsActivity"
             android:exported="true" />
         <activity
-            android:name=".ChatActivity"
+            android:name=".Chat.ChatActivity"
             android:exported="false"
             android:label="@string/title_activity_chat" />
         <activity
-            android:name=".PillReminderActivity"
+            android:name=".PillReminder.PillReminderActivity"
             android:exported="false" />
         <activity
-            android:name=".MedicalRecordActivity"
+            android:name=".MedicalRecord.MedicalRecordActivity"
             android:exported="false" />
         <activity
-            android:name=".StatisticsActivity"
+            android:name=".Statistics.StatisticsActivity"
             android:exported="false" />
         <activity
-            android:name=".BloodGlucoseActivity"
+            android:name=".Statistics.BloodGlucose.BloodGlucoseActivity"
             android:exported="false" />
         <activity
-            android:name=".BloodPressureActivity"
+            android:name=".Statistics.BloodPressure.BloodPressureActivity"
             android:exported="false" />
         <activity
-            android:name=".HealthActivity"
+            android:name=".Statistics.HealthActivity.HealthActivity"
             android:exported="false" />
         <activity
-            android:name=".SleepActivity"
+            android:name=".Statistics.Sleep.SleepActivity"
             android:exported="false" />
         <activity
-            android:name=".HeartRateActivity"
+            android:name=".Statistics.HeartRate.HeartRateActivity"
             android:exported="false" />
         <activity
-            android:name=".WeightActivity"
+            android:name=".Statistics.Weight.WeightActivity"
             android:exported="false" />
         <activity
             android:name=".SignUpActivity"

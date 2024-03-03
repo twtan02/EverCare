@@ -47,6 +47,4 @@ public abstract class BaseActivity extends AppCompatActivity {
         // This method should be implemented in each activity to update their font size.
     }
 
-    // Rest of your BaseActivity code...
-    // ...
 }
