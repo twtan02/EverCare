@@ -102,22 +102,27 @@ public class StatisticsActivity extends AppCompatActivity implements StatisticsP
                 break;
             case "Blood Pressure":
                 intent = new Intent(StatisticsActivity.this, BloodPressureActivity.class);
+                intent.putExtra("userID", currentUserId);
                 startActivity(intent);
                 break;
             case "Weight":
                 intent = new Intent(StatisticsActivity.this, WeightActivity.class);
+                intent.putExtra("userID", currentUserId);
                 startActivity(intent);
                 break;
             case "Heart Rate":
                 intent = new Intent(StatisticsActivity.this, HeartRateActivity.class);
+                intent.putExtra("userID", currentUserId);
                 startActivity(intent);
                 break;
             case "Activity":
                 intent = new Intent(StatisticsActivity.this, HealthActivity.class);
+                intent.putExtra("userID", currentUserId);
                 startActivity(intent);
                 break;
             case "Sleep":
                 intent = new Intent(StatisticsActivity.this, SleepActivity.class);
+                intent.putExtra("userID", currentUserId);
                 startActivity(intent);
                 break;
         }
