@@ -1,24 +1,28 @@
 package my.edu.utar.evercare.Statistics.BloodGlucose;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import my.edu.utar.evercare.R;
+import my.edu.utar.evercare.Statistics.GraphActivity;
 
 public class BloodGlucoseActivity extends AppCompatActivity {
 
@@ -37,11 +42,24 @@ public class BloodGlucoseActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private BloodGlucoseAdapter adapter;
     private List<BloodGlucoseData> bloodGlucoseList;
+    private List<Float> dataPoints;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bloodglucose);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setCustomView(R.layout.custom_toolbar_title);
+
+        TextView customTitleTextView = findViewById(R.id.customToolbarTitle);
+        customTitleTextView.setText("Blood Glucose");
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Initialize Firestore
         db = FirebaseFirestore.getInstance();
@@ -67,9 +85,6 @@ public class BloodGlucoseActivity extends AppCompatActivity {
         // Initialize ArrayList to hold blood glucose data
         bloodGlucoseList = new ArrayList<>();
 
-        // Initialize Firestore
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
         // Initialize adapter
         adapter = new BloodGlucoseAdapter(bloodGlucoseList); // Initialize the adapter here
 
@@ -81,7 +96,7 @@ public class BloodGlucoseActivity extends AppCompatActivity {
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
+                        for (DocumentSnapshot document : task.getResult()) {
                             // Retrieve blood glucose data from Firestore
                             String glucoseLevel = document.getString("blood_glucose_level");
                             Date date = document.getDate("date"); // Assuming date is stored as a Date object in Firestore
@@ -99,7 +114,7 @@ public class BloodGlucoseActivity extends AppCompatActivity {
                     } else {
                         // Log error or show error message if retrieval fails
                         Log.d("Firestore", "Error getting documents: ", task.getException());
-                        Toast.makeText(BloodGlucoseActivity.this, "Failed to retrieve blood glucose data", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Failed to retrieve blood glucose data", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -110,9 +125,64 @@ public class BloodGlucoseActivity extends AppCompatActivity {
                 onSaveButtonClick(v);
             }
         });
+
+        ImageButton showGraphButton = findViewById(R.id.showGraphButton);
+        dataPoints = new ArrayList<>();
+
+        // Inside the onClickListener for showGraphButton
+        showGraphButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clearDataPointsIfNeeded();
+                // Retrieve blood glucose data from Firestore
+                db.collection("statistics")
+                        .document(currentUserID) // Assuming currentUserID is available
+                        .collection("blood_glucose")
+                        .orderBy("date", Query.Direction.ASCENDING)
+                        .get()
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                for (DocumentSnapshot document : task.getResult()) {
+                                    // Retrieve blood glucose data from Firestore
+                                    String glucoseLevelStr = document.getString("blood_glucose_level");
+                                    if (glucoseLevelStr != null) {
+                                        // Extract numeric part of the blood glucose level string
+                                        String numericPart = extractNumericPart(glucoseLevelStr);
+                                        if (numericPart != null) {
+                                            // Convert the blood glucose level to a numeric type
+                                            try {
+                                                Float glucoseLevel = Float.parseFloat(numericPart);
+                                                dataPoints.add(glucoseLevel);
+                                            } catch (NumberFormatException e) {
+                                                Log.e("BloodGlucoseActivity", "Invalid blood glucose level format", e);
+                                            }
+                                        }
+                                    }
+                                }
+                                // Pass dataPoints to GraphActivity when showGraphButton is clicked
+                                Intent intent = new Intent(BloodGlucoseActivity.this, GraphActivity.class);
+                                float[] dataArray = new float[dataPoints.size()];
+                                for (int i = 0; i < dataPoints.size(); i++) {
+                                    dataArray[i] = dataPoints.get(i);
+                                }
+                                intent.putExtra("dataPoints", dataArray);
+                                intent.putExtra("title", "Line Graph for Blood Glucose");
+                                startActivity(intent);
+                            } else {
+                                // Log error or show error message if retrieval fails
+                                Log.d("Firestore", "Error getting documents: ", task.getException());
+                                Toast.makeText(BloodGlucoseActivity.this, "Failed to retrieve blood glucose data", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+        });
     }
 
-
+    // Method to extract numeric part of blood glucose level string
+    private String extractNumericPart(String glucoseLevelStr) {
+        // Remove all non-numeric characters except the decimal point
+        return glucoseLevelStr.replaceAll("[^\\d.]", "");
+    }
 
     // Method to handle button click to save blood glucose level
     public void onSaveButtonClick(View view) {
@@ -169,4 +239,18 @@ public class BloodGlucoseActivity extends AppCompatActivity {
                 });
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void clearDataPointsIfNeeded() {
+        if (!dataPoints.isEmpty()) {
+            dataPoints.clear();
+        }
+    }
 }
