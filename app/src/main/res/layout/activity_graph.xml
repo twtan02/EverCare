@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="4dp"
+        android:theme="@style/ToolbarTheme" />
+
+    <!-- Custom Toolbar Title -->
+    <TextView
+        android:id="@+id/customToolbarTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <!-- Graph Title -->
+    <TextView
+        android:id="@+id/graphTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/customToolbarTitle"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="100dp"
+        android:textColor="@android:color/black"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <my.edu.utar.evercare.Statistics.LineGraphView
+        android:id="@+id/graphView"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:layout_below="@id/graphTitle"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/round_background_white" />
+
+</RelativeLayout>

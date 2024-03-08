@@ -3,8 +3,11 @@ package my.edu.utar.evercare.Statistics;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -38,6 +41,18 @@ public class StatisticsActivity extends AppCompatActivity implements StatisticsP
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setCustomView(R.layout.custom_toolbar_title);
+
+        TextView customTitleTextView = findViewById(R.id.customToolbarTitle);
+        customTitleTextView.setText("Statistics");
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Initialize viewPagerItemArrayList
         viewPagerItemArrayList = new ArrayList<>();
@@ -126,5 +141,14 @@ public class StatisticsActivity extends AppCompatActivity implements StatisticsP
                 startActivity(intent);
                 break;
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -4,16 +4,64 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="4dp"
+        android:theme="@style/ToolbarTheme"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Custom Toolbar Title -->
+    <TextView
+        android:id="@+id/customToolbarTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Graph Section -->
+    <RelativeLayout
+        android:id="@+id/graphContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/round_background_white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone">
+
+        <!-- CustomGraphView to display the graph -->
+        <my.edu.utar.evercare.Statistics.LineGraphView
+            android:id="@+id/customGraphView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+
     <!-- Heart Rate Entry Section -->
     <RelativeLayout
         android:id="@+id/heartRateEntryLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/round_background_white"
         android:elevation="4dp"
         android:padding="16dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/customToolbarTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -35,7 +83,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter heart rate"
-            android:inputType="numberDecimal"
+            android:inputType="number"
             android:textColor="@android:color/black"
             android:layout_below="@id/titleTextView"
             android:layout_marginTop="16dp"/>
@@ -57,6 +105,15 @@
                 android:textSize="16sp"
                 android:textColor="@android:color/black"/>
 
+            <!-- ImageButton to show the graph -->
+            <ImageButton
+                android:id="@+id/showGraphButton"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_graph"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_marginRight="10dp"/>
+
             <!-- Save Button -->
             <ImageButton
                 android:id="@+id/saveButton"
@@ -66,7 +123,6 @@
                 android:src="@drawable/ic_save"/>
 
         </LinearLayout>
-
     </RelativeLayout>
 
     <!-- Past History Section -->

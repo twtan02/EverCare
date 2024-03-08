@@ -51,9 +51,9 @@ public class HeartRateAdapter extends RecyclerView.Adapter<HeartRateAdapter.View
         }
 
         public void bind(HeartRateData heartRateData) {
-            heartRateLevelTextView.setText(heartRateData.getHeartRateLevel());
+            heartRateLevelTextView.setText(heartRateData.getHeartRate());
 
-            // Format the date and time
+            // Format the date
             SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd.MM.yy HH:mm", Locale.getDefault());
             String formattedDateTime = sdf.format(heartRateData.getDate());
 

@@ -83,6 +83,9 @@
             android:name=".Statistics.Weight.WeightActivity"
             android:exported="false" />
         <activity
+            android:name=".Statistics.GraphActivity"
+            android:exported="false" />
+        <activity
             android:name=".SignUpActivity"
             android:exported="false" />
         <activity
