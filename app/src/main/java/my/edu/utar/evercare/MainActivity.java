@@ -1,6 +1,7 @@
 package my.edu.utar.evercare;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -69,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
                 return false; // Return false if the event has not been handled
             }
         });
-
     }
 
     private void isValidLogin(String email, String password) {

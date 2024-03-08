@@ -21,19 +21,37 @@
             android:layout_height="wrap_content"
             android:padding="16dp">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/ivimage"
-                android:layout_width="250dp"
-                android:layout_height="250dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/default_profile_image"
-                android:layout_centerHorizontal="true"/>
+            <RelativeLayout
+                android:id="@+id/profileLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerVertical="true">
+
+                <!-- PieChartView -->
+                <my.edu.utar.evercare.Statistics.PieChartView
+                    android:id="@+id/pieChartView"
+                    android:layout_width="280dp"
+                    android:layout_height="280dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true" />
+
+                <!-- Profile Picture -->
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/ivimage"
+                    android:layout_width="250dp"
+                    android:layout_height="250dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/default_profile_image"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"/>
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/tvHeading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/ivimage"
+                android:layout_below="@id/profileLayout"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
                 android:text="Elderly Name"

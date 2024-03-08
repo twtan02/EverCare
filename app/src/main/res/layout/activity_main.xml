@@ -43,6 +43,7 @@
         android:layout_marginTop="60dp"
         app:rowCount="5">
 
+        <!-- Define buttons as you have in your existing layout -->
         <!-- Button 4 - Emergency Help -->
         <Button
             android:id="@+id/btnEmergencyHelp"
@@ -129,6 +130,7 @@
             app:strokeColor="@color/black"
             app:strokeWidth="2dp"
             app:layout_gravity="center" />
+
 
     </androidx.gridlayout.widget.GridLayout>
 

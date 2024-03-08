@@ -17,25 +17,19 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import my.edu.utar.evercare.R;
 import my.edu.utar.evercare.Statistics.BloodGlucose.BloodGlucoseActivity;
-import my.edu.utar.evercare.Statistics.BloodGlucose.BloodGlucoseAdapter;
-import my.edu.utar.evercare.Statistics.BloodGlucose.BloodGlucoseData;
 import my.edu.utar.evercare.Statistics.BloodPressure.BloodPressureActivity;
 import my.edu.utar.evercare.Statistics.HealthActivity.HealthActivity;
 import my.edu.utar.evercare.Statistics.HeartRate.HeartRateActivity;
-import my.edu.utar.evercare.R;
 import my.edu.utar.evercare.Statistics.Sleep.SleepActivity;
 import my.edu.utar.evercare.Statistics.Weight.WeightActivity;
 
 public class StatisticsActivity extends AppCompatActivity implements StatisticsPagerAdapter.OnItemClickListener {
 
     ViewPager2 viewPager2;
-    ArrayList<ViewPagerItem> viewPagerItemArrayList;
     StatisticsPagerAdapter vpAdapter;
     private String currentUserId;
-    private RecyclerView recyclerView;
-    private BloodGlucoseAdapter adapter;
-    private List<BloodGlucoseData> bloodGlucoseList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,37 +48,18 @@ public class StatisticsActivity extends AppCompatActivity implements StatisticsP
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Initialize viewPagerItemArrayList
-        viewPagerItemArrayList = new ArrayList<>();
+        viewPager2 = findViewById(R.id.viewpager);
 
         // Retrieve data from Firestore and populate viewPagerItemArrayList
         retrieveDataFromFirestore();
-
-        // Create adapter with viewPagerItemArrayList
-        vpAdapter = new StatisticsPagerAdapter(viewPagerItemArrayList, this);
-
-        // Set adapter to ViewPager2
-        viewPager2 = findViewById(R.id.viewpager);
-        viewPager2.setAdapter(vpAdapter);
-
-        // Register onPageChangeCallback for ViewPager2
-        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                // Update currentUserId when the page changes
-                currentUserId = viewPagerItemArrayList.get(position).getUserId();
-
-            }
-        });
     }
-
 
     private void retrieveDataFromFirestore() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("elderly_users")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
+                    ArrayList<ViewPagerItem> viewPagerItemArrayList = new ArrayList<>();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         String profileImageUrl = document.getString("profileImageUrl");
                         String username = document.getString("username");
@@ -98,13 +73,16 @@ public class StatisticsActivity extends AppCompatActivity implements StatisticsP
                             currentUserId = userId;
                         }
                     }
-                    vpAdapter = new StatisticsPagerAdapter(viewPagerItemArrayList, this);
+
+                    // Set adapter to ViewPager2
+                    vpAdapter = new StatisticsPagerAdapter(viewPagerItemArrayList, StatisticsActivity.this);
                     viewPager2.setAdapter(vpAdapter);
                 })
                 .addOnFailureListener(e -> {
                     Log.e("Firestore", "Error getting documents: ", e);
                 });
     }
+
 
     @Override
     public void onItemClick(String healthRecordType) {

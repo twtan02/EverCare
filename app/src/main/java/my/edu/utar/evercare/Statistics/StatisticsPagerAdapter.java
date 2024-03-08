@@ -1,5 +1,8 @@
 package my.edu.utar.evercare.Statistics;
 
+import static java.security.AccessController.getContext;
+
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import java.util.ArrayList;
@@ -18,9 +22,8 @@ public class StatisticsPagerAdapter extends RecyclerView.Adapter<StatisticsPager
     private ArrayList<ViewPagerItem> viewPagerItemArrayList;
     private OnItemClickListener listener;
 
-    // Define interface to handle item click events
     public interface OnItemClickListener {
-        void onItemClick(String healthRecordType); // Pass the type of health record clicked
+        void onItemClick(String healthRecordType);
     }
 
     public StatisticsPagerAdapter(ArrayList<ViewPagerItem> viewPagerItemArrayList, OnItemClickListener listener) {
@@ -49,61 +52,21 @@ public class StatisticsPagerAdapter extends RecyclerView.Adapter<StatisticsPager
         holder.tvDesc.setText(viewPagerItem.getDateOfBirth());
 
         // Set click listeners for each health record linear layout
-        holder.imageButtonBloodGlucose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) {
-                    listener.onItemClick("Blood Glucose"); // Pass the type of health record clicked
-                }
-            }
-        });
+        holder.imageButtonBloodGlucose.setOnClickListener(v -> onItemClick("Blood Glucose"));
+        holder.imageButtonBloodPressure.setOnClickListener(v -> onItemClick("Blood Pressure"));
+        holder.imageButtonWeight.setOnClickListener(v -> onItemClick("Weight"));
+        holder.imageButtonHeartRate.setOnClickListener(v -> onItemClick("Heart Rate"));
+        holder.imageButtonActivity.setOnClickListener(v -> onItemClick("Activity"));
+        holder.imageButtonSleep.setOnClickListener(v -> onItemClick("Sleep"));
 
-        holder.imageButtonBloodPressure.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) {
-                    listener.onItemClick("Blood Pressure"); // Pass the type of health record clicked
-                }
-            }
-        });
+        int[][] segmentColors = {{Color.parseColor("#FFA500")}, {Color.TRANSPARENT}}; // You can define your own colors here
 
-        holder.imageButtonWeight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) {
-                    listener.onItemClick("Weight"); // Pass the type of health record clicked
-                }
-            }
-        });
-
-        holder.imageButtonHeartRate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) {
-                    listener.onItemClick("Heart Rate"); // Pass the type of health record clicked
-                }
-            }
-        });
-
-        holder.imageButtonActivity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) {
-                    listener.onItemClick("Activity"); // Pass the type of health record clicked
-                }
-            }
-        });
-
-        holder.imageButtonSleep.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) {
-                    listener.onItemClick("Sleep"); // Pass the type of health record clicked
-                }
-            }
-        });
-
+        // Style the PieChartView with more colors
+        holder.pieChartView.setStrokeWidth(4); // Example stroke width
+        holder.pieChartView.setStrokeColor(0xFF000000); // Example stroke color
+        holder.pieChartView.setData(new float[]{75, 25}, segmentColors);
     }
+
 
     @Override
     public int getItemCount() {
@@ -119,6 +82,7 @@ public class StatisticsPagerAdapter extends RecyclerView.Adapter<StatisticsPager
         LinearLayout imageButtonHeartRate;
         LinearLayout imageButtonActivity;
         LinearLayout imageButtonSleep;
+        PieChartView pieChartView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -131,6 +95,13 @@ public class StatisticsPagerAdapter extends RecyclerView.Adapter<StatisticsPager
             imageButtonHeartRate = itemView.findViewById(R.id.imageButtonHeartRate);
             imageButtonActivity = itemView.findViewById(R.id.imageButtonActivity);
             imageButtonSleep = itemView.findViewById(R.id.imageButtonSleep);
+            pieChartView = itemView.findViewById(R.id.pieChartView);
+        }
+    }
+
+    private void onItemClick(String healthRecordType) {
+        if (listener != null) {
+            listener.onItemClick(healthRecordType);
         }
     }
 }
