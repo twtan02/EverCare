@@ -8,14 +8,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import my.edu.utar.evercare.R;
 import my.edu.utar.evercare.Statistics.BloodGlucose.BloodGlucoseActivity;
@@ -75,49 +73,64 @@ public class StatisticsActivity extends AppCompatActivity implements StatisticsP
                     }
 
                     // Set adapter to ViewPager2
-                    vpAdapter = new StatisticsPagerAdapter(viewPagerItemArrayList, StatisticsActivity.this);
+                    vpAdapter = new StatisticsPagerAdapter(viewPagerItemArrayList, this, currentUserId);
                     viewPager2.setAdapter(vpAdapter);
+
                 })
                 .addOnFailureListener(e -> {
                     Log.e("Firestore", "Error getting documents: ", e);
                 });
     }
 
-
     @Override
     public void onItemClick(String healthRecordType) {
-        Intent intent;
-        switch (healthRecordType) {
-            case "Blood Glucose":
-                intent = new Intent(StatisticsActivity.this, BloodGlucoseActivity.class);
-                intent.putExtra("userID", currentUserId);
-                startActivity(intent);
-                break;
-            case "Blood Pressure":
-                intent = new Intent(StatisticsActivity.this, BloodPressureActivity.class);
-                intent.putExtra("userID", currentUserId);
-                startActivity(intent);
-                break;
-            case "Blood Lipids":
-                intent = new Intent(StatisticsActivity.this, BloodLipidsActivity.class);
-                intent.putExtra("userID", currentUserId);
-                startActivity(intent);
-                break;
-            case "Heart Rate":
-                intent = new Intent(StatisticsActivity.this, HeartRateActivity.class);
-                intent.putExtra("userID", currentUserId);
-                startActivity(intent);
-                break;
-            case "Weight":
-                intent = new Intent(StatisticsActivity.this, WeightActivity.class);
-                intent.putExtra("userID", currentUserId);
-                startActivity(intent);
-                break;
-            case "Sleep":
-                intent = new Intent(StatisticsActivity.this, SleepActivity.class);
-                intent.putExtra("userID", currentUserId);
-                startActivity(intent);
-                break;
+        // Get the current position of ViewPager2
+        int currentPosition = viewPager2.getCurrentItem();
+
+        // Get the ViewPagerItem at the current position
+        ViewPagerItem viewPagerItem = vpAdapter.getViewPagerItemAtPosition(currentPosition);
+        if (viewPagerItem != null) {
+            // Update the currentUserId with the userId from the selected ViewPagerItem
+            currentUserId = viewPagerItem.getUserId();
+
+            Intent intent;
+            switch (healthRecordType) {
+                case "Blood Glucose":
+                    intent = new Intent(StatisticsActivity.this, BloodGlucoseActivity.class);
+                    intent.putExtra("userID", currentUserId);
+                    startActivity(intent);
+                    break;
+                case "Blood Pressure":
+                    intent = new Intent(StatisticsActivity.this, BloodPressureActivity.class);
+                    intent.putExtra("userID", currentUserId);
+                    startActivity(intent);
+                    break;
+                case "Blood Lipids":
+                    intent = new Intent(StatisticsActivity.this, BloodLipidsActivity.class);
+                    intent.putExtra("userID", currentUserId);
+                    startActivity(intent);
+                    break;
+                case "Heart Rate":
+                    intent = new Intent(StatisticsActivity.this, HeartRateActivity.class);
+                    intent.putExtra("userID", currentUserId);
+                    startActivity(intent);
+                    break;
+                case "Weight":
+                    intent = new Intent(StatisticsActivity.this, WeightActivity.class);
+                    intent.putExtra("userID", currentUserId);
+                    startActivity(intent);
+                    break;
+                case "Sleep":
+                    intent = new Intent(StatisticsActivity.this, SleepActivity.class);
+                    intent.putExtra("userID", currentUserId);
+                    startActivity(intent);
+                    break;
+            }
+
+            // Notify the adapter of the data change after starting the activity
+            vpAdapter.notifyDataSetChanged();
+        } else {
+            Log.e("StatisticsActivity", "Error: ViewPagerItem is null at position " + currentPosition);
         }
     }
 

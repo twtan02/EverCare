@@ -256,4 +256,5 @@ public class BloodGlucoseActivity extends AppCompatActivity {
             dataPoints.clear();
         }
     }
+
 }

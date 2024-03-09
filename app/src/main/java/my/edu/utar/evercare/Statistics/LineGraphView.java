@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -125,39 +126,44 @@ public class LineGraphView extends View {
     }
 
     private void drawXAxisLabels(Canvas canvas, int width) {
-        if (dates.size() > 0) {
-            // Calculate label interval based on the number of dates and available width
-            int labelCount = Math.min(5, dates.size());
-            float interval = (width - 2 * padding) / (labelCount - 1);
+        try {
+            if (dates.size() > 0) {
+                // Calculate label interval based on the number of dates and available width
+                int labelCount = Math.min(5, dates.size());
+                float interval = (width - 2 * padding) / (labelCount - 1);
 
-            Paint paintText = new Paint();
-            paintText.setColor(Color.BLACK);
-            paintText.setTextSize(24f);
-            paintText.setTextAlign(Paint.Align.CENTER);
+                Paint paintText = new Paint();
+                paintText.setColor(Color.BLACK);
+                paintText.setTextSize(24f);
+                paintText.setTextAlign(Paint.Align.CENTER);
 
-            // Calculate the interval between dates to select evenly distributed dates
-            int intervalIndex = (dates.size() - 1) / (labelCount - 1);
+                // Calculate the interval between dates to select evenly distributed dates
+                int intervalIndex = (dates.size() - 1) / (labelCount - 1);
 
-            for (int i = 0; i < labelCount; i++) {
-                // Calculate the index of the date to be displayed
-                int index = i * intervalIndex;
-                // Ensure index does not exceed the bounds of the dates list
-                index = Math.min(index, dates.size() - 1);
+                for (int i = 0; i < labelCount; i++) {
+                    // Calculate the index of the date to be displayed
+                    int index = i * intervalIndex;
+                    // Ensure index does not exceed the bounds of the dates list
+                    index = Math.min(index, dates.size() - 1);
 
-                // Calculate x position for the label
-                float x = padding + i * interval;
+                    // Calculate x position for the label
+                    float x = padding + i * interval;
 
-                // Format date
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                String dateStr = dateFormat.format(dates.get(index));
+                    // Format date
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    String dateStr = dateFormat.format(dates.get(index));
 
-                // Draw label
-                canvas.drawText(dateStr, x, getHeight() - 60, paintText);
+                    // Draw label
+                    canvas.drawText(dateStr, x, getHeight() - 60, paintText);
+                }
             }
+        } catch (ArithmeticException e) {
+            // Handle the divide by zero exception here
+            e.printStackTrace(); // Print the stack trace for debugging
+            // You can also show a toast message here
+            Toast.makeText(getContext(), "Error: Division by zero", Toast.LENGTH_SHORT).show();
         }
     }
-
-
 
 
     private void drawYAxisLabels(Canvas canvas, int height) {

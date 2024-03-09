@@ -19,4 +19,6 @@
     <color name="bottom_nav_start_color">#2196F3</color>
     <color name="bottom_nav_center_color">#1976D2</color>
     <color name="bottom_nav_end_color">#0D47A1</color>
+    <color name="my_red">#FF0000</color>
+
 </resources>
