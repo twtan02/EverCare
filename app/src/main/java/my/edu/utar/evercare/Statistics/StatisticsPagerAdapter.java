@@ -56,7 +56,7 @@ public class StatisticsPagerAdapter extends RecyclerView.Adapter<StatisticsPager
         holder.imageButtonBloodPressure.setOnClickListener(v -> onItemClick("Blood Pressure"));
         holder.imageButtonWeight.setOnClickListener(v -> onItemClick("Weight"));
         holder.imageButtonHeartRate.setOnClickListener(v -> onItemClick("Heart Rate"));
-        holder.imageButtonActivity.setOnClickListener(v -> onItemClick("Activity"));
+        holder.imageButtonBloodLipids.setOnClickListener(v -> onItemClick("Blood Lipids"));
         holder.imageButtonSleep.setOnClickListener(v -> onItemClick("Sleep"));
 
         int[][] segmentColors = {{Color.parseColor("#FFA500")}, {Color.TRANSPARENT}}; // You can define your own colors here
@@ -80,7 +80,7 @@ public class StatisticsPagerAdapter extends RecyclerView.Adapter<StatisticsPager
         LinearLayout imageButtonBloodPressure;
         LinearLayout imageButtonWeight;
         LinearLayout imageButtonHeartRate;
-        LinearLayout imageButtonActivity;
+        LinearLayout imageButtonBloodLipids;
         LinearLayout imageButtonSleep;
         PieChartView pieChartView;
 
@@ -91,9 +91,9 @@ public class StatisticsPagerAdapter extends RecyclerView.Adapter<StatisticsPager
             tvDesc = itemView.findViewById(R.id.tvDesc);
             imageButtonBloodGlucose = itemView.findViewById(R.id.imageButtonBloodGlucose);
             imageButtonBloodPressure = itemView.findViewById(R.id.imageButtonBloodPressure);
-            imageButtonWeight = itemView.findViewById(R.id.imageButtonWeight);
+            imageButtonBloodLipids = itemView.findViewById(R.id.imageButtonBloodLipids);
             imageButtonHeartRate = itemView.findViewById(R.id.imageButtonHeartRate);
-            imageButtonActivity = itemView.findViewById(R.id.imageButtonActivity);
+            imageButtonWeight = itemView.findViewById(R.id.imageButtonWeight);
             imageButtonSleep = itemView.findViewById(R.id.imageButtonSleep);
             pieChartView = itemView.findViewById(R.id.pieChartView);
         }

@@ -198,8 +198,8 @@ public class BloodPressureActivity extends AppCompatActivity {
             return;
         }
 
-        // Append " mmol/L" to the blood pressure level input
-        final String bloodPressureLevel = bloodPressureLevelInput + " mmol/L";
+        // Append " mmHg" to the blood pressure level input
+        final String bloodPressureLevel = bloodPressureLevelInput + " mmHg";
 
         // Check if currentUserID is null
         if (currentUserID == null) {

@@ -19,8 +19,8 @@ import java.util.List;
 
 import my.edu.utar.evercare.R;
 import my.edu.utar.evercare.Statistics.BloodGlucose.BloodGlucoseActivity;
+import my.edu.utar.evercare.Statistics.BloodLipids.BloodLipidsActivity;
 import my.edu.utar.evercare.Statistics.BloodPressure.BloodPressureActivity;
-import my.edu.utar.evercare.Statistics.HealthActivity.HealthActivity;
 import my.edu.utar.evercare.Statistics.HeartRate.HeartRateActivity;
 import my.edu.utar.evercare.Statistics.Sleep.SleepActivity;
 import my.edu.utar.evercare.Statistics.Weight.WeightActivity;
@@ -98,8 +98,8 @@ public class StatisticsActivity extends AppCompatActivity implements StatisticsP
                 intent.putExtra("userID", currentUserId);
                 startActivity(intent);
                 break;
-            case "Weight":
-                intent = new Intent(StatisticsActivity.this, WeightActivity.class);
+            case "Blood Lipids":
+                intent = new Intent(StatisticsActivity.this, BloodLipidsActivity.class);
                 intent.putExtra("userID", currentUserId);
                 startActivity(intent);
                 break;
@@ -108,8 +108,8 @@ public class StatisticsActivity extends AppCompatActivity implements StatisticsP
                 intent.putExtra("userID", currentUserId);
                 startActivity(intent);
                 break;
-            case "Activity":
-                intent = new Intent(StatisticsActivity.this, HealthActivity.class);
+            case "Weight":
+                intent = new Intent(StatisticsActivity.this, WeightActivity.class);
                 intent.putExtra("userID", currentUserId);
                 startActivity(intent);
                 break;

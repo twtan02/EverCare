@@ -71,7 +71,7 @@
             android:name=".Statistics.BloodPressure.BloodPressureActivity"
             android:exported="false" />
         <activity
-            android:name=".Statistics.HealthActivity.HealthActivity"
+            android:name=".Statistics.BloodLipids.BloodLipidsActivity"
             android:exported="false" />
         <activity
             android:name=".Statistics.Sleep.SleepActivity"

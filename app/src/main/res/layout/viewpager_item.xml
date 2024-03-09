@@ -67,7 +67,6 @@
                 android:layout_margin="8dp"
                 android:text="DOB"/>
 
-            <!-- Blood Glucose -->
             <LinearLayout
                 android:id="@+id/imageButtonBloodGlucose"
                 android:layout_width="wrap_content"
@@ -137,9 +136,9 @@
 
             </LinearLayout>
 
-            <!-- Weight -->
+            <!-- Blood Lipids -->
             <LinearLayout
-                android:id="@+id/imageButtonWeight"
+                android:id="@+id/imageButtonBloodLipids"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -157,13 +156,13 @@
                     <ImageButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_weight"
+                        android:src="@drawable/ic_bloodlipids"
                         android:background="@android:color/transparent"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Weight"
+                        android:text="Blood Lipids"
                         android:textStyle="bold"
                         android:textSize="18sp"
                         android:textColor="@android:color/black"
@@ -180,7 +179,7 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:background="@android:color/transparent"
-                android:layout_below="@id/imageButtonWeight"
+                android:layout_below="@id/imageButtonBloodLipids"
                 android:layout_marginTop="16dp">
 
                 <LinearLayout
@@ -207,9 +206,9 @@
 
             </LinearLayout>
 
-            <!-- Activity -->
+            <!-- Weight -->
             <LinearLayout
-                android:id="@+id/imageButtonActivity"
+                android:id="@+id/imageButtonWeight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -227,13 +226,13 @@
                     <ImageButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_activity"
+                        android:src="@drawable/ic_weight"
                         android:background="@android:color/transparent"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Activity"
+                        android:text="Weight"
                         android:textStyle="bold"
                         android:textSize="18sp"
                         android:textColor="@android:color/black"
@@ -250,7 +249,7 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:background="@android:color/transparent"
-                android:layout_below="@id/imageButtonActivity"
+                android:layout_below="@id/imageButtonWeight"
                 android:layout_marginTop="16dp">
 
                 <LinearLayout
