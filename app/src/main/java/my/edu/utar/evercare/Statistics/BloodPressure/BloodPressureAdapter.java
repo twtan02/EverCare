@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
@@ -51,7 +52,20 @@ public class BloodPressureAdapter extends RecyclerView.Adapter<my.edu.utar.everc
         }
 
         public void bind(BloodPressureData bloodPressureData) {
-            bloodPressureLevelTextView.setText(bloodPressureData.getBloodPressureLevel());
+            String bloodPressureLevel = bloodPressureData.getBloodPressureLevel();
+
+            // Extract only numeric characters from the blood pressure level string
+            String numericBloodPressureLevel = bloodPressureLevel.replaceAll("[^0-9]", "");
+
+            // Check if blood pressure level exceeds the range
+            int pressureLevel = Integer.parseInt(numericBloodPressureLevel);
+            if (pressureLevel < 90 || pressureLevel > 120) {
+                bloodPressureLevelTextView.setTextColor(ContextCompat.getColor(itemView.getContext(), android.R.color.holo_red_dark));
+            } else {
+                bloodPressureLevelTextView.setTextColor(ContextCompat.getColor(itemView.getContext(), android.R.color.black));
+            }
+
+            bloodPressureLevelTextView.setText(bloodPressureLevel);
 
             // Format the date and time
             SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd.MM.yy HH:mm", Locale.getDefault());
@@ -59,6 +73,7 @@ public class BloodPressureAdapter extends RecyclerView.Adapter<my.edu.utar.everc
 
             dateTextView.setText(formattedDateTime);
         }
+
     }
 
 

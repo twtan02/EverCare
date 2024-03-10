@@ -151,12 +151,23 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="16dp"/>
 
+        <!-- Average Value TextView -->
+        <TextView
+            android:id="@+id/averageValueTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Normal value: 60 - 100 bpm"
+            android:textSize="16sp"
+            android:textColor="#333333"
+            android:layout_below="@id/pastHistoryTitleTextView"
+            android:layout_centerHorizontal="true"/>
+
         <!-- RecyclerView to display past heart rate data -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/heartRateRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/pastHistoryTitleTextView"
+            android:layout_below="@id/averageValueTextView"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

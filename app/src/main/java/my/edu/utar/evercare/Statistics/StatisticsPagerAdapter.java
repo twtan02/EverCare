@@ -34,11 +34,11 @@ public class StatisticsPagerAdapter extends RecyclerView.Adapter<StatisticsPager
 
     // Define colors for each health record component
     private static final int[] CHART_COLORS = {
-            Color.parseColor("#FFA500"),  // Orange for Blood Glucose
-            Color.parseColor("#00FF00"),  // Green for Blood Pressure
-            Color.parseColor("#0000FF"),  // Blue for Blood Lipids
-            Color.parseColor("#FF0000"),  // Red for Heart Rate
-            Color.parseColor("#AA66CC"),  // Yellow for Sleep
+            Color.parseColor("#FFC107"), // Amber
+            Color.parseColor("#4CAF50"), // Green
+            Color.parseColor("#2196F3"), // Blue
+            Color.parseColor("#F44336"), // Red
+            Color.parseColor("#9C27B0")  // Purple
     };
 
     // Define a variable to store the adjusted percentage for each health record component
@@ -129,7 +129,6 @@ public class StatisticsPagerAdapter extends RecyclerView.Adapter<StatisticsPager
     }
 
     private void retrieveHealthRecordData(String component, ViewHolder holder) {
-        Log.d("currentUserId", "Searching: " + currentUserId);
         db.collection("statistics")
                 .document(currentUserId)
                 .collection(component)

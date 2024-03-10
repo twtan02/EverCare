@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
@@ -51,7 +52,20 @@ public class BloodGlucoseAdapter extends RecyclerView.Adapter<BloodGlucoseAdapte
         }
 
         public void bind(BloodGlucoseData bloodGlucoseData) {
-            bloodGlucoseLevelTextView.setText(bloodGlucoseData.getBloodGlucoseLevel());
+            String bloodGlucoseLevel = bloodGlucoseData.getBloodGlucoseLevel();
+
+            // Extract only numeric characters from the blood glucose level string
+            String numericBloodGlucoseLevel = bloodGlucoseLevel.replaceAll("[^0-9.]", "");
+
+            // Check if blood glucose level exceeds the range
+            double glucoseLevel = Double.parseDouble(numericBloodGlucoseLevel);
+            if (glucoseLevel < 3.9 || glucoseLevel > 5.6) {
+                bloodGlucoseLevelTextView.setTextColor(ContextCompat.getColor(itemView.getContext(), android.R.color.holo_red_dark));
+            } else {
+                bloodGlucoseLevelTextView.setTextColor(ContextCompat.getColor(itemView.getContext(), android.R.color.black));
+            }
+
+            bloodGlucoseLevelTextView.setText(bloodGlucoseLevel);
 
             // Format the date and time
             SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd.MM.yy HH:mm", Locale.getDefault());
@@ -59,7 +73,9 @@ public class BloodGlucoseAdapter extends RecyclerView.Adapter<BloodGlucoseAdapte
 
             dateTextView.setText(formattedDateTime);
         }
+
     }
+
 
 
 }

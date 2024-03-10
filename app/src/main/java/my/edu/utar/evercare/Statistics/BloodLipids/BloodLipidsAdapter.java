@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
@@ -51,7 +52,20 @@ public class BloodLipidsAdapter extends RecyclerView.Adapter<BloodLipidsAdapter.
         }
 
         public void bind(BloodLipidsData bloodLipidsData) {
-            bloodLipidsLevelTextView.setText(bloodLipidsData.getBloodLipidsLevel());
+            String bloodLipidsLevel = bloodLipidsData.getBloodLipidsLevel();
+
+            // Extract only numeric characters from the blood lipids level string
+            String numericBloodLipidsLevel = bloodLipidsLevel.replaceAll("[^0-9.]", "");
+
+            // Check if blood lipids level exceeds the range
+            double lipidsLevel = Double.parseDouble(numericBloodLipidsLevel);
+            if (lipidsLevel < 100 || lipidsLevel > 129) {
+                bloodLipidsLevelTextView.setTextColor(ContextCompat.getColor(itemView.getContext(), android.R.color.holo_red_dark));
+            } else {
+                bloodLipidsLevelTextView.setTextColor(ContextCompat.getColor(itemView.getContext(), android.R.color.black));
+            }
+
+            bloodLipidsLevelTextView.setText(bloodLipidsLevel);
 
             // Format the date and time
             SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd.MM.yy HH:mm", Locale.getDefault());
@@ -59,5 +73,6 @@ public class BloodLipidsAdapter extends RecyclerView.Adapter<BloodLipidsAdapter.
 
             dateTextView.setText(formattedDateTime);
         }
+
     }
 }

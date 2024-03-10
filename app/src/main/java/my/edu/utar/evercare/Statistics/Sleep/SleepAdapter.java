@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
@@ -51,7 +52,20 @@ public class SleepAdapter extends RecyclerView.Adapter<SleepAdapter.ViewHolder> 
         }
 
         public void bind(SleepData sleepData) {
-            sleepDurationTextView.setText(sleepData.getSleepDuration());
+            String sleepDuration = sleepData.getSleepDuration();
+
+            // Extract only numeric characters from the sleep duration string
+            String numericSleepDuration = sleepDuration.replaceAll("[^0-9]", "");
+
+            // Check if sleep duration exceeds the range
+            int duration = Integer.parseInt(numericSleepDuration);
+            if (duration < 5 || duration > 8) {
+                sleepDurationTextView.setTextColor(ContextCompat.getColor(itemView.getContext(), android.R.color.holo_red_dark));
+            } else {
+                sleepDurationTextView.setTextColor(ContextCompat.getColor(itemView.getContext(), android.R.color.black));
+            }
+
+            sleepDurationTextView.setText(sleepDuration);
 
             // Format the date and time
             SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd.MM.yy HH:mm", Locale.getDefault());
@@ -59,5 +73,6 @@ public class SleepAdapter extends RecyclerView.Adapter<SleepAdapter.ViewHolder> 
 
             dateTextView.setText(formattedDateTime);
         }
+
     }
 }

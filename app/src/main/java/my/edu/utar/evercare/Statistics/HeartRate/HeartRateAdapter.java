@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
@@ -51,13 +52,27 @@ public class HeartRateAdapter extends RecyclerView.Adapter<HeartRateAdapter.View
         }
 
         public void bind(HeartRateData heartRateData) {
-            heartRateLevelTextView.setText(heartRateData.getHeartRate());
+            String heartRate = heartRateData.getHeartRate();
 
-            // Format the date
+            // Extract only numeric characters from the heart rate string
+            String numericHeartRate = heartRate.replaceAll("[^0-9]", "");
+
+            // Check if heart rate exceeds the range
+            int rate = Integer.parseInt(numericHeartRate);
+            if (rate < 60 || rate > 100) {
+                heartRateLevelTextView.setTextColor(ContextCompat.getColor(itemView.getContext(), android.R.color.holo_red_dark));
+            } else {
+                heartRateLevelTextView.setTextColor(ContextCompat.getColor(itemView.getContext(), android.R.color.black));
+            }
+
+            heartRateLevelTextView.setText(heartRate);
+
+            // Format the date and time
             SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd.MM.yy HH:mm", Locale.getDefault());
             String formattedDateTime = sdf.format(heartRateData.getDate());
 
             dateTextView.setText(formattedDateTime);
         }
+
     }
 }
