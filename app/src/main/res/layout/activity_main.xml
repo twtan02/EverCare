@@ -36,11 +36,12 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/textMenu"
         android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="60dp"
         android:visibility="visible"
         app:columnCount="2"
-        app:orientation="horizontal"
         app:columnOrderPreserved="false"
-        android:layout_marginTop="60dp"
+        app:orientation="horizontal"
         app:rowCount="5">
 
         <!-- Define buttons as you have in your existing layout -->
@@ -48,41 +49,41 @@
         <Button
             android:id="@+id/btnEmergencyHelp"
             style="@style/GridButton"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:drawableTop="@drawable/ic_emergency_help"
+            android:text="Emergency Help"
             android:textColor="@color/black"
             android:textSize="18dp"
-            android:text="Emergency Help"
-            android:drawableTop="@drawable/ic_emergency_help"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            app:layout_gravity="center"
             app:strokeColor="@color/black"
-            app:strokeWidth="2dp"
-            app:layout_gravity="center" />
+            app:strokeWidth="2dp" />
 
         <!-- Button 2 - Chat -->
         <Button
             android:id="@+id/btnChat"
             style="@style/GridButton"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:drawableTop="@drawable/ic_chat"
+            android:text="Chat"
             android:textColor="@color/black"
             android:textSize="18dp"
-            android:text="Chat"
-            android:drawableTop="@drawable/ic_chat"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
             app:layout_gravity="center" />
 
         <!-- Button 1 - Medical Record -->
         <Button
             android:id="@+id/btnMedicalRecord"
             style="@style/GridButton"
-            android:text="Medical Record"
-            android:textSize="18dp"
-            android:textColor="@color/black"
-            android:drawableTop="@drawable/ic_medical_record"
-            android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
+            android:drawableTop="@drawable/ic_medical_record"
+            android:text="Medical Record"
+            android:textColor="@color/black"
+            android:textSize="18dp"
             app:layout_gravity="center" />
 
 
@@ -90,46 +91,46 @@
         <Button
             android:id="@+id/btnPillReminder"
             style="@style/GridButton"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:drawableTop="@drawable/ic_pill_reminder"
+            android:text="Pill Reminder"
             android:textColor="@color/black"
             android:textSize="18dp"
-            android:text="Pill Reminder"
-            android:drawableTop="@drawable/ic_pill_reminder"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            app:layout_gravity="center"
             app:strokeColor="@color/black"
-            app:strokeWidth="2dp"
-            app:layout_gravity="center" />
+            app:strokeWidth="2dp" />
 
         <!-- Button 5 - Remote Monitoring -->
         <Button
             android:id="@+id/btnRemoteMonitoring"
             style="@style/GridButton"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:drawableTop="@drawable/ic_remote_monitoring"
+            android:text="Remote Monitoring"
             android:textColor="@color/black"
             android:textSize="18dp"
-            android:text="Remote Monitoring"
-            android:drawableTop="@drawable/ic_remote_monitoring"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            app:layout_gravity="center"
             app:strokeColor="@color/black"
-            app:strokeWidth="2dp"
-            app:layout_gravity="center" />
+            app:strokeWidth="2dp" />
 
         <!-- Button 6 - Statistics -->
         <Button
             android:id="@+id/btnStatistics"
             style="@style/GridButton"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:drawableTop="@drawable/ic_statistics"
+            android:text="Statistics"
             android:textColor="@color/black"
             android:textSize="18dp"
-            android:text="Statistics"
-            android:drawableTop="@drawable/ic_statistics"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            app:layout_gravity="center"
             app:strokeColor="@color/black"
-            app:strokeWidth="2dp"
-            app:layout_gravity="center" />
+            app:strokeWidth="2dp" />
 
 
     </androidx.gridlayout.widget.GridLayout>

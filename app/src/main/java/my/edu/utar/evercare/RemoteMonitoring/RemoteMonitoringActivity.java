@@ -30,6 +30,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 import my.edu.utar.evercare.R;
@@ -41,6 +42,7 @@ public class RemoteMonitoringActivity extends AppCompatActivity implements Surfa
     private CameraDevice cameraDevice;
     private CaptureRequest.Builder captureRequestBuilder;
     private CameraCaptureSession cameraCaptureSession;
+    private String videoFileName;
 
     private static final int REQUEST_CAMERA_PERMISSION = 100;
     private static final String TAG = "RemoteMonitoringActivity";
@@ -82,7 +84,7 @@ public class RemoteMonitoringActivity extends AppCompatActivity implements Surfa
             public void onClick(View v) {
                 isCameraDevice = false;
                 // Additional functionality for the viewer device if needed
-                retrieveLiveVideoStream();
+                retrieveLiveVideoStream(videoFileName);
             }
         });
     }
@@ -211,9 +213,14 @@ public class RemoteMonitoringActivity extends AppCompatActivity implements Surfa
         Uri videoUri = generateVideoUri();
         Log.d(TAG, "Generated video URI: " + videoUri);
 
-
         if (videoUri != null) {
-            StorageReference videoRef = FirebaseStorage.getInstance().getReference().child("videos").child("video1.mp4");
+            // Specify the folder name
+            String folderName = "videos";
+
+            // Get a reference to the specified folder
+            StorageReference videoRef = FirebaseStorage.getInstance().getReference().child(folderName).child(videoUri.getLastPathSegment());
+
+            // Store the video in the specified folder
             videoRef.putFile(videoUri)
                     .addOnSuccessListener(taskSnapshot -> {
                         // Video upload successful
@@ -233,37 +240,55 @@ public class RemoteMonitoringActivity extends AppCompatActivity implements Surfa
     // This method should generate the URI of the recorded video
     private Uri generateVideoUri() {
         // Replace this with your logic to generate the URI automatically
-        // For example:
-        String videoFileName = "video_" + System.currentTimeMillis() + ".mp4";
+
+        videoFileName = "video_" + System.currentTimeMillis() + ".mp4";
         File videoFile = new File(getFilesDir(), videoFileName);
+
+        // Log the file path for debugging
+        Log.d(TAG, "Video file path: " + videoFile.getAbsolutePath());
 
         // Ensure that the directory exists
         if (!videoFile.getParentFile().exists()) {
             videoFile.getParentFile().mkdirs();
         }
 
+        // Create the video file
+        try {
+            boolean created = videoFile.createNewFile();
+            if (!created) {
+                Log.e(TAG, "Failed to create video file");
+                return null;
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Error creating video file: " + e.getMessage());
+            return null;
+        }
+
         return FileProvider.getUriForFile(this, getPackageName() + ".provider", videoFile);
     }
 
 
+    private void retrieveLiveVideoStream(String videoFileName) {
+        // Get a reference to the uploaded video in the "videos" folder with the dynamic filename
+        StorageReference videoRef = FirebaseStorage.getInstance().getReference().child("videos").child(videoFileName);
 
-
-    private void retrieveLiveVideoStream() {
-        // Add code here to retrieve the live video stream from Firebase Storage
-        // For example:
-         StorageReference videoRef = FirebaseStorage.getInstance().getReference().child("videos").child("video1.mp4");
-         videoRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-             @Override
-             public void onSuccess(Uri uri) {
-                 String videoUrl = uri.toString();
-                 // Now you can use the videoUrl to play the live video stream
-             }
-         }).addOnFailureListener(new OnFailureListener() {
-             @Override
-             public void onFailure(@NonNull Exception exception) {
-                 // Handle any errors
-             }
-         });
+        // Get the download URL for the video
+        videoRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                String videoUrl = uri.toString();
+                // Now you can use the videoUrl to play the live video stream
+                // For example, you can pass this URL to a video player library or use it to load the video in a VideoView
+                Log.d(TAG, "Video download URL: " + videoUrl);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+                Log.e(TAG, "Failed to retrieve live video stream: " + exception.getMessage());
+            }
+        });
     }
+
 
 }
