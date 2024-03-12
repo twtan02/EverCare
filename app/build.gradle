@@ -70,8 +70,4 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'com.karumi:dexter:6.2.1'
 
-
-// Use the AndroidX RecyclerView library
-
-    // Add other dependencies as needed
 }

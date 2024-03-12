@@ -37,10 +37,6 @@ public class ChatManager {
 
         // Add message to the chat document's "messages" collection for both users
         addMessageToCollection(chatDocumentId, messageMap);
-
-        // Also, add the same message to the other user's collection
-        String otherChatDocumentId = chatDocumentId.replace(currentUserId, selectedUserId);
-        addMessageToCollection(otherChatDocumentId, messageMap);
     }
 
     public void sendMessageWithImage(String messageText, Uri imageUrl) {
@@ -52,10 +48,6 @@ public class ChatManager {
 
         // Add message to the chat document's "messages" collection for both users
         addMessageToCollection(chatDocumentId, messageMap);
-
-        // Also, add the same message to the other user's collection
-        String otherChatDocumentId = chatDocumentId.replace(currentUserId, selectedUserId);
-        addMessageToCollection(otherChatDocumentId, messageMap);
     }
 
     private void addMessageToCollection(String chatDocumentId, Map<String, Object> messageMap) {

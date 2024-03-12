@@ -18,6 +18,11 @@
         android:layout_marginEnd="8dp"
         android:gravity="end">
 
+        <!-- Nested RelativeLayout for image and text -->
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
         <!-- ImageView to display selected image -->
         <ImageView
             android:id="@+id/imageView"
@@ -25,7 +30,10 @@
             android:layout_height="50dp"
             android:layout_marginStart="8dp"
             android:contentDescription="Selected Image"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="onImageClick" />
 
         <!-- Your message text view -->
         <TextView
@@ -35,7 +43,9 @@
             android:textColor="#000"
             android:textSize="16sp"
             android:text="Outgoing Message"
-            android:layout_alignParentEnd="true" />
+            android:layout_below="@id/imageView"
+            android:layout_marginStart="8dp" />
 
+        </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>

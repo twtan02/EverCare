@@ -4,37 +4,42 @@
     android:layout_height="wrap_content"
     android:layout_gravity="start">
 
-    <!-- Parent LinearLayout for both text and image with background -->
+    <!-- Background for the message -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_message_incoming"
         android:orientation="horizontal"
-        android:padding="8dp"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:gravity="start">
+        android:padding="8dp">
 
-        <!-- ImageView to display selected image -->
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="8dp"
-            android:contentDescription="Selected Image"
-            android:visibility="gone" />
-
-        <!-- Your message text view -->
-        <TextView
-            android:id="@+id/messageText"
+        <!-- Nested RelativeLayout for image and text -->
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#000"
-            android:textSize="16sp"
-            android:text="Message" />
+            android:layout_height="wrap_content">
 
+            <!-- ImageView to display selected image -->
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="8dp"
+                android:contentDescription="Selected Image"
+                android:visibility="gone"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="onImageClick" />
+
+            <!-- Your message text view -->
+            <TextView
+                android:id="@+id/messageText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#000"
+                android:textSize="16sp"
+                android:text="Incoming Message"
+                android:layout_below="@id/imageView"
+                android:layout_marginStart="8dp" />
+
+        </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>
