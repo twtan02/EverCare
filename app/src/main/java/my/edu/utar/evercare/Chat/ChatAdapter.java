@@ -127,44 +127,34 @@ public class ChatAdapter extends FirestoreRecyclerAdapter<ChatMessage, ChatAdapt
     }
 
     private void showImageDialog(Context context, String imageUrl) {
-        Log.d("ImageDialog", "Image URL: " + imageUrl);
-
+        // Inflate the dialog layout
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_image_viewer, null);
+        // Find the ImageView in the dialog layout
         ImageView dialogImageView = dialogView.findViewById(R.id.imageViewDialog);
 
-        // Load the image using Glide
+        // Load the image using Glide into the ImageView
         Glide.with(context)
                 .load(imageUrl)
-                .listener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        Log.e("ImageDialog", "Failed to load image: " + e.getMessage());
-                        return false; // Return false to allow Glide to call the onLoadFailed listener of any other RequestListener.
-                    }
-
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        Log.d("ImageDialog", "Image loaded successfully");
-                        return false; // Return false to allow Glide to call the onResourceReady listener of any other RequestListener.
-                    }
-                })
                 .into(dialogImageView);
 
+        // Create an AlertDialog builder
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        // Set the view of the builder to the inflated dialog layout
         builder.setView(dialogView);
 
+        // Create the AlertDialog
         AlertDialog dialog = builder.create();
 
         // Set OnClickListener to dismiss the dialog when the background is clicked
-        dialogView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
+        dialogView.setOnClickListener(v -> dialog.dismiss());
 
+        // Show the dialog
         dialog.show();
+
+        // Adjust the dialog window's attributes to wrap content
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
+
 
 
 }

@@ -40,6 +40,7 @@ public class ChatFragment extends Fragment {
     private ImageView buttonSend;
     private ImageView buttonUpload;
     private ImageView imageViewSelectedImage; // Add this line
+    private ImageView buttonDeleteImage;
     private Uri selectedImageUri; // Add this line
 
     // Request code for media upload
@@ -133,7 +134,32 @@ public class ChatFragment extends Fragment {
             }
         });
 
+        // Find the buttonDeleteImage ImageView
+        buttonDeleteImage = view.findViewById(R.id.buttonDeleteImage);
+
+        // Set a click listener
+        buttonDeleteImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handle the delete image button click
+                deleteSelectedImage();
+            }
+        });
+
         return view;
+    }
+
+    // Method to delete the selected image
+    private void deleteSelectedImage() {
+        // Reset the selected image URI
+        selectedImageUri = null;
+
+        // Clear the selected image from imageViewSelectedImage
+        imageViewSelectedImage.setImageURI(null);
+
+        // Hide the imageViewSelectedImage
+        imageViewSelectedImage.setVisibility(View.GONE);
+        buttonDeleteImage.setVisibility(View.GONE);
     }
 
     private void sendMessage() {
@@ -151,11 +177,13 @@ public class ChatFragment extends Fragment {
             // Clear the input fields
             editTextMessage.setText("");
             imageViewSelectedImage.setVisibility(View.GONE); // Hide the image view
+            buttonDeleteImage.setVisibility(View.GONE);
 
         } else if (selectedImageUri != null) {
             // If there's no text, but there's an image, send the image
             chatManager.sendMessageWithImage("", selectedImageUri);
             imageViewSelectedImage.setVisibility(View.GONE); // Hide the image view
+            buttonDeleteImage.setVisibility(View.GONE);
 
         } else {
             Toast.makeText(getContext(), "Please enter a message", Toast.LENGTH_SHORT).show();
@@ -186,6 +214,7 @@ public class ChatFragment extends Fragment {
 
                 // Optionally, make the imageViewSelectedImage visible
                 imageViewSelectedImage.setVisibility(View.VISIBLE);
+                buttonDeleteImage.setVisibility(View.VISIBLE);
 
                 // You can also handle other logic related to the selected image here
             }

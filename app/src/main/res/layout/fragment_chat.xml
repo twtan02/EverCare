@@ -1,4 +1,3 @@
-<!-- fragment_chat.xml -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -21,34 +20,16 @@
         android:background="@android:color/white"
         android:padding="8dp">
 
-        <!-- Layout to hold image and text -->
-        <LinearLayout
-            android:id="@+id/imageTextLayout"
-            android:layout_width="match_parent"
+        <!-- Voice input button -->
+        <ImageView
+            android:id="@+id/buttonVoice"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <!-- ImageView to display selected image -->
-            <ImageView
-                android:id="@+id/imageViewSelectedImage"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginEnd="8dp"
-                android:contentDescription="Selected Image"
-                android:visibility="gone" />
-
-
-            <!-- Message input field -->
-            <EditText
-                android:id="@+id/editTextMessage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Type a message..."
-                android:inputType="textMultiLine"
-                android:maxLength="500"
-                android:maxLines="5"
-                android:minLines="1" />
-        </LinearLayout>
+            android:layout_alignParentStart="true"
+            android:contentDescription="Voice"
+            android:src="@drawable/ic_voice"
+            android:scaleType="fitCenter"
+            android:padding="8dp" />
 
         <!-- Send button -->
         <ImageView
@@ -57,7 +38,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:contentDescription="Send"
-            android:src="@drawable/ic_send" />
+            android:src="@drawable/ic_send"
+            android:padding="8dp" />
 
         <!-- Media upload button -->
         <ImageView
@@ -67,6 +49,56 @@
             android:layout_toStartOf="@id/buttonSend"
             android:contentDescription="Upload"
             android:src="@drawable/ic_upload"
-            android:onClick="onUploadButtonClick" />
+            android:padding="8dp" />
+
+        <!-- Layout to hold image and text -->
+        <LinearLayout
+            android:id="@+id/imageTextLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/buttonVoice"
+            android:layout_toStartOf="@id/buttonUpload"
+            android:background="@drawable/edit_text_background"
+            android:orientation="vertical">
+
+            <!-- ImageView to display selected image -->
+            <ImageView
+                android:id="@+id/imageViewSelectedImage"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Selected Image"
+                android:padding="9dp"
+                android:visibility="gone" />
+
+            <!-- Delete button for the selected image -->
+            <ImageView
+                android:id="@+id/buttonDeleteImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Delete Image"
+                android:src="@drawable/ic_delete"
+                android:padding="4dp"
+                android:visibility="gone" />
+
+            <!-- Message input field -->
+            <EditText
+                android:id="@+id/editTextMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Type a message..."
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:padding="9dp"
+                android:inputType="textMultiLine"
+                android:background="@drawable/edit_text_background"
+                android:maxLength="500"
+                android:maxLines="5"
+                android:minLines="1" />
+
+        </LinearLayout>
+
     </RelativeLayout>
 </RelativeLayout>
