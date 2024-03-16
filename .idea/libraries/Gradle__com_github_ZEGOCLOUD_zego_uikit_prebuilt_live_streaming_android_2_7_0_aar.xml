@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.ZEGOCLOUD:zego_uikit_prebuilt_live_streaming_android:2.7.0@aar" external-system-id="GRADLE">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/7c7a9977b43cd81117b384dc8d5902bb/transformed/zego_uikit_prebuilt_live_streaming_android-2.7.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/7c7a9977b43cd81117b384dc8d5902bb/transformed/zego_uikit_prebuilt_live_streaming_android-2.7.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/7c7a9977b43cd81117b384dc8d5902bb/transformed/zego_uikit_prebuilt_live_streaming_android-2.7.0/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.ZEGOCLOUD/zego_uikit_prebuilt_live_streaming_android/2.7.0/5fcb0cc4f181c24ebf72be50cc084d814f98ae11/zego_uikit_prebuilt_live_streaming_android-2.7.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -37,12 +37,10 @@
     <string name="instruction_detail">
     <ul>
         <li><b>If you want to use this device as the camera</b> to monitor the elderly, click on the <b>camera button</b>.</li>
-        <br/>
+        <br />
         <li><b>If you want to view the live video stream</b>, click on the <b>view button</b>.</li>
     </ul>
 </string>
-
-
 
 
 </resources>
