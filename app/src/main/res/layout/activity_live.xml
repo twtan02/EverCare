@@ -13,24 +13,27 @@
         android:padding="5dp">
 
         <TextView
+            android:id="@+id/live_id_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/live_id_input"
-            android:layout_margin="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
             android:gravity="center"
             android:text="LIVE ID: "
             android:textColor="@color/black"
             android:textSize="20sp" />
 
         <ImageView
+            android:id="@+id/share_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_share"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:layout_marginHorizontal="20dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:id="@+id/share_btn"/>
+            android:src="@drawable/ic_share" />
 
     </RelativeLayout>
 

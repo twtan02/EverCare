@@ -20,5 +20,7 @@
     <color name="bottom_nav_center_color">#1976D2</color>
     <color name="bottom_nav_end_color">#0D47A1</color>
     <color name="my_red">#FF0000</color>
+    <color name="dark_red">#8B0000</color>
+
 
 </resources>

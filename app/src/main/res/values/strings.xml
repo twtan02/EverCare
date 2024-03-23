@@ -13,34 +13,32 @@
     <string name="frequency_format">Frequency: %s</string>
     <string name="elderly_user_format">%s - %s</string>
 
-    <string name="long_paragraph"><![CDATA[
-    <b>Medical Record Management:</b> EVERCARE is a mobile application that assists elderly people, staff, and caregivers to manage medical records, including tracking medical appointments and recording vital signs.<br>
-    <b>Chat:</b>  It provides a chat feature that allows users to communicate with each other, facilitating easy communication between caregivers, elderly individuals, and staff members.<br>
-    <b>Pill Reminder:</b> EVERCARE includes a pill reminder feature that helps users manage their medication schedule, ensuring they take the right medications at the right times.<br>
-    <b>Emergency Help:</b> In case of emergencies, users can quickly access the emergency help feature, which notifies designated contacts and emergency services for immediate assistance.<br>
-    <b>Remote Monitoring:</b> EVERCARE offers remote monitoring functionality, allowing caregivers and family members to monitor the health and well-being of elderly individuals from a distance.<br>
-    ]]></string>
     <string-array name="gender_array">
         <item>Select Gender</item>
         <item>Male</item>
         <item>Female</item>
     </string-array>
+
     <string-array name="frequency_array">
         <item>Once a day</item>
         <item>Twice a day</item>
         <item>Three times a day</item>
     </string-array>
+
     <string name="dropdown_menu_description">Dropdown Menu</string>
     <string name="select_medication">Select Medication</string>
     <string name="title_activity_maps">MapsActivity</string>
     <string name="select_option">Please select an option:</string>
+
     <string name="instruction_detail">
     <ul>
         <li><b>If you want to use this device as the camera</b> to monitor the elderly, click on the <b>camera button</b>.</li>
         <br />
         <li><b>If you want to view the live video stream</b>, click on the <b>view button</b>.</li>
     </ul>
-</string>
+    </string>
+
+    <string name="google_maps_key">AIzaSyCAssxxUDeUevzN8Wn5JazMRTjMhgdQTGA</string>
 
 
 </resources>

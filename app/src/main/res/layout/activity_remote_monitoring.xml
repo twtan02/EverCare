@@ -3,9 +3,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".RemoteMonitoring.RemoteMonitoringActivity">
- 
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="4dp"
+        android:theme="@style/ToolbarTheme"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Custom Toolbar Title -->
     <TextView
+        android:id="@+id/customToolbarTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Icon for LIVE -->
+    <ImageView
+        android:id="@+id/live_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_live"
+        android:layout_above="@+id/live_text"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="8dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:layout_gravity="center_horizontal"/>
+
+    <!-- Text "LIVE" -->
+    <TextView
+        android:id="@+id/live_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text= "LIVE"
@@ -22,6 +63,7 @@
         android:layout_height="wrap_content"
         android:text="Start New Live or Enter Live ID to join"
         android:layout_above="@+id/bottom_layout"
+        android:textStyle="bold"
         android:gravity="center"
         android:textSize="18sp"
         android:textColor="@color/black"/>
@@ -73,17 +115,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text= "Start New Live"
+            android:textColor="@color/black"
             android:padding="12dp"
             android:layout_marginTop="20dp"
             android:textSize="16sp"
             android:background="@drawable/rounded_corner"
             android:id="@+id/go_live_btn"/>
     </LinearLayout>
-
-
-
-
-
 
 
 </RelativeLayout>
