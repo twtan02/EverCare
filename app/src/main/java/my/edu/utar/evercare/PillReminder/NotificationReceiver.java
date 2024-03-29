@@ -2,10 +2,12 @@ package my.edu.utar.evercare.PillReminder;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 
 import androidx.core.app.NotificationCompat;
 
@@ -37,14 +39,20 @@ public class NotificationReceiver extends BroadcastReceiver {
             // Create the notification channel
             notificationManager.createNotificationChannel(notificationChannel);
 
-            // Build the notification
+            // Add action to the notification intent to launch the app
+            Intent launchIntent = new Intent(context, PillReminderActivity.class);
+            launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            // Build the notification with the action
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "PillReminderChannel")
                     .setSmallIcon(R.drawable.ic_notification)
                     .setContentTitle(reminderTitle)
                     .setContentText(reminderText)
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setAutoCancel(true)
-                    .setSound(soundUri);
+                    .setSound(soundUri)
+                    .setContentIntent(pendingIntent); // Set the pending intent to launch the app
 
             // Show the notification
             notificationManager.notify(notificationId, builder.build());

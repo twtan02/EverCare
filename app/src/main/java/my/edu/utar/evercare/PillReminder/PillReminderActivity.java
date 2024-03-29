@@ -8,6 +8,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -335,14 +336,40 @@ public class PillReminderActivity extends AppCompatActivity {
         notificationIntent.putExtra("reminderText", "It's time to take your pill!");
         notificationIntent.putExtra("notificationId", notificationId); // Pass the notification ID
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, notificationId, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, notificationId, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
-        // Schedule the alarm
+        // Schedule the alarm (using scheduleExactAlarm method)
+        scheduleExactAlarm(pendingIntent, reminderDateTime.getTimeInMillis());
+    }
+
+
+    private void scheduleExactAlarm(PendingIntent pendingIntent, long triggerMillis) {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        if (alarmManager != null) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, reminderDateTime.getTimeInMillis(), pendingIntent);
+        if (alarmManager == null) {
+            // AlarmManager is not available on this device
+            Toast.makeText(this, "AlarmManager is not available on this device", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Check if the device supports scheduling exact alarms
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (!alarmManager.canScheduleExactAlarms()) {
+                // Device does not support scheduling exact alarms
+                // Handle accordingly (e.g., fallback to inexact alarms)
+                Toast.makeText(this, "Device does not support scheduling exact alarms", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+        try {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerMillis, pendingIntent);
+        } catch (SecurityException e) {
+            // Handle SecurityException (e.g., show error message)
+            Toast.makeText(this, "Failed to schedule exact alarm: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
+
+
 
     private void deletePillReminderFromFirestore(PillReminder pillReminder) {
         String documentId = pillReminder.getDocumentId();
@@ -386,7 +413,7 @@ public class PillReminderActivity extends AppCompatActivity {
 
         // Create an intent for the scheduled notification
         Intent notificationIntent = new Intent(this, NotificationReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, notificationId, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, notificationId, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
         // Cancel the scheduled notification
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);

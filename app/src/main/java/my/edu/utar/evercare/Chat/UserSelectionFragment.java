@@ -1,6 +1,7 @@
-package my.edu.utar.evercare.User;
+package my.edu.utar.evercare.Chat;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +18,17 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import my.edu.utar.evercare.Chat.ChatFragment;
 import my.edu.utar.evercare.R;
+import my.edu.utar.evercare.User.AllUser;
+import my.edu.utar.evercare.User.AllUserAdapter;
+import my.edu.utar.evercare.User.CaregiverUser;
+import my.edu.utar.evercare.User.CaregiverUserAdapter;
+import my.edu.utar.evercare.User.ElderlyUserAdapter;
+import my.edu.utar.evercare.User.StaffUser;
+import my.edu.utar.evercare.User.StaffUserAdapter;
 
 public class UserSelectionFragment extends Fragment {
 
@@ -29,6 +38,7 @@ public class UserSelectionFragment extends Fragment {
     private StaffUserAdapter staffUserAdapter;
     private AllUserAdapter allUserAdapter;
     private TabLayout tabLayout;
+    private String currentUsername;
 
     @Nullable
     @Override
@@ -92,7 +102,26 @@ public class UserSelectionFragment extends Fragment {
         String currentUserId = getCurrentUserId();
 
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+        // To get the current user name
+        firestore.collection("all_users")
+                .document(currentUserId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        currentUsername = documentSnapshot.getString("username");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error fetching current user: " + e.getMessage());
+                });
+
+
         Query usersQuery = firestore.collection(collectionReference).whereNotEqualTo("userId", currentUserId);
+        // Only retrieve the caregiver that linked with the elderly account in the "FAMILY" tab
+        Query usersQuery2 = firestore.collection(collectionReference)
+                                                .whereEqualTo("elderlyParentName", currentUsername)
+                                                .whereNotEqualTo("userId", currentUserId);
 
         if (collectionReference.equals("all_users")) {
             if (allUserAdapter != null) {
@@ -123,7 +152,7 @@ public class UserSelectionFragment extends Fragment {
             }
 
             FirestoreRecyclerOptions<CaregiverUser> options = new FirestoreRecyclerOptions.Builder<CaregiverUser>()
-                    .setQuery(usersQuery, CaregiverUser.class)
+                    .setQuery(usersQuery2, CaregiverUser.class)
                     .build();
 
             caregiverUserAdapter = new CaregiverUserAdapter(options);

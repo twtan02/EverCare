@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import my.edu.utar.evercare.R;
-import my.edu.utar.evercare.User.UserSelectionFragment;
 
 public class ChatActivity extends AppCompatActivity {
 

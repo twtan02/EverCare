@@ -102,6 +102,8 @@ public class StatisticsPagerAdapter extends RecyclerView.Adapter<StatisticsPager
 
     private void UpdateUserId(String currentUserId, ViewHolder holder){
         this.currentUserId = currentUserId;
+        holder.setAllDataAvailable(false);
+        holder.setPieChartData(0); // Clear any existing data in the pie chart
         getAllStatisticsData(holder);
     }
 
@@ -135,6 +137,9 @@ public class StatisticsPagerAdapter extends RecyclerView.Adapter<StatisticsPager
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        // Check if data is available for the current user
+                        boolean allDataAvailable = !task.getResult().isEmpty();
+                        holder.setAllDataAvailable(allDataAvailable);
                         switch (component) {
                             case "blood_glucose":
                                 processBloodGlucoseData(task.getResult(), holder);
@@ -583,6 +588,7 @@ public class StatisticsPagerAdapter extends RecyclerView.Adapter<StatisticsPager
         LinearLayout imageButtonBloodLipids;
         LinearLayout imageButtonSleep;
         PieChartView pieChartView;
+        boolean allDataAvailable = false;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -626,6 +632,7 @@ public class StatisticsPagerAdapter extends RecyclerView.Adapter<StatisticsPager
 
 
         public void setPieChartData(float totalPercentage) {
+            if (allDataAvailable) {
             float[] data = new float[CHART_COLORS.length];
             int[][] segmentColors = new int[CHART_COLORS.length][1];
 
@@ -662,6 +669,15 @@ public class StatisticsPagerAdapter extends RecyclerView.Adapter<StatisticsPager
             pieChartView.setStrokeWidth(4); // Example stroke width
             pieChartView.setStrokeColor(0xFF000000); // Example stroke color
             pieChartView.setData(data, segmentColors);
+            pieChartView.setVisibility(View.VISIBLE); // Show the pie chart
+            } else {
+                pieChartView.setVisibility(View.GONE); // Hide the pie chart if data is not available
+            }
+        }
+
+        // Set a flag to indicate whether all data is available for the current user
+        public void setAllDataAvailable(boolean allDataAvailable) {
+            this.allDataAvailable = allDataAvailable;
         }
 
 

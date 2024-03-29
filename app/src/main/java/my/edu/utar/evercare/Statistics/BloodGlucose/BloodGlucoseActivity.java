@@ -14,11 +14,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -76,6 +79,9 @@ public class BloodGlucoseActivity extends AppCompatActivity {
 
         // Get the current user ID from the intent
         currentUserID = getIntent().getStringExtra("userID");
+
+        // Check the current user's role and adjust EditText accordingly
+        checkUserRole();
 
         // Initialize RecyclerView
         recyclerView = findViewById(R.id.bloodGlucoseRecyclerView);
@@ -179,6 +185,58 @@ public class BloodGlucoseActivity extends AppCompatActivity {
                         }
                     });
         });
+    }
+
+    private String getCurrentUserId() {
+        // Assuming you are using Firebase Authentication
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        // Check if the user is authenticated
+        if (currentUser != null) {
+            // The user is signed in, return their UID
+            return currentUser.getUid();
+        } else {
+            // No user is signed in, handle accordingly (e.g., redirect to login)
+            // Return an empty string or throw an exception based on your app's logic
+            return "";
+        }
+    }
+
+    private void checkUserRole() {
+        // User that logged in the app
+        String currentID = getCurrentUserId();
+        // Query Firestore to retrieve the user's role based on the currentUserID
+        db.collection("all_users")
+                .document(currentID)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String userRole = documentSnapshot.getString("role");
+                        if (userRole != null) {
+                            // Check the user's role and adjust EditText accordingly
+                            if (userRole.equals("Elderly")) {
+                                // Disable EditText if the current user is elderly
+                                bloodGlucoseEditText.setEnabled(false);
+                                // Optionally, change the hint text to notify the user why the EditText is disabled
+                                bloodGlucoseEditText.setHintTextColor(ContextCompat.getColor(this, R.color.my_red));
+                                bloodGlucoseEditText.setHint("You are not allowed to edit this field.");
+                            } else {
+                                // Enable EditText if the current user is caregiver or staff
+                                bloodGlucoseEditText.setEnabled(true);
+                            }
+                        } else {
+                            // Handle case where role is null or not found
+                            Toast.makeText(this, "User role not found", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        // Handle case where document does not exist
+                        Toast.makeText(this, "User document not found", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure in retrieving user document
+                    Toast.makeText(this, "Failed to retrieve user document: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 
     // Method to extract numeric part of blood glucose level string
