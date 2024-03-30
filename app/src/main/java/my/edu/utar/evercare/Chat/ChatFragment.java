@@ -1,9 +1,11 @@
 package my.edu.utar.evercare.Chat;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +29,9 @@ import com.google.firebase.firestore.Query;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
+import java.util.ArrayList;
+import java.util.Locale;
+
 import my.edu.utar.evercare.R;
 
 public class ChatFragment extends Fragment {
@@ -37,14 +42,12 @@ public class ChatFragment extends Fragment {
     private ChatManager chatManager;
     private String currentUserId;
     private EditText editTextMessage;
-    private ImageView buttonSend;
-    private ImageView buttonUpload;
-    private ImageView imageViewSelectedImage; // Add this line
-    private ImageView buttonDeleteImage;
+    private ImageView buttonSend, buttonUpload, imageViewSelectedImage, buttonDeleteImage, buttonVoice;
     private Uri selectedImageUri; // Add this line
 
     // Request code for media upload
     private static final int MEDIA_UPLOAD_REQUEST_CODE = 123;
+    private static final int REQUEST_CODE_SPEECH_INPUT = 100;
 
     private final ActivityResultLauncher<Intent> mediaUploadLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -103,6 +106,9 @@ public class ChatFragment extends Fragment {
         // Inside your ChatFragment's onCreateView method
         editTextMessage = view.findViewById(R.id.editTextMessage);
         buttonSend = view.findViewById(R.id.buttonSend);
+        buttonUpload = view.findViewById(R.id.buttonUpload);
+        buttonDeleteImage = view.findViewById(R.id.buttonDeleteImage);
+        buttonVoice = view.findViewById(R.id.buttonVoice);
 
         editTextMessage.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -122,10 +128,6 @@ public class ChatFragment extends Fragment {
             }
         });
 
-        // Find the buttonUpload ImageView
-        buttonUpload = view.findViewById(R.id.buttonUpload);
-
-        // Set a click listener
         buttonUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,15 +136,20 @@ public class ChatFragment extends Fragment {
             }
         });
 
-        // Find the buttonDeleteImage ImageView
-        buttonDeleteImage = view.findViewById(R.id.buttonDeleteImage);
-
-        // Set a click listener
         buttonDeleteImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Handle the delete image button click
                 deleteSelectedImage();
+            }
+        });
+
+        buttonVoice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Perform the action for voice input
+                // For example, you might start voice recognition here
+                startVoiceRecognition();
             }
         });
 
@@ -220,6 +227,34 @@ public class ChatFragment extends Fragment {
             }
         }
     }
+
+    private void startVoiceRecognition() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now...");
+
+        try {
+            voiceRecognitionLauncher.launch(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(getContext(), "Speech recognition not supported on this device", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    private final ActivityResultLauncher<Intent> voiceRecognitionLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    ArrayList<String> speechResults = result.getData().getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    if (speechResults != null && !speechResults.isEmpty()) {
+                        editTextMessage.setText(speechResults.get(0));
+                    }
+                } else {
+                    Toast.makeText(getContext(), "Speech recognition cancelled", Toast.LENGTH_SHORT).show();
+                }
+            }
+    );
 
 
     @Override
