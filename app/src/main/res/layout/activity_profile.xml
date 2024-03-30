@@ -39,47 +39,167 @@
         android:background="@drawable/profile_container"
         android:orientation="vertical">
 
-        <!-- TextViews with background -->
-        <TextView
-            android:id="@+id/textViewName"
+        <!-- Name Layout -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical">
 
-            android:padding="10dp"
-            android:text="Name: John Doe"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/textViewEmail"
+                <ImageView
+                    android:id="@+id/imageViewName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_name"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:padding="4dp"/>
+
+                <!-- Name Title -->
+                <TextView
+                    android:id="@+id/textViewTitleName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Name"
+                    android:textColor="@color/quantum_grey"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_toEndOf="@id/imageViewName"
+                    android:layout_alignParentTop="true"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"/>
+
+                <!-- Name Field -->
+                <TextView
+                    android:id="@+id/textViewName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="John Doe"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_toEndOf="@id/imageViewName"
+                    android:layout_below="@id/textViewTitleName"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+
+        <!-- Email Layout -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="4dp"
-            android:padding="10dp"
-            android:text="Email: johndoe@example.com"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textViewAge"
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/imageViewEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_email"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:padding="4dp"/>
+
+                <!-- Email Title -->
+                <TextView
+                    android:id="@+id/textViewTitleEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Email"
+                    android:textColor="@color/quantum_grey"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_toEndOf="@id/imageViewEmail"
+                    android:layout_alignParentTop="true"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"/>
+
+                <!-- Email Field -->
+                <TextView
+                    android:id="@+id/textViewEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="johndoe@example.com"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_toEndOf="@id/imageViewEmail"
+                    android:layout_below="@id/textViewTitleEmail"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <!-- Age Layout -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:padding="10dp"
-            android:text="Age: 30"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/imageViewAge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_age"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:padding="4dp"/>
+
+                <!-- Age Title -->
+                <TextView
+                    android:id="@+id/textViewTitleAge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Age"
+                    android:textColor="@color/quantum_grey"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_toEndOf="@id/imageViewAge"
+                    android:layout_alignParentTop="true"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"/>
+
+                <!-- Age Field -->
+                <TextView
+                    android:id="@+id/textViewAge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="30"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_toEndOf="@id/imageViewAge"
+                    android:layout_below="@id/textViewTitleAge"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"/>
+            </RelativeLayout>
+        </LinearLayout>
     </LinearLayout>
+
 
     <!-- Upload Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton

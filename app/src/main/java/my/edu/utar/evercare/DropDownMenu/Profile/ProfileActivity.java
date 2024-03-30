@@ -122,9 +122,9 @@ public class ProfileActivity extends AppCompatActivity {
                                     int age = calculateAge(dateOfBirth);
 
                                     // Update the views with the user details
-                                    textViewName.setText("Name: " + name);
-                                    textViewEmail.setText("Email: " + email);
-                                    textViewAge.setText("Age: " + age);
+                                    textViewName.setText(name);
+                                    textViewEmail.setText(email);
+                                    textViewAge.setText(String.valueOf(age));
                                 } else {
                                     // If data is not found in elderly_users collection,
                                     // try to fetch data from staff_users collection
@@ -165,9 +165,9 @@ public class ProfileActivity extends AppCompatActivity {
                                 int age = calculateAge(dateOfBirth);
 
                                 // Update the views with the user details
-                                textViewName.setText("Name: " + name);
-                                textViewEmail.setText("Email: " + email);
-                                textViewAge.setText("Age: " + age);
+                                textViewName.setText(name);
+                                textViewEmail.setText(email);
+                                textViewAge.setText(String.valueOf(age));
                             } else {
                                 // If data is not found in staff_users collection,
                                 // try to fetch data from caregiver_users collection
@@ -205,9 +205,9 @@ public class ProfileActivity extends AppCompatActivity {
                                 int age = calculateAge(dateOfBirth);
 
                                 // Update the views with the user details
-                                textViewName.setText("Name: " + name);
-                                textViewEmail.setText("Email: " + email);
-                                textViewAge.setText("Age: " + age);
+                                textViewName.setText(name);
+                                textViewEmail.setText(email);
+                                textViewAge.setText(String.valueOf(age));
                             } else {
                                 // User data not found in any collection, handle this scenario
                             }
