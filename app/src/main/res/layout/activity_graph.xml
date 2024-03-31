@@ -41,4 +41,14 @@
         android:layout_centerHorizontal="true"
         android:background="@drawable/round_background_white" />
 
+    <!-- Button to export graph to PDF -->
+    <Button
+        android:id="@+id/exportButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/graphView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Export to PDF" />
+
 </RelativeLayout>

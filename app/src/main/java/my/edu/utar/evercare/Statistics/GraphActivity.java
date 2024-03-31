@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -63,6 +65,20 @@ public class GraphActivity extends AppCompatActivity {
                 Log.e("GraphActivity", "graphView is null");
             }
         }
+
+        Button exportButton = findViewById(R.id.exportButton);
+
+        // Set an OnClickListener to trigger exportToPDF() when the button is clicked
+        exportButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Trigger the exportToPDF() method of your LineGraphView
+                LineGraphView lineGraphView = findViewById(R.id.graphView);
+                String graphTitle = ((TextView) findViewById(R.id.graphTitle)).getText().toString();
+                lineGraphView.exportToPDF(graphTitle);
+            }
+        });
+
     }
 
 

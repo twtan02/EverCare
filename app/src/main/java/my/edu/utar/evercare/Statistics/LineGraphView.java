@@ -1,17 +1,23 @@
 package my.edu.utar.evercare.Statistics;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.pdf.PdfDocument;
+import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
-
+import android.view.View;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -56,6 +62,34 @@ public class LineGraphView extends View {
         invalidate(); // Refresh view after setting data points
     }
 
+    public void exportToPDF(final String graphTitle) {
+        PdfDocument document = new PdfDocument();
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(getWidth(), getHeight(), 1).create();
+        PdfDocument.Page page = document.startPage(pageInfo);
+        Canvas canvas = page.getCanvas();
+
+        // Draw the graph onto the PDF canvas using the draw() method
+        draw(canvas);
+
+        document.finishPage(page);
+
+        // Save the document to the "Download" directory with the graph title as the filename
+        File downloadDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File pdfFile = new File(downloadDirectory, graphTitle + ".pdf");
+
+        try {
+            document.writeTo(new FileOutputStream(pdfFile));
+            Toast.makeText(getContext(), "PDF saved to " + pdfFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Error saving PDF", Toast.LENGTH_SHORT).show();
+        }
+
+        document.close();
+    }
+
+
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -64,8 +98,8 @@ public class LineGraphView extends View {
             return; // No data points to draw
         }
 
-        int width = getWidth();
-        int height = getHeight();
+        int width = canvas.getWidth();
+        int height = canvas.getHeight();
 
         // Draw graph title
         canvas.drawText(graphTitle, width / 2f, padding * 0.5f, paintTitle);

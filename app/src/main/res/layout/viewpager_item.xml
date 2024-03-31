@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:layout_marginHorizontal="16dp">
 
+
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
@@ -14,7 +15,8 @@
         android:elevation="8dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
