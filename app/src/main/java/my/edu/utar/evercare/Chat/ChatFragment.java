@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,26 +16,35 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import android.widget.ProgressBar;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.UUID;
 
 import my.edu.utar.evercare.R;
 
 public class ChatFragment extends Fragment {
+
+    private static final int MEDIA_UPLOAD_REQUEST_CODE = 123;
+    private static final int REQUEST_CODE_SPEECH_INPUT = 100;
+    private static final String TAG = "ChatFragment";
 
     private String selectedUserId;
     private RecyclerView recyclerView;
@@ -43,12 +53,8 @@ public class ChatFragment extends Fragment {
     private String currentUserId;
     private EditText editTextMessage;
     private ImageView buttonSend, buttonUpload, imageViewSelectedImage, buttonDeleteImage, buttonVoice;
-    private Uri selectedImageUri; // Add this line
-
-    // Request code for media upload
-    private static final int MEDIA_UPLOAD_REQUEST_CODE = 123;
-    private static final int REQUEST_CODE_SPEECH_INPUT = 100;
-
+    private Uri selectedImageUri;
+    private View rootView;
     private final ActivityResultLauncher<Intent> mediaUploadLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -62,8 +68,6 @@ public class ChatFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Receive selected user ID from arguments
         Bundle args = getArguments();
         if (args != null) {
             selectedUserId = args.getString("selectedUserId");
@@ -73,26 +77,20 @@ public class ChatFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate the fragment layout
-        View view = inflater.inflate(R.layout.fragment_chat, container, false);
+        rootView = inflater.inflate(R.layout.fragment_chat, container, false);
+        recyclerView = rootView.findViewById(R.id.chatRecyclerView);
+        imageViewSelectedImage = rootView.findViewById(R.id.imageViewSelectedImage);
 
-        // Initialize views
-        recyclerView = view.findViewById(R.id.chatRecyclerView);
-        imageViewSelectedImage = view.findViewById(R.id.imageViewSelectedImage); // Add this line
-
-        // Initialize Firebase Firestore and current user ID
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
             currentUserId = auth.getCurrentUser().getUid();
         }
 
-        // Initialize ChatManager with selected user ID
         chatManager = new ChatManager(firestore, currentUserId, selectedUserId);
 
-        // Set up the RecyclerView and ChatAdapter
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        layoutManager.setStackFromEnd(true); // Display messages from the bottom
+        layoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(layoutManager);
 
         Query chatMessagesQuery = chatManager.getChatMessagesQuery();
@@ -103,68 +101,34 @@ public class ChatFragment extends Fragment {
         chatAdapter = new ChatAdapter(options, currentUserId);
         recyclerView.setAdapter(chatAdapter);
 
-        // Inside your ChatFragment's onCreateView method
-        editTextMessage = view.findViewById(R.id.editTextMessage);
-        buttonSend = view.findViewById(R.id.buttonSend);
-        buttonUpload = view.findViewById(R.id.buttonUpload);
-        buttonDeleteImage = view.findViewById(R.id.buttonDeleteImage);
-        buttonVoice = view.findViewById(R.id.buttonVoice);
+        editTextMessage = rootView.findViewById(R.id.editTextMessage);
+        buttonSend = rootView.findViewById(R.id.buttonSend);
+        buttonUpload = rootView.findViewById(R.id.buttonUpload);
+        buttonDeleteImage = rootView.findViewById(R.id.buttonDeleteImage);
+        buttonVoice = rootView.findViewById(R.id.buttonVoice);
 
-        editTextMessage.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
-                    sendMessage();
-                    return true; // Return true to indicate that the event is handled
-                }
-                return false;
-            }
-        });
-
-        buttonSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        editTextMessage.setOnEditorActionListener((v, actionId, event) -> {
+            if (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
                 sendMessage();
+                return true;
             }
+            return false;
         });
 
-        buttonUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Handle the upload button click
-                openMediaPicker(); // You can replace this with your desired logic
-            }
-        });
+        buttonSend.setOnClickListener(v -> sendMessage());
 
-        buttonDeleteImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Handle the delete image button click
-                deleteSelectedImage();
-            }
-        });
+        buttonUpload.setOnClickListener(v -> openMediaPicker());
 
-        buttonVoice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Perform the action for voice input
-                // For example, you might start voice recognition here
-                startVoiceRecognition();
-            }
-        });
+        buttonDeleteImage.setOnClickListener(v -> deleteSelectedImage());
 
-        return view;
+        buttonVoice.setOnClickListener(v -> startVoiceRecognition());
+
+        return rootView;
     }
 
-    // Method to delete the selected image
     private void deleteSelectedImage() {
-        // Reset the selected image URI
         selectedImageUri = null;
-
-        // Clear the selected image from imageViewSelectedImage
         imageViewSelectedImage.setImageURI(null);
-
-        // Hide the imageViewSelectedImage
         imageViewSelectedImage.setVisibility(View.GONE);
         buttonDeleteImage.setVisibility(View.GONE);
     }
@@ -172,36 +136,36 @@ public class ChatFragment extends Fragment {
     private void sendMessage() {
         String messageText = editTextMessage.getText().toString().trim();
 
+        // If the both text and image not null
         if (!messageText.isEmpty()) {
             if (selectedImageUri != null) {
-                // Send both text and image
                 chatManager.sendMessageWithImage(messageText, selectedImageUri);
             } else {
-                // Send only text
                 chatManager.sendMessage(messageText);
             }
-
-            // Clear the input fields
             editTextMessage.setText("");
-            imageViewSelectedImage.setVisibility(View.GONE); // Hide the image view
-            buttonDeleteImage.setVisibility(View.GONE);
-
-        } else if (selectedImageUri != null) {
-            // If there's no text, but there's an image, send the image
+            clearSelectedImage();
+        }
+        // If the text is null but image not null
+        else if (selectedImageUri != null) {
             chatManager.sendMessageWithImage("", selectedImageUri);
-            imageViewSelectedImage.setVisibility(View.GONE); // Hide the image view
-            buttonDeleteImage.setVisibility(View.GONE);
-
+            clearSelectedImage();
         } else {
             Toast.makeText(getContext(), "Please enter a message", Toast.LENGTH_SHORT).show();
         }
     }
 
+    // Method to clear the selected image
+    private void clearSelectedImage() {
+        selectedImageUri = null;
+        imageViewSelectedImage.setImageDrawable(null); // Clear the image
+        imageViewSelectedImage.setVisibility(View.GONE);
+        buttonDeleteImage.setVisibility(View.GONE);
+    }
 
-    // Method to handle the upload action (you can replace this with your desired logic)
     private void openMediaPicker() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*"); // You can also use "video/*" for videos
+        intent.setType("image/*");
         mediaUploadLauncher.launch(intent);
     }
 
@@ -211,22 +175,51 @@ public class ChatFragment extends Fragment {
             // Get the selected file URI
             Uri selectedFileUri = data.getData();
 
-            // Update imageViewSelectedImage with the selected image
+            // Check if the selected file URI is not null
             if (selectedFileUri != null) {
-                // Set the selected image URI to the class variable
+
                 selectedImageUri = selectedFileUri;
 
-                // Show the selected image in imageViewSelectedImage
-                imageViewSelectedImage.setImageURI(selectedImageUri);
+                // Show the selected image using Glide
+                Glide.with(this)
+                        .load(selectedImageUri) // Load the image URI
+                        .into(imageViewSelectedImage); // Set the ImageView
 
                 // Optionally, make the imageViewSelectedImage visible
                 imageViewSelectedImage.setVisibility(View.VISIBLE);
                 buttonDeleteImage.setVisibility(View.VISIBLE);
 
-                // You can also handle other logic related to the selected image here
+                // Upload the selected image to Firebase Storage
+                uploadImageToStorage(selectedImageUri);
             }
         }
     }
+
+
+    private void uploadImageToStorage(Uri imageUri) {
+        String imageId = UUID.randomUUID().toString();
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images/" + imageId);
+        storageRef.putFile(imageUri)
+                .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl()
+                        .addOnSuccessListener(uri -> {
+                            String imageUrl = uri.toString();
+                            selectedImageUri = Uri.parse(imageUrl);
+
+                            // Set the imageViewSelectedImage URI
+                            imageViewSelectedImage.setImageURI(selectedImageUri);
+
+                            // Load the image using Glide with the selectedFileUri
+                            Glide.with(requireContext())
+                                    .load(imageUri)
+                                    .into(imageViewSelectedImage);
+
+                            imageViewSelectedImage.setVisibility(View.VISIBLE);
+                            buttonDeleteImage.setVisibility(View.VISIBLE);
+                        })
+                        .addOnFailureListener(e -> Log.e(TAG, "Failed to get image download URL: " + e.getMessage())))
+                .addOnFailureListener(e -> Log.e(TAG, "Image upload failed: " + e.getMessage()));
+    }
+
 
     private void startVoiceRecognition() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -241,7 +234,6 @@ public class ChatFragment extends Fragment {
         }
     }
 
-
     private final ActivityResultLauncher<Intent> voiceRecognitionLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -255,7 +247,6 @@ public class ChatFragment extends Fragment {
                 }
             }
     );
-
 
     @Override
     public void onStart() {

@@ -99,6 +99,5 @@
                 android:minLines="1" />
 
         </LinearLayout>
-
     </RelativeLayout>
 </RelativeLayout>

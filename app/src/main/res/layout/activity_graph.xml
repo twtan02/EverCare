@@ -49,6 +49,7 @@
         android:layout_below="@id/graphView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:text="Export to PDF" />
+        android:text="Export to PDF"
+        android:textColor="@color/black"/>
 
 </RelativeLayout>
