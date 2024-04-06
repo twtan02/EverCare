@@ -120,7 +120,7 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
                 });
     }
 
-    private void fetchMedicalRecordsForElderlyUsers() {
+    public void fetchMedicalRecordsForElderlyUsers() {
         medicalRecordsMap.clear();
         for (ElderlyUser elderlyUser : elderlyUsers) {
             firestore.collection("medical_records")
@@ -170,18 +170,18 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
             }
         }
 
-        MedicalRecordItemAdapter itemAdapter = new MedicalRecordItemAdapter(allMedicalRecords, medicineNames);
+        MedicalRecordItemAdapter itemAdapter = new MedicalRecordItemAdapter(allMedicalRecords, medicineNames, this);
         medicalRecordRecyclerView.setAdapter(itemAdapter);
     }
 
-    private void fetchMedicineNamesFromFirestore() {
-        medicineNames = new ArrayList<>();
+    public void fetchMedicineNamesFromFirestore() {
         FirebaseFirestore.getInstance().collection("medical_records")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            List<String> updatedMedicineNames = new ArrayList<>(); // Create a new list for updated medicine names
                             for (DocumentSnapshot document : task.getResult()) {
                                 String elderlyName = document.getString("elderlyName");
                                 List<Map<String, Object>> medications = (List<Map<String, Object>>) document.get("medications");
@@ -192,11 +192,22 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
                                             // Append the elderly name before or after the medicine name
                                             // Here, we append it before the medicine name
                                             String modifiedMedicineName = elderlyName + " - " + medicineName;
-                                            medicineNames.add(modifiedMedicineName);
+                                            updatedMedicineNames.add(modifiedMedicineName);
                                         }
                                     }
                                 }
                             }
+                            // Ensure that medicineNames is initialized
+                            if (medicineNames == null) {
+                                medicineNames = new ArrayList<>();
+                            }
+                            // Update the medicineNames list with the new data
+                            medicineNames.clear(); // Clear the old data
+                            medicineNames.addAll(updatedMedicineNames); // Add the updated medicine names
+
+                            // Log out the medicine names here
+                            Log.d("MedicalRecordItemAdapter", "Medicine Names Retrieved: " + medicineNames.toString());
+
                             // Notify the adapter that medicine names are fetched
                             if (medicalRecordItemAdapter != null) {
                                 medicalRecordItemAdapter.setMedicineNames(medicineNames);
@@ -207,6 +218,7 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
                     }
                 });
     }
+
 
 
     private void showChooseElderlyUserDialog() {
@@ -356,7 +368,10 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
                                                         Log.d("MedicalRecordActivity", "Medication added to existing medical record");
-                                                        fetchMedicalRecordsForElderlyUsers(); // Refresh the UI
+                                                        // Refresh the UI
+                                                        fetchMedicalRecordsForElderlyUsers();
+                                                        // Fetch updated medicine names after adding a medical record
+                                                        fetchMedicineNamesFromFirestore();
                                                     }
                                                 })
                                                 .addOnFailureListener(new OnFailureListener() {
@@ -423,7 +438,7 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
     }
 
     private void setupRecyclerView(List<String> medicineNames) {
-        medicalRecordItemAdapter = new MedicalRecordItemAdapter(new ArrayList<>(), medicineNames);
+        medicalRecordItemAdapter = new MedicalRecordItemAdapter(new ArrayList<>(), medicineNames, this);
         medicalRecordRecyclerView.setAdapter(medicalRecordItemAdapter);
         medicalRecordRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }

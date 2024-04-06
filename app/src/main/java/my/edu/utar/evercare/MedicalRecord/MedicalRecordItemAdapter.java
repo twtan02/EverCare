@@ -37,10 +37,12 @@ public class MedicalRecordItemAdapter extends RecyclerView.Adapter<MedicalRecord
 
     private List<MedicalRecord> medicalRecords;
     private List<String> medicineNames;
+    private MedicalRecordActivity medicalRecordActivity;
 
-    public MedicalRecordItemAdapter(List<MedicalRecord> medicalRecords, List<String> medicineNames) {
+    public MedicalRecordItemAdapter(List<MedicalRecord> medicalRecords, List<String> medicineNames, MedicalRecordActivity medicalRecordActivity) {
         this.medicalRecords = medicalRecords;
         this.medicineNames = (medicineNames != null) ? medicineNames : new ArrayList<>();
+        this.medicalRecordActivity = medicalRecordActivity;
     }
 
     @NonNull
@@ -68,7 +70,6 @@ public class MedicalRecordItemAdapter extends RecyclerView.Adapter<MedicalRecord
         Glide.with(holder.itemView.getContext())
                 .load(medicalRecord.getProfileImageUrl())
                 .placeholder(R.drawable.default_profile_image)
-                .error(R.drawable.default_failure_profile)
                 .transform(new CircleCrop())
                 .into(holder.profileImageView);
 
@@ -112,6 +113,9 @@ public class MedicalRecordItemAdapter extends RecyclerView.Adapter<MedicalRecord
             return;
         }
 
+        // Log out the selected medication name
+        Log.d("MedicalRecordItemAdapter", "Selected Medication Name: " + selectedMedicationName);
+
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         CollectionReference medicalRecordsRef = firestore.collection("medical_records");
 
@@ -121,13 +125,16 @@ public class MedicalRecordItemAdapter extends RecyclerView.Adapter<MedicalRecord
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            boolean medicationFound = false; // Flag to track if medication was found
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 List<Map<String, Object>> medications = (List<Map<String, Object>>) document.get("medications");
                                 if (medications != null) {
                                     for (Map<String, Object> medication : medications) {
                                         String medicineName = (String) medication.get("medicineName");
+                                        Log.d("medicineName", "medicineName: " + medicineName);
                                         if (medicineName != null && medicineName.equals(selectedMedicationName)) {
                                             // Found the medication to delete
+                                            medicationFound = true; // Set flag to true
                                             medications.remove(medication);
                                             // Update the medical record in Firestore
                                             document.getReference().update("medications", medications)
@@ -135,23 +142,35 @@ public class MedicalRecordItemAdapter extends RecyclerView.Adapter<MedicalRecord
                                                         @Override
                                                         public void onSuccess(Void aVoid) {
                                                             Log.d("MedicalRecordItemAdapter", "Medication deleted successfully");
-                                                            // Check if position is valid before removing item
-                                                            if (position >= 0 && position < medicalRecord.getMedications().size()) {
-                                                                medicalRecord.getMedications().remove(position);
+                                                            // Find the index of the medication in medicalRecord.getMedications()
+                                                            int indexToRemove = -1;
+                                                            for (int i = 0; i < medicalRecord.getMedications().size(); i++) {
+                                                                Medication med = medicalRecord.getMedications().get(i);
+                                                                if (med.getMedicineName().equals(selectedMedicationName)) {
+                                                                    indexToRemove = i;
+                                                                    break;
+                                                                }
+                                                            }
+                                                            if (indexToRemove != -1) {
+                                                                // Remove the medication from medicalRecord.getMedications() list
+                                                                medicalRecord.getMedications().remove(indexToRemove);
                                                                 // If medications list is empty, remove the MedicalRecord object
                                                                 if (medicalRecord.getMedications().isEmpty()) {
                                                                     medicalRecords.remove(medicalRecord);
                                                                     notifyDataSetChanged();
                                                                 } else {
-                                                                    notifyItemRemoved(position);
+                                                                    notifyItemRemoved(indexToRemove);
                                                                 }
                                                                 // Refresh medical records from Firestore to ensure synchronization
                                                                 refreshMedicalRecords();
+                                                                // Fetch medical records for elderly users again
+                                                                medicalRecordActivity.fetchMedicalRecordsForElderlyUsers();
+                                                                // Fetch updated medicine names after deleting a medical record
+                                                                medicalRecordActivity.fetchMedicineNamesFromFirestore();
                                                             } else {
-                                                                Log.e("MedicalRecordItemAdapter", "Invalid position: " + position);
+                                                                Log.e("MedicalRecordItemAdapter", "Medication not found in the list");
                                                             }
                                                         }
-
                                                     })
                                                     .addOnFailureListener(new OnFailureListener() {
                                                         @Override
@@ -159,10 +178,14 @@ public class MedicalRecordItemAdapter extends RecyclerView.Adapter<MedicalRecord
                                                             Log.e("MedicalRecordItemAdapter", "Error deleting medication", e);
                                                         }
                                                     });
-                                            return;
+                                            break; // Exit loop once medication is found and deleted
                                         }
                                     }
                                 }
+                            }
+                            // Handle if medication was not found for deletion
+                            if (!medicationFound) {
+                                Log.e("MedicalRecordItemAdapter", "Medication not found for deletion");
                             }
                         } else {
                             Log.e("MedicalRecordItemAdapter", "Error getting medical records", task.getException());
@@ -170,6 +193,7 @@ public class MedicalRecordItemAdapter extends RecyclerView.Adapter<MedicalRecord
                     }
                 });
     }
+
 
     private void refreshMedicalRecords() {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
@@ -195,10 +219,20 @@ public class MedicalRecordItemAdapter extends RecyclerView.Adapter<MedicalRecord
 
 
     private void showDeleteDialog(Context context, MedicalRecord medicalRecord, List<String> medicationNames, int position) {
+        String elderlyName = medicalRecord.getElderlyName();
+
+        // Filter medication names based on the selected elderly user's name
+        List<String> filteredMedicationNames = new ArrayList<>();
+        for (String medicationName : medicationNames) {
+            if (medicationName.startsWith(elderlyName)) {
+                filteredMedicationNames.add(medicationName);
+            }
+        }
+
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_delete_medication, null);
         Spinner medicationSpinner = dialogView.findViewById(R.id.medication_spinner);
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, medicationNames);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, filteredMedicationNames);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         medicationSpinner.setAdapter(spinnerAdapter);
 
@@ -227,7 +261,5 @@ public class MedicalRecordItemAdapter extends RecyclerView.Adapter<MedicalRecord
 
         builder.create().show();
     }
-
-
 
 }
