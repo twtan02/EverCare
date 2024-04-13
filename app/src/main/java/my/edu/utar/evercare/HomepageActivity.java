@@ -210,6 +210,7 @@ public class HomepageActivity extends AppCompatActivity {
     private void enableElderlyFeatures() {
         isChatEnabled = true;
         isEmergencyHelpEnabled = true;
+        isRemoteMonitoringEnabled = true;
     }
 
     // Method to enable features for staff and caregiver users
