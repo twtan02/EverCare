@@ -1,5 +1,7 @@
 package my.edu.utar.evercare.MedicalRecord;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,18 +32,23 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import my.edu.utar.evercare.User.ElderlyUser;
 import my.edu.utar.evercare.R;
+import timber.log.Timber;
 
 public class MedicalRecordActivity extends AppCompatActivity implements MedicalRecordAdapter.OnMedicalRecordClickListener {
 
@@ -53,34 +60,40 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
     private MedicalRecordItemAdapter medicalRecordItemAdapter;
     private AlertDialog dialog;
     private List<String> medicineNames;
+    private Map<String, ElderlyUser> elderlyUserMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_medical_record);
 
+        // Initialize Firestore instance and RecyclerView
         firestore = FirebaseFirestore.getInstance();
         medicalRecordRecyclerView = findViewById(R.id.medical_record_recyclerview);
 
+        // Set up the toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setCustomView(R.layout.custom_toolbar_title);
-
         TextView customTitleTextView = findViewById(R.id.customToolbarTitle);
         customTitleTextView.setText("Medical Record");
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        // Fetch elderly users and medicine names from Firestore
         fetchElderlyUsersFromFirestore();
         fetchMedicineNamesFromFirestore();
-        setupRecyclerView(new ArrayList<>());
 
+        // Fetch the user's role and filter medical records
+        fetchUserAndFilterMedicalRecords();
+
+        // Set up RecyclerView
+        setupRecyclerView(new ArrayList<>());
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         medicalRecordRecyclerView.setLayoutManager(layoutManager);
 
+        // Set up FloatingActionButton
         FloatingActionButton fabAddMedicalRecord = findViewById(R.id.fab_add_medical_record);
         fabAddMedicalRecord.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,30 +135,126 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
 
     public void fetchMedicalRecordsForElderlyUsers() {
         medicalRecordsMap.clear();
-        for (ElderlyUser elderlyUser : elderlyUsers) {
-            firestore.collection("medical_records")
-                    .whereEqualTo("elderlyId", elderlyUser.getUserId())
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                List<MedicalRecord> medicalRecords = new ArrayList<>();
-                                for (DocumentSnapshot document : task.getResult()) {
-                                    MedicalRecord medicalRecord = document.toObject(MedicalRecord.class);
-                                    if (medicalRecord != null) {
-                                        medicalRecords.add(medicalRecord);
-                                    }
+        // Retrieve the current user's ID from Firebase Authentication
+        String userId = getCurrentUserIdFromFirebase();
+        // Query Firestore to get the corresponding user document
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        DocumentReference userRef = firestore.collection("all_users").document(userId);
+        userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    String userRole = documentSnapshot.getString("role");
+                    if (userRole != null && userRole.equals("Caregiver")) {
+                        String elderlyParentName = documentSnapshot.getString("elderlyParentName");
+                        fetchMedicalRecordsForCaregiver(userId, elderlyParentName);
+                    } else {
+//                        fetchMedicalRecordsForStaff(userId);
+                        for (ElderlyUser elderlyUser : elderlyUsers) {
+                            firestore.collection("medical_records")
+                                    .whereEqualTo("elderlyId", elderlyUser.getUserId())
+                                    .get()
+                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                List<MedicalRecord> medicalRecords = new ArrayList<>();
+                                                for (DocumentSnapshot document : task.getResult()) {
+                                                    MedicalRecord medicalRecord = document.toObject(MedicalRecord.class);
+                                                    if (medicalRecord != null) {
+                                                        medicalRecords.add(medicalRecord);
+                                                    }
+                                                }
+                                                medicalRecordsMap.put(elderlyUser.getUserId(), medicalRecords);
+                                                updateRecyclerView();
+                                            } else {
+                                                Log.e("MedicalRecordActivity", "Error getting medical records: ", task.getException());
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+
+                } else {
+                    Log.e("MedicalRecordActivity", "User document does not exist");
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("MedicalRecordActivity", "Error retrieving user document", e);
+            }
+        });
+    }
+
+    private void fetchMedicalRecordsForCaregiver(String userId, String elderlyParentName) {
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        firestore.collection("medical_records")
+                .whereEqualTo("elderlyName", elderlyParentName)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<MedicalRecord> medicalRecords = new ArrayList<>();
+                            for (DocumentSnapshot document : task.getResult()) {
+                                MedicalRecord medicalRecord = document.toObject(MedicalRecord.class);
+                                if (medicalRecord != null) {
+                                    medicalRecords.add(medicalRecord);
                                 }
-                                medicalRecordsMap.put(elderlyUser.getUserId(), medicalRecords);
-                                updateRecyclerView();
-                            } else {
-                                Log.e("MedicalRecordActivity", "Error getting medical records: ", task.getException());
+                            }
+                            medicalRecordsMap.put(userId, medicalRecords);
+                            updateRecyclerView();
+                        } else {
+                            Log.e("MedicalRecordActivity", "Error getting medical records: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+
+
+    private void filterMedicalRecordsByUserRole(String userRole, List<MedicalRecord> filteredMedicalRecords) {
+        // Retrieve the current user's ID from Firebase Authentication
+        String userId = getCurrentUserIdFromFirebase();
+        // Query Firestore to get the corresponding user document
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        DocumentReference userRef = firestore.collection("all_users").document(userId);
+        userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    String elderlyParentName = documentSnapshot.getString("elderlyParentName");
+                    // Filter medical records based on user's role and assigned elderly parent name
+                    for (List<MedicalRecord> records : medicalRecordsMap.values()) {
+                        for (MedicalRecord medicalRecord : records) {
+                            Log.d("MedicalRecordActivity", "medicalRecord: " + medicalRecord);
+                            if (userRole.equals("Caregiver") && medicalRecord.getElderlyName().equals(elderlyParentName)) {
+                                filteredMedicalRecords.add(medicalRecord);
+                            } else if (!userRole.equals("Caregiver")) {
+                                filteredMedicalRecords.add(medicalRecord);
                             }
                         }
-                    });
-        }
+                    }
+
+                    // Update RecyclerView to display the filtered medical records
+                    medicalRecordAdapter.setMedicalRecords(filteredMedicalRecords);
+
+                    // Log out filteredMedicalRecords
+                    Log.d("MedicalRecordActivity", "Filtered Medical Records: " + filteredMedicalRecords);
+                } else {
+                    Log.e("MedicalRecordActivity", "User document does not exist");
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("MedicalRecordActivity", "Error retrieving user document", e);
+            }
+        });
     }
+
+
 
     private void updateRecyclerView() {
         List<MedicalRecord> allMedicalRecords = new ArrayList<>();
@@ -219,27 +328,112 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
                 });
     }
 
+    private String getCurrentUserIdFromFirebase() {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser != null) {
+            return currentUser.getUid();
+        } else {
+            // Handle the case where the current user is null
+            return null;
+        }
+    }
+
+    private void fetchUserAndFilterMedicalRecords() {
+        // Retrieve the current user's ID from Firebase Authentication
+        String userId = getCurrentUserIdFromFirebase();
+
+        // Query Firestore to get the corresponding user document
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        DocumentReference userRef = firestore.collection("all_users").document(userId);
+        userRef.get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            String userRole = documentSnapshot.getString("role");
+
+                            // Initialize filteredMedicalRecords here
+                            List<MedicalRecord> filteredMedicalRecords = new ArrayList<>();
+
+                            // Filter medical records based on the user's role
+                            filterMedicalRecordsByUserRole(userRole, filteredMedicalRecords);
+                        } else {
+                            Log.e("MedicalRecordActivity", "User document does not exist");
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("MedicalRecordActivity", "Error retrieving user document", e);
+                    }
+                });
+    }
+
 
 
     private void showChooseElderlyUserDialog() {
         List<String> elderlyUserNames = new ArrayList<>();
-        for (ElderlyUser elderlyUser : elderlyUsers) {
-            elderlyUserNames.add(elderlyUser.getUsername());
+        String currentUserId = getCurrentUserIdFromFirebase();
+        elderlyUserMap.clear(); // Clear the map before populating it again
+
+        if (currentUserId != null) {
+            FirebaseFirestore.getInstance().collection("all_users")
+                    .document(currentUserId)
+                    .get()
+                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            if (documentSnapshot.exists()) {
+                                String currentUserRole = documentSnapshot.getString("role");
+                                String elderlyParentName = documentSnapshot.getString("elderlyParentName");
+                                Log.d("MedicalRecordActivity", "currentUserRole: " + currentUserRole);
+                                Log.d("MedicalRecordActivity", "Elderly Parent Name: " + elderlyParentName);
+
+                                for (ElderlyUser elderlyUser : elderlyUsers) {
+                                    if (currentUserRole.equals("Caregiver")) {
+                                        if (elderlyUser.getUsername().equals(elderlyParentName)) {
+                                            elderlyUserNames.add(elderlyUser.getUsername());
+                                            elderlyUserMap.put(elderlyUser.getUsername(), elderlyUser); // Add to the map
+                                        }
+                                    } else if (currentUserRole.equals("Staff")){
+                                        elderlyUserNames.add(elderlyUser.getUsername());
+                                        elderlyUserMap.put(elderlyUser.getUsername(), elderlyUser); // Add to the map
+                                    }
+                                }
+
+                                String[] elderlyUserArray = elderlyUserNames.toArray(new String[0]);
+
+                                AlertDialog.Builder builder = new AlertDialog.Builder(MedicalRecordActivity.this, R.style.CustomAlertDialogStyle);
+                                builder.setTitle("Choose Elderly User");
+                                builder.setItems(elderlyUserArray, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // Retrieve the corresponding ElderlyUser object from the map using the selected username
+                                        String selectedUsername = elderlyUserArray[which];
+                                        ElderlyUser selectedElderlyUser = elderlyUserMap.get(selectedUsername);
+                                        showAddMedicalRecordDialog(selectedElderlyUser);
+                                    }
+                                });
+                                builder.show();
+                            } else {
+                                Log.e(TAG, "User document does not exist");
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e(TAG, "Error retrieving user document", e);
+                        }
+                    });
+        } else {
+            Log.e(TAG, "Current user ID is null");
         }
-
-        String[] elderlyUserArray = elderlyUserNames.toArray(new String[0]);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialogStyle);
-        builder.setTitle("Choose Elderly User");
-        builder.setItems(elderlyUserArray, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                ElderlyUser selectedElderlyUser = elderlyUsers.get(which);
-                showAddMedicalRecordDialog(selectedElderlyUser);
-            }
-        });
-        builder.show();
     }
+
+
 
     private void showAddMedicalRecordDialog(ElderlyUser selectedElderlyUser) {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_medical_record, null);
@@ -438,10 +632,11 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
     }
 
     private void setupRecyclerView(List<String> medicineNames) {
-        medicalRecordItemAdapter = new MedicalRecordItemAdapter(new ArrayList<>(), medicineNames, this);
-        medicalRecordRecyclerView.setAdapter(medicalRecordItemAdapter);
+        medicalRecordAdapter = new MedicalRecordAdapter(new ArrayList<>(), this); // Initialize the adapter
+        medicalRecordRecyclerView.setAdapter(medicalRecordAdapter); // Set the adapter to the RecyclerView
         medicalRecordRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

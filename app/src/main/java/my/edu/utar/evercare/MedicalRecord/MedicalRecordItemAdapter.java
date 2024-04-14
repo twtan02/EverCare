@@ -1,5 +1,7 @@
 package my.edu.utar.evercare.MedicalRecord;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,7 +24,11 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -112,9 +118,6 @@ public class MedicalRecordItemAdapter extends RecyclerView.Adapter<MedicalRecord
             Log.e("MedicalRecordItemAdapter", "Medical record is null");
             return;
         }
-
-        // Log out the selected medication name
-        Log.d("MedicalRecordItemAdapter", "Selected Medication Name: " + selectedMedicationName);
 
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         CollectionReference medicalRecordsRef = firestore.collection("medical_records");
@@ -209,7 +212,7 @@ public class MedicalRecordItemAdapter extends RecyclerView.Adapter<MedicalRecord
                                 MedicalRecord medicalRecord = document.toObject(MedicalRecord.class);
                                 medicalRecords.add(medicalRecord);
                             }
-                            notifyDataSetChanged(); // Notify adapter of the updated data
+                            notifyDataSetChanged();
                         } else {
                             Log.e("MedicalRecordItemAdapter", "Error refreshing medical records", task.getException());
                         }
@@ -217,17 +220,19 @@ public class MedicalRecordItemAdapter extends RecyclerView.Adapter<MedicalRecord
                 });
     }
 
-
     private void showDeleteDialog(Context context, MedicalRecord medicalRecord, List<String> medicationNames, int position) {
         String elderlyName = medicalRecord.getElderlyName();
 
         // Filter medication names based on the selected elderly user's name
         List<String> filteredMedicationNames = new ArrayList<>();
         for (String medicationName : medicationNames) {
-            if (medicationName.startsWith(elderlyName)) {
+            String[] parts = medicationName.split(" - ");
+            String elderlyNameInMedication = parts[0];
+            if (elderlyNameInMedication.equals(elderlyName)) {
                 filteredMedicationNames.add(medicationName);
             }
         }
+
 
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_delete_medication, null);
         Spinner medicationSpinner = dialogView.findViewById(R.id.medication_spinner);
