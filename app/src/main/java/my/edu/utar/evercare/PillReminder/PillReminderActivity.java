@@ -33,6 +33,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -64,14 +67,11 @@ public class PillReminderActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setCustomView(R.layout.custom_toolbar_title);
-
         TextView customTitleTextView = findViewById(R.id.customToolbarTitle);
         customTitleTextView.setText("Pill Reminder");
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         recyclerView = findViewById(R.id.pill_reminder_recyclerview);
@@ -107,7 +107,64 @@ public class PillReminderActivity extends AppCompatActivity {
     }
 
     private void fetchPillRemindersFromFirestore() {
+
+        getCurrentUserRole(new OnUserRoleFetchedListener() {
+            @Override
+            public void onUserRoleFetched(String currentUserRole) {
+                Log.d("PillReminderActivity", "Current user role: " + currentUserRole);
+                firestore.collection("all_users")
+                        .document(getCurrentUserId()) // Assuming you have a method to get the current user's ID
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // Check if the current user is a caregiver
+                                        if (currentUserRole.equals("Caregiver")) {
+                                            // Fetch the linked elderly parent name
+                                            String elderlyParentName = document.getString("elderlyParentName");
+                                            if (elderlyParentName != null) {
+                                                fetchPillRemindersForCaregiver(elderlyParentName);
+                                            }
+                                        } else {
+                                            firestore.collection("pill_reminders")
+                                                    .get()
+                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                            if (task.isSuccessful()) {
+                                                                pillReminders.clear();
+                                                                for (DocumentSnapshot document : task.getResult()) {
+                                                                    PillReminder pillReminder = document.toObject(PillReminder.class);
+                                                                    if (pillReminder != null) {
+                                                                        pillReminder.setDocumentId(document.getId()); // Set document ID
+                                                                        pillReminders.add(pillReminder);
+                                                                    }
+                                                                }
+                                                                pillReminderAdapter.notifyDataSetChanged();
+                                                            } else {
+                                                                Log.e("PillReminderActivity", "Error getting pill reminders: ", task.getException());
+                                                            }
+                                                        }
+                                                    });
+                                        }
+                                    } else {
+                                        Log.e("PillReminderActivity", "User document does not exist");
+                                    }
+                                } else {
+                                    Log.e("PillReminderActivity", "Error fetching current user data: ", task.getException());
+                                }
+                            }
+                        });
+            }
+        });
+    }
+
+    private void fetchPillRemindersForCaregiver(String elderlyParentName) {
         firestore.collection("pill_reminders")
+                .whereEqualTo("elderlyUser", elderlyParentName)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -123,11 +180,14 @@ public class PillReminderActivity extends AppCompatActivity {
                             }
                             pillReminderAdapter.notifyDataSetChanged();
                         } else {
-                            Log.e("PillReminderActivity", "Error getting pill reminders: ", task.getException());
+                            Log.e("PillReminderActivity", "Error getting pill reminders for caregiver: ", task.getException());
                         }
                     }
                 });
     }
+
+
+
 
 
     private void showAddPillReminderDialog() {
@@ -270,18 +330,119 @@ public class PillReminderActivity extends AppCompatActivity {
         dialog.show();
     }
 
+
+
+
+
+
+
+
+
+
+
     private void fetchElderlyUserNames() {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
+        // Fetch current user's role
+        getCurrentUserRole(new OnUserRoleFetchedListener() {
+            @Override
+            public void onUserRoleFetched(String currentUserRole) {
+                Log.d("PillReminderActivity", "Current user role: " + currentUserRole);
+                firestore.collection("all_users")
+                        .document(getCurrentUserId()) // Assuming you have a method to get the current user's ID
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // Check if the current user is a caregiver
+                                        if (currentUserRole.equals("Caregiver")) {
+                                            // Fetch the linked elderly parent name
+                                            String elderlyParentName = document.getString("elderlyParentName");
+                                            if (elderlyParentName != null) {
+                                                // Fetch all elderly user names where the name matches the linked elderly parent name
+                                                fetchElderlyUserNamesForCaregiver(elderlyParentName);
+                                            }
+                                        } else {
+                                            // If the current user is not a caregiver, fetch all elderly user names
+                                            firestore.collection("elderly_users")
+                                                    .get()
+                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                            if (task.isSuccessful()) {
+                                                                List<String> elderlyUserNames = new ArrayList<>();
+                                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                    // Assuming that you have a field named "name" in your "elderly_users" collection
+                                                                    String userName = document.getString("username");
+                                                                    if (userName != null) {
+                                                                        elderlyUserNames.add(userName);
+                                                                    }
+                                                                }
+                                                                setupElderlyUserSpinner(elderlyUserNames);
+                                                            } else {
+                                                                Log.e("PillReminderActivity", "Error fetching elderly user names: ", task.getException());
+                                                            }
+                                                        }
+                                                    });
+                                        }
+                                    } else {
+                                        Log.e("PillReminderActivity", "User document does not exist");
+                                    }
+                                } else {
+                                    Log.e("PillReminderActivity", "Error fetching current user data: ", task.getException());
+                                }
+                            }
+                        });
+            }
+        });
+    }
+
+
+    private void getCurrentUserRole(OnUserRoleFetchedListener listener) {
+        // Retrieve the current user's ID from Firebase Authentication
+        String userId = getCurrentUserId();
+
+        // Query Firestore to get the corresponding user document
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        DocumentReference userRef = firestore.collection("all_users").document(userId);
+        userRef.get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String userRole = documentSnapshot.getString("role");
+                        listener.onUserRoleFetched(userRole);
+                    } else {
+                        Log.e("PillReminderActivity", "User document does not exist");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("PillReminderActivity", "Error retrieving user document", e);
+                });
+    }
+
+    // Define an interface for fetching user role asynchronously
+    private interface OnUserRoleFetchedListener {
+        void onUserRoleFetched(String userRole);
+    }
+
+
+
+    // Fetch elderly user names for the caregiver's linked elderly parent
+    private void fetchElderlyUserNamesForCaregiver(String elderlyParentName) {
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
         firestore.collection("elderly_users")
+                .whereEqualTo("username", elderlyParentName) // Assuming the field name for linked parent name is "linkedParentName"
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
+
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             List<String> elderlyUserNames = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                // Assuming that you have a field named "name" in your "elderly_users" collection
                                 String userName = document.getString("username");
                                 if (userName != null) {
                                     elderlyUserNames.add(userName);
@@ -289,11 +450,36 @@ public class PillReminderActivity extends AppCompatActivity {
                             }
                             setupElderlyUserSpinner(elderlyUserNames);
                         } else {
-                            Log.e("PillReminderActivity", "Error fetching elderly user names: ", task.getException());
+                            Log.e("PillReminderActivity", "Error fetching elderly user names for caregiver's linked elderly parent: ", task.getException());
                         }
                     }
                 });
     }
+
+
+
+    private String getCurrentUserId() {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser != null) {
+            return currentUser.getUid();
+        } else {
+            // Handle the case where the current user is null
+            return null;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     private void setupElderlyUserSpinner(List<String> elderlyUserNames) {
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, elderlyUserNames);

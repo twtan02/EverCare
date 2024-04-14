@@ -388,8 +388,6 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
                             if (documentSnapshot.exists()) {
                                 String currentUserRole = documentSnapshot.getString("role");
                                 String elderlyParentName = documentSnapshot.getString("elderlyParentName");
-                                Log.d("MedicalRecordActivity", "currentUserRole: " + currentUserRole);
-                                Log.d("MedicalRecordActivity", "Elderly Parent Name: " + elderlyParentName);
 
                                 for (ElderlyUser elderlyUser : elderlyUsers) {
                                     if (currentUserRole.equals("Caregiver")) {
