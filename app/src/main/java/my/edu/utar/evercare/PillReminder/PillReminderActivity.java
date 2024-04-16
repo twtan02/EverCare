@@ -230,25 +230,63 @@ public class PillReminderActivity extends AppCompatActivity {
         builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String pillName = pillNameEditText.getText().toString();
-                String dosageString = dosageEditText.getText().toString();
+                String pillName = pillNameEditText.getText().toString().trim();
+                String dosageString = dosageEditText.getText().toString().trim();
                 String frequency = frequencySpinner.getSelectedItem().toString();
-                String reminderDate = editReminderDate.getText().toString();
-                String reminderTime = editReminderTime.getText().toString();
-                String selectedElderlyUser = spinnerElderly.getSelectedItem().toString(); // Get the selected elderly user
+                String reminderDate = editReminderDate.getText().toString().trim();
+                String reminderTime = editReminderTime.getText().toString().trim();
+                String selectedElderlyUser = spinnerElderly.getSelectedItem().toString().trim(); // Get the selected elderly user
 
-                int dosage = 0;
-                if (!dosageString.isEmpty()) {
-                    dosage = Integer.parseInt(dosageString);
-                } else {
-                    Toast.makeText(PillReminderActivity.this, "Invalid dosage", Toast.LENGTH_SHORT).show();
+                if (pillName.isEmpty()) {
+                    // Notify the user about the missing pill name
+                    Toast.makeText(PillReminderActivity.this, "Please enter the pill name", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
+                if (dosageString.isEmpty()) {
+                    // Notify the user about the missing dosage
+                    Toast.makeText(PillReminderActivity.this, "Please enter the dosage", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                int dosage;
+                try {
+                    dosage = Integer.parseInt(dosageString);
+                    if (dosage <= 0) {
+                        // Dosage should be greater than 0
+                        Toast.makeText(PillReminderActivity.this, "Dosage should be greater than 0", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    // Invalid dosage format
+                    Toast.makeText(PillReminderActivity.this, "Invalid dosage format", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (reminderDate.isEmpty()) {
+                    // Notify the user about the missing reminder date
+                    Toast.makeText(PillReminderActivity.this, "Please select the reminder date", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (reminderTime.isEmpty()) {
+                    // Notify the user about the missing reminder time
+                    Toast.makeText(PillReminderActivity.this, "Please select the reminder time", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (selectedElderlyUser.isEmpty()) {
+                    // Notify the user about the missing selected elderly user
+                    Toast.makeText(PillReminderActivity.this, "Please select the elderly user", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Proceed with adding the pill reminder to Firestore
                 PillReminder newPillReminder = new PillReminder(pillName, dosage, frequency, reminderDate, reminderTime, selectedElderlyUser);
                 addPillReminderToFirestore(newPillReminder);
             }
         });
+
 
 
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

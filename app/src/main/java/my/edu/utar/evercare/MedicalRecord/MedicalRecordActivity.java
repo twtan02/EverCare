@@ -482,15 +482,44 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
         builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // Save the medical record to Firestore
-                String medicineName = medicineNameEditText.getText().toString();
-                String dosageString = dosageEditText.getText().toString();
-                if (!TextUtils.isEmpty(medicineName) && !TextUtils.isEmpty(dosageString)) {
-                    int dosage = Integer.parseInt(dosageString);
-                    saveMedicalRecord(selectedElderlyUser, medicineName, dosage);
+                // Get medicine name and dosage from EditText fields
+                String medicineName = medicineNameEditText.getText().toString().trim();
+                String dosageString = dosageEditText.getText().toString().trim();
+
+                // Validate medicine name
+                if (TextUtils.isEmpty(medicineName)) {
+                    // Notify the user about the missing medicine name
+                    Toast.makeText(MedicalRecordActivity.this, "Please enter the medicine name", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+
+                // Validate dosage
+                if (TextUtils.isEmpty(dosageString)) {
+                    // Notify the user about the missing dosage
+                    Toast.makeText(MedicalRecordActivity.this, "Please enter the dosage", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Convert dosage string to integer
+                int dosage;
+                try {
+                    dosage = Integer.parseInt(dosageString);
+                    if (dosage <= 0) {
+                        // Notify the user that dosage should be greater than 0
+                        Toast.makeText(MedicalRecordActivity.this, "Dosage should be greater than 0", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    // Notify the user about the invalid dosage format
+                    Toast.makeText(MedicalRecordActivity.this, "Invalid dosage format", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // If both fields are valid, proceed with saving the medical record to Firestore
+                saveMedicalRecord(selectedElderlyUser, medicineName, dosage);
             }
         });
+
 
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
