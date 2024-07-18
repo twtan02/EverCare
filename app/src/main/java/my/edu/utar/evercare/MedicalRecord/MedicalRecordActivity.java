@@ -228,7 +228,6 @@ public class MedicalRecordActivity extends AppCompatActivity implements MedicalR
                     // Filter medical records based on user's role and assigned elderly parent name
                     for (List<MedicalRecord> records : medicalRecordsMap.values()) {
                         for (MedicalRecord medicalRecord : records) {
-                            Log.d("MedicalRecordActivity", "medicalRecord: " + medicalRecord);
                             if (userRole.equals("Caregiver") && medicalRecord.getElderlyName().equals(elderlyParentName)) {
                                 filteredMedicalRecords.add(medicalRecord);
                             } else if (!userRole.equals("Caregiver")) {
